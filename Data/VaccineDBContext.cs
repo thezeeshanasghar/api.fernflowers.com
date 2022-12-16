@@ -5,10 +5,10 @@ namespace api.fernflowers.com.Data;
 
 public class VaccineDBContext : DbContext
 {
-    public VaccineDBContext(DbContextOptions<VaccineDBContext> options):base(options)
+    public VaccineDBContext(DbContextOptions<VaccineDBContext> options) : base(options)
     {
 
     }
 
-    public DbSet<Vaccine> Vaccines {get;set;}
+    public DbSet<Vaccine> Vaccines { get; set; }
 }
