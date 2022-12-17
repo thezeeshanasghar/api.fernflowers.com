@@ -1,0 +1,14 @@
+namespace api.fernflowers.com.Data.Entities;
+
+public class Doctor
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int MobileNumber { get; set; }
+    public bool Isapproved { get; set; }
+    public bool IsEnabled { get; set; }
+    public string Email { get; set; }
+    public string DoctorType { get; set; }
+    public int PMDC { get; set; }
+    
+}

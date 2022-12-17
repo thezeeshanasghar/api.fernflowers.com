@@ -11,4 +11,10 @@ public class VaccineDBContext : DbContext
     }
 
     public DbSet<Vaccine> Vaccines { get; set; }
+    public DbSet<Dose> Doses { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Doctor> Doctors { get; set; }
+    public DbSet<Clinic> Clinics { get; set; }
+
+    public DbSet<User> Users { get; set; }
 }
