@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221219055042_update1")]
+    partial class update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,8 +129,8 @@ namespace api.fernflowers.com.Migrations
                     b.Property<bool>("Infinite")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsSpecial")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int>("IsSpecial")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
