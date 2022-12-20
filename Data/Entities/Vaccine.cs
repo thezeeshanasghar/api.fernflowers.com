@@ -6,5 +6,4 @@ public class Vaccine
     public string Name { get; set; }
     public bool IsSpecial { get; set; }
     public bool Infinite { get; set; }
-    // public int? MinGap { get; set; }
 }

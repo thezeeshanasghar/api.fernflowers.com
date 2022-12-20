@@ -8,11 +8,11 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClinicsController : ControllerBase
+    public class ClinicController : ControllerBase
     {
         private readonly VaccineDBContext _vaccineDBContext;
 
-        public ClinicsController(VaccineDBContext vaccineDBContext)
+        public ClinicController(VaccineDBContext vaccineDBContext)
         {
             _vaccineDBContext = vaccineDBContext;
         }

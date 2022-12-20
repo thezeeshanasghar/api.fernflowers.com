@@ -8,11 +8,11 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BrandsController : ControllerBase
+    public class BrandController : ControllerBase
     {
         private readonly VaccineDBContext _vaccineDBContext;
 
-        public BrandsController(VaccineDBContext vaccineDBContext)
+        public BrandController(VaccineDBContext vaccineDBContext)
         {
             _vaccineDBContext = vaccineDBContext;
         }
@@ -62,5 +62,5 @@ namespace api.fernflowers.com.Controllers
             await _vaccineDBContext.SaveChangesAsync();
             return NoContent();
         }
-     }
+    }
 }

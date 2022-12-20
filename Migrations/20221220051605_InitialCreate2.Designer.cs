@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20221217134052_update")]
-    partial class update
+    [Migration("20221220051605_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,8 +86,13 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PMDC")
-                        .HasColumnType("int");
+                    b.Property<string>("PMDC")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -115,30 +120,6 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Doses");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("CountryCode")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MobileNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>
                 {
                     b.Property<int>("Id")
@@ -148,8 +129,8 @@ namespace api.fernflowers.com.Migrations
                     b.Property<bool>("Infinite")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("IsSpecial")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsSpecial")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -15,5 +15,4 @@ public class VaccineDBContext : DbContext
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Clinic> Clinics { get; set; }
-
 }
