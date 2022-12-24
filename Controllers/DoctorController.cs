@@ -3,6 +3,7 @@ using api.fernflowers.com.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using api.fernflowers.com.ModelDTO;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -34,9 +35,9 @@ namespace api.fernflowers.com.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Doctor doctors)
         {
-	        _vaccineDBContext.Doctors.Add(doctors);
-        	await _vaccineDBContext.SaveChangesAsync();
-	        return Created($"/get-doctor-by-id?id={doctors.Id}", doctors);
+            _vaccineDBContext.Doctors.Add(doctors);
+            await _vaccineDBContext.SaveChangesAsync();
+            return Created($"/get-doctor-by-id?id={doctors.Id}", doctors);
         }
 
         [HttpPut]
@@ -60,6 +61,37 @@ namespace api.fernflowers.com.Controllers
             await _vaccineDBContext.SaveChangesAsync();
             return NoContent();
         }
+        [HttpPost("login")]
+        public Response<DoctorDTO> login(DoctorDTO userDTO)
+        {
         
+                {
+                    var dbUser = _vaccineDBContext.Doctors.FirstOrDefault(x => 
+                                                                x.MobileNumber == userDTO.MobileNumber && 
+                                                                x.Password == userDTO.Password);
+                    if (dbUser == null){
+                        return new Response<DoctorDTO>(false, "Invalid Mobile Number and Password.", null);
+
+                    userDTO.Id = dbUser.Id;}
+                    else (userDTO.DoctorType.Equals("DOCTOR"))
+                    {
+
+                        var doctorDb = _vaccineDBContext.Doctors.Where(x => x.Id == dbUser.Id).FirstOrDefault();
+                        if (doctorDb == null)
+                            return new Response<DoctorDTO>(false, "Doctor not found.", null);
+                        if (doctorDb.IsApproved != true)
+                            return new Response<DoctorDTO>(false, "You are not approved. Contact admin for approval at 923335196658", null);
+
+                        userDTO.Id = doctorDb.Id;
+                        
+                     
+                        userDTO.DoctorType = doctorDb.DoctorType;
+
+                    }
+                    
+
+                    return new Response<DoctorDTO>(true, null, userDTO);
+                }
+        }
     }
 }
