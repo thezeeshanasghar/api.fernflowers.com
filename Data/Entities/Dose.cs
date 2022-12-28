@@ -7,5 +7,7 @@ public class Dose
     public int MinAge { get; set; }
     public int? MinGap { get; set; }
 
+    public int VaccineId { get; set; }
+
     
 }

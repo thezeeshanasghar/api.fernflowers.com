@@ -1,4 +1,5 @@
 namespace api.fernflowers.com.Data.Entities;
+using Newtonsoft.Json;
 
 public class Vaccine
 {
@@ -6,4 +7,10 @@ public class Vaccine
     public string Name { get; set; }
     public bool IsSpecial { get; set; }
     public bool Infinite { get; set; }
+
+
+    [JsonIgnore]
+    public virtual IEnumerable<Dose> Doses {get;set;}
+    [JsonIgnore]
+    public virtual IEnumerable<Brand> Brands {get;set;}
 }

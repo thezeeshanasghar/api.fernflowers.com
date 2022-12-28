@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221228113236_UpdateDoseBrand")]
+    partial class UpdateDoseBrand
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,7 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("VaccineId")
+                    b.Property<int?>("VaccineId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -159,9 +162,7 @@ namespace api.fernflowers.com.Migrations
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
                         .WithMany("Doses")
-                        .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VaccineId");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>

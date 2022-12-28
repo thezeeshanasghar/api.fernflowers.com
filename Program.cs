@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.UseMemberCasing();
+        });
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
     builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
@@ -26,6 +29,7 @@ builder.Services.AddDbContext<VaccineDBContext>(
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+
 
 var app = builder.Build();
 
