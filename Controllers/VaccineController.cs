@@ -1,9 +1,9 @@
-﻿using api.fernflowers.com.Data;
-using api.fernflowers.com.Data.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using api.fernflowers.com.Data;
+using api.fernflowers.com.Data.Entities;
 using api.fernflowers.com.ModelDTO;
 
 namespace api.fernflowers.com.Controllers
@@ -36,9 +36,10 @@ namespace api.fernflowers.com.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Vaccine vaccine)
         {
-	        _db.Vaccines.Add(vaccine);
-        	await _db.SaveChangesAsync();
-	        return Created(new Uri(Request.GetEncodedUrl()+ "/" + vaccine.Id), vaccine);
+            _db.Vaccines.Add(vaccine);
+            await _db.SaveChangesAsync();
+            return Created(new Uri(Request.GetEncodedUrl() + "/" + vaccine.Id),
+            vaccine);
         }
 
         [HttpPut]
@@ -69,17 +70,17 @@ namespace api.fernflowers.com.Controllers
             //var vaccines = await _db.Vaccines.Include(x=> x.Brands).Include(x=>x.Doses).ToListAsync();
             var vaccines = await _db.Vaccines.ToListAsync();
             List<VaccineWithCountDTO> listDTO = new List<VaccineWithCountDTO>();
-             foreach (var item in vaccines){
-                listDTO.Add(
-                    new VaccineWithCountDTO{
-                        vaccine =item,
-                        DoseCount = _db.Doses.Where(x=>x.VaccineId == item.Id).Count(),
-                        BrandCount = 0//item.Brands.Count()
-                        });
-             }
-        
+            foreach (var item in vaccines)
+            {
+                listDTO
+                    .Add(new VaccineWithCountDTO
+                    {
+                        vaccine = item,
+                        DoseCount = _db.Doses.Where(x => x.VaccineId == item.Id).Count(),
+                        BrandCount = 0
+                    });
+            }
             return Ok(listDTO);
         }
-     
     }
 }
