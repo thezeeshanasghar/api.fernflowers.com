@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api.fernflowers.com.ModelDTO;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -30,6 +31,7 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetDoctorByIdAsync(int id)
         {
             var doctor = await _vaccineDBContext.Doctors.FindAsync(id);
+            
             return Ok(doctor);
         }
 
@@ -40,10 +42,11 @@ namespace api.fernflowers.com.Controllers
             await _vaccineDBContext.SaveChangesAsync();
             return Created($"/get-doctor-by-id?id={doctors.Id}", doctors);
         }
-
+        [Route("update")]
         [HttpPut]
         public async Task<IActionResult> PutAsync(Doctor doctorToUpdate)
         {
+            
             _vaccineDBContext.Doctors.Update(doctorToUpdate);
             await _vaccineDBContext.SaveChangesAsync();
             return NoContent();
@@ -62,7 +65,20 @@ namespace api.fernflowers.com.Controllers
             await _vaccineDBContext.SaveChangesAsync();
             return NoContent();
         }
-
+        // [Route("{id}")]
+        [HttpPatch]
+         public async Task<IActionResult> PatchAsync(int id,JsonPatchDocument<Doctor>patchDocument)
+        {
+            var doctorToDelete = await _vaccineDBContext.Doctors.FindAsync(id);
+            if (doctorToDelete == null)
+            {
+                return NotFound();
+            }
+            doctorToDelete.Isapproved=true;
+            _vaccineDBContext.Entry(doctorToDelete).State=EntityState.Modified;
+            await _vaccineDBContext.SaveChangesAsync();
+            return NoContent();
+        }
         // [HttpPost("login")]
         // public Response<DoctorDTO> login(DoctorDTO userDTO)
         // {

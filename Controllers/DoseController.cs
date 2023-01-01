@@ -36,7 +36,7 @@ namespace api.fernflowers.com.Controllers
         {
 	        _vaccineDBContext.Doses.Add(doses);
         	await _vaccineDBContext.SaveChangesAsync();
-	        return Created($"/get-brand-by-id?id={doses.Id}", doses);
+	        return Created($"/get-dose-by-id?id={doses.Id}", doses);
         }
 
         [HttpPut]
