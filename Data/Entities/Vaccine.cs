@@ -10,7 +10,7 @@ public class Vaccine
 
 
     [JsonIgnore]
-    public virtual IEnumerable<Dose> Doses {get;set;}
+    public virtual ICollection<Dose> Doses {get;set;}
     [JsonIgnore]
-    public virtual IEnumerable<Brand> Brands {get;set;}
+    public virtual ICollection<Brand> Brands {get;set;}
 }
