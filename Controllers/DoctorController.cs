@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api.fernflowers.com.ModelDTO;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -12,106 +13,135 @@ namespace api.fernflowers.com.Controllers
     [ApiController]
     public class DoctorController : ControllerBase
     {
-        private readonly VaccineDBContext _vaccineDBContext;
+        private readonly VaccineDBContext _db;
 
         public DoctorController(VaccineDBContext vaccineDBContext)
         {
-            _vaccineDBContext = vaccineDBContext;
+            _db = vaccineDBContext;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAll()
         {
-            var doctors = await _vaccineDBContext.Doctors.ToListAsync();
-            return Ok(doctors);
+            try{
+                var doctor = await _db.Doctors.ToListAsync();
+                return Ok(doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
-        [HttpGet]
-        [Route("get-doctor-by-id")]
-        public async Task<IActionResult> GetDoctorByIdAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            var doctor = await _vaccineDBContext.Doctors.FindAsync(id);
-            
-            return Ok(doctor);
+            try{
+                var doctor = await _db.Doctors.FindAsync(id);
+                if(doctor==null)
+                    return NotFound();
+                return Ok(doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Doctor doctors)
+        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
         {
-            _vaccineDBContext.Doctors.Add(doctors);
-            await _vaccineDBContext.SaveChangesAsync();
-            return Created($"/get-doctor-by-id?id={doctors.Id}", doctors);
+            try{
+                _db.Doctors.Add(doctor);
+                await _db.SaveChangesAsync();
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
-        [Route("update")]
+
         [HttpPut]
-        public async Task<IActionResult> PutAsync(Doctor doctorToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
         {
-            
-            _vaccineDBContext.Doctors.Update(doctorToUpdate);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            try{
+                if(id != doctorToUpdate.Id)
+                    return BadRequest();
+                var dbDoctor = await _db.Doctors.FindAsync(id);
+                if(dbDoctor==null)
+                    return NotFound();
+
+                _db.Doctors.Update(doctorToUpdate);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            var doctorToDelete = await _vaccineDBContext.Doctors.FindAsync(id);
-            if (doctorToDelete == null)
-            {
-                return NotFound();
+            try{
+                var doctorToDelete = await _db.Doctors.FindAsync(id);
+                if (doctorToDelete == null)
+                {
+                    return NotFound();
+                }
+                _db.Doctors.Remove(doctorToDelete);
+                await _db.SaveChangesAsync();
+                return NoContent();
             }
-            _vaccineDBContext.Doctors.Remove(doctorToDelete);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
-        // [Route("{id}")]
-        [HttpPatch]
-         public async Task<IActionResult> PatchAsync(int id,JsonPatchDocument<Doctor>patchDocument)
+
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
         {
-            var doctorToDelete = await _vaccineDBContext.Doctors.FindAsync(id);
-            if (doctorToDelete == null)
-            {
-                return NotFound();
+            try{
+                var dbDoctor = await _db.Doctors.FindAsync(id);
+                if (dbDoctor == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbDoctor);
+                await _db.SaveChangesAsync();
+                return NoContent();
             }
-            doctorToDelete.Isapproved=true;
-            _vaccineDBContext.Entry(doctorToDelete).State=EntityState.Modified;
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
-        // [HttpPost("login")]
-        // public Response<DoctorDTO> login(DoctorDTO userDTO)
-        // {
-
-        //     {
-        //         var dbUser = _vaccineDBContext.Doctors.FirstOrDefault(x =>
-        //                                                     x.MobileNumber == userDTO.MobileNumber &&
-        //                                                     x.Password == userDTO.Password);
-        //         if (dbUser == null)
-        //         {
-        //             return new Response<DoctorDTO>(false, "Invalid Mobile Number and Password.", null);
-
-        //             userDTO.Id = dbUser.Id;
-        //         }
-        //         else (userDTO.DoctorType.Equals("DOCTOR"))
-        //             {
-
-        //             var doctorDb = _vaccineDBContext.Doctors.Where(x => x.Id == dbUser.Id).FirstOrDefault();
-        //             if (doctorDb == null)
-        //                 return new Response<DoctorDTO>(false, "Doctor not found.", null);
-        //             if (doctorDb.IsApproved != true)
-        //                 return new Response<DoctorDTO>(false, "You are not approved. Contact admin for approval at 923335196658", null);
-
-        //             userDTO.Id = doctorDb.Id;
 
 
-        //             userDTO.DoctorType = doctorDb.DoctorType;
+        [HttpGet]
+        [Route("get-AllDoctors")]
+        public async Task<IActionResult> GetDoctorByAsync()
+        {
+            try{
+                var doctor = await _db.Doctors.ToListAsync();
+                return Ok(doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
+        }
 
-        //         }
+        [HttpGet]
+        [Route("approved/{approved:bool}")]
+        public async Task<IActionResult> GetApprovedDoctors(bool approved)
+        {
+            try{
+                var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
+                return Ok(doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
+        }
 
-
-        //         return new Response<DoctorDTO>(true, null, userDTO);
-        //     }
-        // }
     }
 }

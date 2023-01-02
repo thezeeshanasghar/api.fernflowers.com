@@ -1,6 +1,8 @@
 using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,55 +12,106 @@ namespace api.fernflowers.com.Controllers
     [ApiController]
     public class ClinicController : ControllerBase
     {
-        private readonly VaccineDBContext _vaccineDBContext;
+        private readonly VaccineDBContext _db;
 
         public ClinicController(VaccineDBContext vaccineDBContext)
         {
-            _vaccineDBContext = vaccineDBContext;
+            _db = vaccineDBContext;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAll()
         {
-            var clinics = await _vaccineDBContext.Clinics.ToListAsync();
-            return Ok(clinics);
+            try{
+                var clinics = await _db.Clinics.ToListAsync();
+                return Ok(clinics);
+            }
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
         [HttpGet]
-        [Route("get-clinic-by-id")]
-        public async Task<IActionResult> GetClinicByIdAsync(int id)
+        [Route("{id}")]
+        public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            var clinic = await _vaccineDBContext.Clinics.FindAsync(id);
-            return Ok(clinic);
+            try{
+                var clinic = await _db.Clinics.FindAsync(id);
+                if(clinic==null)
+                    return NotFound();
+                return Ok(clinic);
+            }
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Clinic clinics)
+        public async Task<IActionResult> PostNew([FromBody] Clinic clinic)
         {
-	        _vaccineDBContext.Clinics.Add(clinics);
-        	await _vaccineDBContext.SaveChangesAsync();
-	        return Created($"/get-clinic-by-id?id={clinics.Id}", clinics);
+            try{
+                _db.Clinics.Add(clinic);
+                await _db.SaveChangesAsync();
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + clinic.Id), clinic);
+            }
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync(Clinic clinicToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Clinic clinicToUpdate)
         {
-            _vaccineDBContext.Clinics.Update(clinicToUpdate);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            try{
+                if(id != clinicToUpdate.Id)
+                    return BadRequest();
+                var dbClinic = await _db.Clinics.FindAsync(id);
+                if(dbClinic==null)
+                    return NotFound();
+
+                _db.Clinics.Update(clinicToUpdate);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            var clinicToDelete = await _vaccineDBContext.Clinics.FindAsync(id);
-            if (clinicToDelete == null)
-            {
-                return NotFound();
+            try{
+                var clinicToDelete = await _db.Clinics.FindAsync(id);
+                if (clinicToDelete == null)
+                {
+                    return NotFound();
+                }
+                _db.Clinics.Remove(clinicToDelete);
+                await _db.SaveChangesAsync();
+                return NoContent();
             }
-            _vaccineDBContext.Clinics.Remove(clinicToDelete);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Clinic> patchDocument)
+        {
+            try{
+                var dbClinic = await _db.Clinics.FindAsync(id);
+                if (dbClinic == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbClinic);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+             catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
     }
 }

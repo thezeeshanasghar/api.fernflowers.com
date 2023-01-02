@@ -1,6 +1,8 @@
 using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,57 +12,108 @@ namespace api.fernflowers.com.Controllers
     [ApiController]
     public class BrandController : ControllerBase
     {
-        private readonly VaccineDBContext _vaccineDBContext;
+        private readonly VaccineDBContext _db;
 
         public BrandController(VaccineDBContext vaccineDBContext)
         {
-            _vaccineDBContext = vaccineDBContext;
+            _db = vaccineDBContext;
         }
 
         [HttpGet]
         
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAll()
         {
-            var brands = await _vaccineDBContext.Brands.ToListAsync();
-            return Ok(brands);
+            try{
+                var brand = await _db.Brands.ToListAsync();
+                return Ok(brand);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpGet]
-        [Route("get-brand-by-id")]
-        public async Task<IActionResult> GetBrandByIdAsync(int id)
+        [Route("{id}")]
+        public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            var brand = await _vaccineDBContext.Brands.FindAsync(id);
-            return Ok(brand);
+            try{
+                var brand = await _db.Brands.FindAsync(id);
+                if(brand==null)
+                    return NotFound();
+                return Ok(brand);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Brand brands)
+        public async Task<IActionResult> PostNew([FromBody] Brand brand)
         {
-	        _vaccineDBContext.Brands.Add(brands);
-        	await _vaccineDBContext.SaveChangesAsync();
-	        return Created($"/get-brand-by-id?id={brands.Id}", brands);
+            try{
+                _db.Brands.Add(brand);
+                await _db.SaveChangesAsync();
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + brand.Id), brand);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync(Brand brandToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Brand brandToUpdate)
         {
-            _vaccineDBContext.Brands.Update(brandToUpdate);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            try{
+                if(id != brandToUpdate.Id)
+                    return BadRequest();
+                var dbBrand = await _db.Brands.FindAsync(id);
+                if(dbBrand==null)
+                    return NotFound();
+
+                _db.Brands.Update(brandToUpdate);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute]  int id)
         {
-            var brandToDelete = await _vaccineDBContext.Brands.FindAsync(id);
-            if (brandToDelete == null)
-            {
-                return NotFound();
+            try{
+                var brandToDelete = await _db.Brands.FindAsync(id);
+                if (brandToDelete == null)
+                {
+                    return NotFound();
+                }
+                _db.Brands.Remove(brandToDelete);
+                await _db.SaveChangesAsync();
+                return NoContent();
             }
-            _vaccineDBContext.Brands.Remove(brandToDelete);
-            await _vaccineDBContext.SaveChangesAsync();
-            return NoContent();
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
+        }
+        
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Brand> patchDocument)
+        {
+            try{
+                var dbBrand = await _db.Brands.FindAsync(id);
+                if (dbBrand == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbBrand);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
         }
     }
 }
