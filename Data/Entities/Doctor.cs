@@ -11,5 +11,6 @@ public class Doctor
     public string Email { get; set; }
     public string DoctorType { get; set; }
     public string PMDC { get; set; }
+    public int BrandAmountId { get; set; }
 
 }

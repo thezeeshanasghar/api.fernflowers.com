@@ -11,11 +11,11 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : ControllerBase
+    public class BrandInventoryController : ControllerBase
     {
         private readonly VaccineDBContext _db;
 
-        public DoctorController(VaccineDBContext vaccineDBContext)
+        public BrandInventoryController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -24,8 +24,8 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetAll()
         {
             try{
-                var doctor = await _db.Doctors.ToListAsync();
-                return Ok(doctor);
+                var brandinventory = await _db.BrandInventories.ToListAsync();
+                return Ok(brandinventory);
             }
             catch(Exception ex){
                 return StatusCode(500, "Internal server error"); 
@@ -36,10 +36,10 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
             try{
-                var doctor = await _db.Doctors.FindAsync(id);
-                if(doctor==null)
+                var brandinventory = await _db.BrandInventories.FindAsync(id);
+                if(brandinventory==null)
                     return NotFound();
-                return Ok(doctor);
+                return Ok(brandinventory);
             }
             catch(Exception ex){
                 return StatusCode(500, "Internal server error"); 
@@ -47,12 +47,12 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+        public async Task<IActionResult> PostNew([FromBody] BrandInventory brandinventory)
         {
             try{
-                _db.Doctors.Add(doctor);
+                _db.BrandInventories.Add(brandinventory);
                 await _db.SaveChangesAsync();
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor);
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + brandinventory.Id), brandinventory);
             }
             catch(Exception ex){
                 return StatusCode(500, "Internal server error"); 
@@ -60,16 +60,16 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandInventory brandinventoryToUpdate)
         {
             try{
-                if(id != doctorToUpdate.Id)
+                if(id != brandinventoryToUpdate.Id)
                     return BadRequest();
-                var dbDoctor = await _db.Doctors.FindAsync(id);
-                if(dbDoctor==null)
+                var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
+                if(dbbrandinventory==null)
                     return NotFound();
 
-                _db.Doctors.Update(doctorToUpdate);
+                _db.BrandInventories.Update(brandinventoryToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -83,12 +83,12 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             try{
-                var doctorToDelete = await _db.Doctors.FindAsync(id);
-                if (doctorToDelete == null)
+                var brandinventoryToDelete = await _db.BrandInventories.FindAsync(id);
+                if (brandinventoryToDelete == null)
                 {
                     return NotFound();
                 }
-                _db.Doctors.Remove(doctorToDelete);
+                _db.BrandInventories.Remove(brandinventoryToDelete);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -99,15 +99,15 @@ namespace api.fernflowers.com.Controllers
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<BrandInventory> patchDocument)
         {
             try{
-                var dbDoctor = await _db.Doctors.FindAsync(id);
-                if (dbDoctor == null)
+                var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
+                if (dbbrandinventory == null)
                 {
                     return NotFound();
                 }
-                patchDocument.ApplyTo(dbDoctor);
+                patchDocument.ApplyTo(dbbrandinventory);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -118,18 +118,7 @@ namespace api.fernflowers.com.Controllers
 
 
 
-        [HttpGet]
-        [Route("approved/{approved:bool}")]
-        public async Task<IActionResult> GetApprovedDoctors(bool approved)
-        {
-            try{
-                var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
-                return Ok(doctor);
-            }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
-            }
-        }
+        
 
     }
 }
