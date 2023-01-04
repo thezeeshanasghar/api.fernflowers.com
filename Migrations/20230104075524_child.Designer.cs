@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230104075524_child")]
+    partial class child
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +105,10 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ClinicId")
+                    b.Property<long>("ClinicId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ClinicId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DOB")
@@ -154,7 +160,7 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClinicId");
+                    b.HasIndex("ClinicId1");
 
                     b.ToTable("Childs");
                 });
@@ -309,7 +315,7 @@ namespace api.fernflowers.com.Migrations
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Clinic", "Clinic")
                         .WithMany()
-                        .HasForeignKey("ClinicId")
+                        .HasForeignKey("ClinicId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

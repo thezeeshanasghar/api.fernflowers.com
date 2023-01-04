@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230104080033_child2.2")]
+    partial class child22
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,9 +105,6 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ClinicId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DOB")
                         .HasColumnType("datetime(6)");
 
@@ -154,8 +154,6 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClinicId");
-
                     b.ToTable("Childs");
                 });
 
@@ -169,6 +167,9 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("ChildId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -177,6 +178,8 @@ namespace api.fernflowers.com.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ChildId");
 
                     b.ToTable("Clinics");
                 });
@@ -305,15 +308,11 @@ namespace api.fernflowers.com.Migrations
                     b.Navigation("Doctor");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Child", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinic", b =>
                 {
-                    b.HasOne("api.fernflowers.com.Data.Entities.Clinic", "Clinic")
-                        .WithMany()
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Clinic");
+                    b.HasOne("api.fernflowers.com.Data.Entities.Child", null)
+                        .WithMany("Clinics")
+                        .HasForeignKey("ChildId");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
@@ -339,6 +338,11 @@ namespace api.fernflowers.com.Migrations
                     b.Navigation("Brands");
 
                     b.Navigation("Doctors");
+                });
+
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Child", b =>
+                {
+                    b.Navigation("Clinics");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>
