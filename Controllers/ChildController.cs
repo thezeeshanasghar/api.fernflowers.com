@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using api.fernflowers.com.ModelDTO;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
+using System.Globalization;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -47,11 +48,12 @@ namespace api.fernflowers.com.Controllers
             }
         }
         
-         [HttpGet]
-        public async Task<IActionResult> GetAll(string Name,string City, string DOB,string Gender)
+         [HttpGet("name")]
+        public async Task<IActionResult> GetAll(string Name,string City,string Gender)
         {
             try{
-                var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.DOB==Convert.ToDateTime(DOB) && a.Gender==Gender ).ToListAsync();
+                // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
+                var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.Gender==Gender ).ToListAsync();
                 return Ok(child);
             }
             catch(Exception ex)
@@ -60,7 +62,29 @@ namespace api.fernflowers.com.Controllers
             }
         }
         
-  
+        // [HttpGet("{name}")]
+        
+        // public async Task<ActionResult>Search(string Name,string Gender,string City,System.DateTime DOB)
+        // {
+        //     try{
+        //         // var child = await _db.Childs.FindAsync(name,gender,city,dob);
+        //         // if(child==null){
+        //         //     return NotFound();
+
+        //         // }
+        //         // return Ok(child);
+        //         var list=await _db.Childs.Where(a=>a.Name==Name && a.Gender==Gender && a.City==City && a.DOB==DOB).ToListAsync();
+                
+
+        //         return Ok(list);
+
+                    
+                
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, "Internal server error"); 
+        //     }
+        // }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Child child)
