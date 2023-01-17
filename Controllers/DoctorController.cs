@@ -14,6 +14,7 @@ namespace api.fernflowers.com.Controllers
     public class DoctorController : ControllerBase
     {
         private readonly VaccineDBContext _db;
+        
 
         public DoctorController(VaccineDBContext vaccineDBContext)
         {
@@ -40,6 +41,28 @@ namespace api.fernflowers.com.Controllers
                 if(doctor==null)
                     return NotFound();
                 return Ok(doctor);
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+         
+            }
+        }
+
+
+        [Route("login")] 
+        [HttpGet()]
+        
+        public async Task<IActionResult>Login(int MobileNumber , string Password)
+        {
+            try{
+                
+                var list=await _db.Doctors.Where(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.Isapproved==true).ToListAsync();
+                
+
+                return Ok(list);
+
+                    
+                
             }
             catch(Exception ex){
                 return StatusCode(500, "Internal server error"); 
