@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,29 +11,16 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230118100951_doctorupdate20")]
+    partial class doctorupdate20
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("BrandAmountDoctor", b =>
-                {
-                    b.Property<long>("BrandAmountsId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("DoctorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BrandAmountsId", "DoctorsId");
-
-                    b.HasIndex("DoctorsId");
-
-                    b.ToTable("BrandAmountDoctor");
-                });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
@@ -43,9 +31,6 @@ namespace api.fernflowers.com.Migrations
                     b.Property<int>("BrandAmountId")
                         .HasColumnType("int");
 
-                    b.Property<long?>("BrandAmountId1")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -55,7 +40,7 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandAmountId1");
+                    b.HasIndex("BrandAmountId");
 
                     b.HasIndex("VaccineId");
 
@@ -64,17 +49,14 @@ namespace api.fernflowers.com.Migrations
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
                     b.Property<int>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -286,26 +268,13 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Vaccines");
                 });
 
-            modelBuilder.Entity("BrandAmountDoctor", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.BrandAmount", null)
-                        .WithMany()
-                        .HasForeignKey("BrandAmountsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", null)
-                        .WithMany()
-                        .HasForeignKey("DoctorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.BrandAmount", null)
                         .WithMany("Brands")
-                        .HasForeignKey("BrandAmountId1");
+                        .HasForeignKey("BrandAmountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
                         .WithMany("Brands")

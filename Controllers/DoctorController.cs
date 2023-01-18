@@ -72,14 +72,12 @@ namespace api.fernflowers.com.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
         {
-            try{
+            
                 _db.Doctors.Add(doctor);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor);
-            }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
-            }
+            
+            
         }
 
         [HttpPut]

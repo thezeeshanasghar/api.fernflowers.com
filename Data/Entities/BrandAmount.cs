@@ -4,16 +4,17 @@ namespace api.fernflowers.com.Data.Entities;
 
 public class BrandAmount
 {
-  public BrandAmount()
+   public BrandAmount()
     {
         this.Brands = new HashSet<Brand>();
         this.Doctors = new HashSet<Doctor>();
     }
+
     
 
     
     
-    public int Id { get; set; }
+    public long Id { get; set; }
     public int Amount { get; set; }
     public int BrandId { get; set; }
     [JsonIgnore]
@@ -22,8 +23,5 @@ public class BrandAmount
     public int DoctorId { get; set; }
     [JsonIgnore]
     public virtual ICollection<Doctor> Doctors { get; set; }
-    //  public virtual string VaccineName { get; set; }
-
-
-
+    
 }

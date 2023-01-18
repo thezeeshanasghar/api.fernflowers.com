@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,41 +11,22 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230118105450_doctorupdate30")]
+    partial class doctorupdate30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("BrandAmountDoctor", b =>
-                {
-                    b.Property<long>("BrandAmountsId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("DoctorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BrandAmountsId", "DoctorsId");
-
-                    b.HasIndex("DoctorsId");
-
-                    b.ToTable("BrandAmountDoctor");
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    b.Property<int>("BrandAmountId")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("BrandAmountId1")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -55,8 +37,6 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandAmountId1");
-
                     b.HasIndex("VaccineId");
 
                     b.ToTable("Brands");
@@ -64,20 +44,30 @@ namespace api.fernflowers.com.Migrations
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int>("BrandId")
+                    b.Property<long>("BrandId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("BrandId1")
                         .HasColumnType("int");
 
-                    b.Property<int>("DoctorId")
+                    b.Property<long>("DoctorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("DoctorId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId1");
+
+                    b.HasIndex("DoctorId1");
 
                     b.ToTable("BrandAmounts");
                 });
@@ -286,30 +276,30 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Vaccines");
                 });
 
-            modelBuilder.Entity("BrandAmountDoctor", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.BrandAmount", null)
-                        .WithMany()
-                        .HasForeignKey("BrandAmountsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", null)
-                        .WithMany()
-                        .HasForeignKey("DoctorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
-                    b.HasOne("api.fernflowers.com.Data.Entities.BrandAmount", null)
-                        .WithMany("Brands")
-                        .HasForeignKey("BrandAmountId1");
-
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
                         .WithMany("Brands")
                         .HasForeignKey("VaccineId");
+                });
+
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
+                {
+                    b.HasOne("api.fernflowers.com.Data.Entities.Brand", "Brand")
+                        .WithMany("BrandAmounts")
+                        .HasForeignKey("BrandId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", "Doctor")
+                        .WithMany("BrandAmounts")
+                        .HasForeignKey("DoctorId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandInventory", b =>
@@ -351,9 +341,14 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
-                    b.Navigation("Brands");
+                    b.Navigation("BrandAmounts");
+                });
+
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
+                {
+                    b.Navigation("BrandAmounts");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>
