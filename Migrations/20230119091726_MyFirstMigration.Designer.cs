@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230119091726_MyFirstMigration")]
+    partial class MyFirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,8 +135,6 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
                     b.ToTable("Clinics");
                 });
 
@@ -242,17 +243,6 @@ namespace api.fernflowers.com.Migrations
                     b.Navigation("Clinic");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinic", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", "Doctor")
-                        .WithMany("Clinics")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Dose", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
@@ -260,11 +250,6 @@ namespace api.fernflowers.com.Migrations
                         .HasForeignKey("VaccineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
-                {
-                    b.Navigation("Clinics");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>

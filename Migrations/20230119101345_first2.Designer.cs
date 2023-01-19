@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230119101345_first2")]
+    partial class first2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,7 +248,7 @@ namespace api.fernflowers.com.Migrations
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinic", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Doctor", "Doctor")
-                        .WithMany("Clinics")
+                        .WithMany()
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -260,11 +263,6 @@ namespace api.fernflowers.com.Migrations
                         .HasForeignKey("VaccineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
-                {
-                    b.Navigation("Clinics");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>

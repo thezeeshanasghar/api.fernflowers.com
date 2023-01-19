@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
 
+
+
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -14,11 +16,17 @@ namespace api.fernflowers.com.Controllers
     public class DoctorController : ControllerBase
     {
         private readonly VaccineDBContext _db;
-        
+      
 
-        public DoctorController(VaccineDBContext vaccineDBContext)
+       
+       
+
+
+        public DoctorController(VaccineDBContext vaccineDBContext )
         {
             _db = vaccineDBContext;
+            
+         
         }
 
         [HttpGet]
@@ -75,9 +83,7 @@ namespace api.fernflowers.com.Controllers
             
                 _db.Doctors.Add(doctor);
                 await _db.SaveChangesAsync();
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor);
-            
-            
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor.Id);
         }
 
         [HttpPut]
