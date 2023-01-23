@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
-
-
+using api.fernflowers.com.ModelDTO;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -78,12 +77,29 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+        public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
         {
-            
-                _db.Doctors.Add(doctor);
+                var doctorEntity = new Doctor{
+                    Name = doctor.Name,
+                    Email = doctor.Email,
+                    Isapproved = doctor.IsApproved,
+                    IsEnabled = doctor.IsEnabled,
+                    DoctorType = doctor.DoctorType,
+                    MobileNumber = doctor.MobileNumber,
+                    Password = doctor.Password,
+                    PMDC = doctor.PMDC
+                };
+                var clinicEntity = new Clinic{
+                    Address = doctor.Clinic.Address,
+                    Name = doctor.Clinic.Name,
+                    Number = doctor.Clinic.Number
+                };
+                _db.Doctors.Add(doctorEntity);
                 await _db.SaveChangesAsync();
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor.Id);
+                clinicEntity.DoctorId = doctorEntity.Id;
+                _db.Clinics.Add(clinicEntity);
+                await _db.SaveChangesAsync();
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
         }
 
         [HttpPut]
