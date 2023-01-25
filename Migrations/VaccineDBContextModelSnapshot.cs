@@ -151,9 +151,6 @@ namespace api.fernflowers.com.Migrations
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time(6)");
 
-                    b.Property<bool>("IsOpen")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Session")
                         .IsRequired()
                         .HasColumnType("longtext");

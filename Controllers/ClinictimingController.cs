@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -50,17 +51,21 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] Clinictiming clinictiming)
+        public async Task<IActionResult> PostNew([FromBody] List<string> data)
         {
             try
             {
-                _db.Clinictimings.Add(clinictiming);
+                List<Clinictiming> clinictimings = new List<Clinictiming>();
+                foreach(var item in data){
+                    var clinictiming = JsonConvert.DeserializeObject<Clinictiming>(item);
+                    _db.Clinictimings.Add(clinictiming);
+                }
                 await _db.SaveChangesAsync();
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + clinictiming.Id), clinictiming);
+                return Ok(new {Message = "Sucessfully Added"});
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 

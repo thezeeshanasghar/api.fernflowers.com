@@ -94,11 +94,23 @@ namespace api.fernflowers.com.Controllers
                     Name = doctor.Clinic.Name,
                     Number = doctor.Clinic.Number
                 };
+                // var clinictimingEntity = new Clinictiming{
+                //     Day=doctor.Clinic.Clinictiming.Day,
+                //     Session = doctor.Clinic.Clinictiming.Session,
+                //     StartTime=doctor.Clinic.Clinictiming.StartTime,
+                //     EndTime=doctor.Clinic.Clinictiming.EndTime
+                // };
                 _db.Doctors.Add(doctorEntity);
                 await _db.SaveChangesAsync();
+
                 clinicEntity.DoctorId = doctorEntity.Id;
                 _db.Clinics.Add(clinicEntity);
                 await _db.SaveChangesAsync();
+
+                // clinictimingEntity.ClinicId=clinicEntity.Id;
+                // _db.Clinictimings.Add(clinictimingEntity);
+                // await _db.SaveChangesAsync();
+
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
         }
 

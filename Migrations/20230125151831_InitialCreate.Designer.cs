@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230119102249_first4")]
-    partial class first4
+    [Migration("20230125151831_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,9 +135,35 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
                     b.ToTable("Clinics");
+                });
+
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinictiming", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Session")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clinictimings");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
@@ -245,17 +271,6 @@ namespace api.fernflowers.com.Migrations
                     b.Navigation("Clinic");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinic", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", "Doctor")
-                        .WithMany("Clinics")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Dose", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
@@ -263,11 +278,6 @@ namespace api.fernflowers.com.Migrations
                         .HasForeignKey("VaccineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Doctor", b =>
-                {
-                    b.Navigation("Clinics");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Vaccine", b =>
