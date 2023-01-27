@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
 using api.fernflowers.com.ModelDTO;
-
+using System.Linq;
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -79,39 +79,50 @@ namespace api.fernflowers.com.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
         {
+            if(doctor != null){
                 var doctorEntity = new Doctor{
-                    Name = doctor.Name,
-                    Email = doctor.Email,
-                    Isapproved = doctor.IsApproved,
-                    IsEnabled = doctor.IsEnabled,
-                    DoctorType = doctor.DoctorType,
-                    MobileNumber = doctor.MobileNumber,
-                    Password = doctor.Password,
-                    PMDC = doctor.PMDC
-                };
+                Name = doctor.Name,
+                Email = doctor.Email,
+                Isapproved = doctor.IsApproved,
+                IsEnabled = doctor.IsEnabled,
+                DoctorType = doctor.DoctorType,
+                MobileNumber = doctor.MobileNumber,
+                Password = doctor.Password,
+                PMDC = doctor.PMDC
+            };
+            
+            _db.Doctors.Add(doctorEntity);
+            await _db.SaveChangesAsync();
+            
+            if(doctor.Clinic!=null){
                 var clinicEntity = new Clinic{
-                    Address = doctor.Clinic.Address,
-                    Name = doctor.Clinic.Name,
-                    Number = doctor.Clinic.Number
-                };
-                // var clinictimingEntity = new Clinictiming{
-                //     Day=doctor.Clinic.Clinictiming.Day,
-                //     Session = doctor.Clinic.Clinictiming.Session,
-                //     StartTime=doctor.Clinic.Clinictiming.StartTime,
-                //     EndTime=doctor.Clinic.Clinictiming.EndTime
-                // };
-                _db.Doctors.Add(doctorEntity);
+                Address = doctor.Clinic.Address,
+                Name = doctor.Clinic.Name,
+                Number = doctor.Clinic.Number
+            };
+            clinicEntity.DoctorId = doctorEntity.Id;
+            _db.Clinics.Add(clinicEntity);
+            
+            await _db.SaveChangesAsync();
+            if(doctor.Clinic.ClinicTiming!=null){
+                foreach(var ct in doctor.Clinic.ClinicTiming){
+                    var entityClinicTiming = new Clinictiming{
+                        Day=ct.Day,
+                        Session = ct.Session,
+                        StartTime=ct.StartTime,
+                        EndTime=ct.EndTime,
+                        ClinicId = clinicEntity.Id
+                    };
+                    _db.Clinictimings.Add(entityClinicTiming);
+                }
                 await _db.SaveChangesAsync();
-
-                clinicEntity.DoctorId = doctorEntity.Id;
-                _db.Clinics.Add(clinicEntity);
-                await _db.SaveChangesAsync();
-
-                // clinictimingEntity.ClinicId=clinicEntity.Id;
-                // _db.Clinictimings.Add(clinictimingEntity);
-                // await _db.SaveChangesAsync();
-
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+            }
+            }
+            return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+            }
+            else{
+                return BadRequest("Doctor data is required");
+            }
         }
 
         [HttpPut]

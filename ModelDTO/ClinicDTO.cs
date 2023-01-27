@@ -8,6 +8,6 @@ namespace api.fernflowers.com.ModelDTO
         public string Address { get; set; }
         public int Number { get; set; }
         public int? DoctorId { get; set; }
-        public ClinictimingDTO Clinictiming { get; set; }
+        public List<ClinictimingDTO> ClinicTiming { get; set; }
     }
 }
