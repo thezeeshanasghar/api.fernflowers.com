@@ -102,8 +102,9 @@ namespace api.fernflowers.com.Controllers
             };
             clinicEntity.DoctorId = doctorEntity.Id;
             _db.Clinics.Add(clinicEntity);
-            
             await _db.SaveChangesAsync();
+
+
             if(doctor.Clinic.ClinicTiming!=null){
                 foreach(var ct in doctor.Clinic.ClinicTiming){
                     var entityClinicTiming = new Clinictiming{
@@ -118,6 +119,17 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
             }
             }
+            
+            if(doctor.DoctorSchedule!=null){
+                foreach(var schedule in doctor.DoctorSchedule){
+                        _db.DoctorSchedules.Add(new DoctorsSchedule{
+                            DoctorId = doctorEntity.Id,
+                            DoseId = schedule
+                        });
+                }
+                await _db.SaveChangesAsync();
+            }
+            
             return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
             }
             else{

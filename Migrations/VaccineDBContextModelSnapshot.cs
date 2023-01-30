@@ -203,6 +203,23 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Doctors");
                 });
 
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.DoctorSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DoseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DoctorSchedules");
+                });
+
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Dose", b =>
                 {
                     b.Property<int>("Id")
