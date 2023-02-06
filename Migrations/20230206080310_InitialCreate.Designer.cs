@@ -11,7 +11,7 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230130113936_InitialCreate")]
+    [Migration("20230206080310_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -206,7 +206,7 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.DoctorSchedule", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.DoctorsSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

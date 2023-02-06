@@ -203,7 +203,7 @@ namespace api.fernflowers.com.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.DoctorSchedule", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.DoctorsSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
