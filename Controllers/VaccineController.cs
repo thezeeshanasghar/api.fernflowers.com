@@ -102,7 +102,7 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetVaccineWithCounts()
         {
             try{
-                //var vaccines = await _db.Vaccines.Include(x=> x.Brands).Include(x=>x.Doses).ToListAsync();
+         
                 var vaccines = await _db.Vaccines.ToListAsync();
                 List<VaccineWithCountDTO> listDTO = new List<VaccineWithCountDTO>();
                 foreach (var item in vaccines)
@@ -112,7 +112,7 @@ namespace api.fernflowers.com.Controllers
                         {
                             vaccine = item,
                             DoseCount = _db.Doses.Where(x => x.VaccineId == item.Id).Count(),
-                            BrandCount = 0
+                            BrandCount = _db.Brands.Where(x => x.VaccineId == item.Id).Count()
                         });
                 }
                 return Ok(listDTO);
