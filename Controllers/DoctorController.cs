@@ -63,10 +63,10 @@ namespace api.fernflowers.com.Controllers
         {
             try{
                 
-                var list=await _db.Doctors.Where(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.Isapproved==true).ToListAsync();
+                var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.Isapproved==true);
                 
 
-                return Ok(list);
+                return Ok(doctor);
 
                     
                 
