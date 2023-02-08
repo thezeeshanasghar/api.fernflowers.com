@@ -67,7 +67,7 @@ namespace api.fernflowers.com.Controllers
                 var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.IsApproved==true);
                 var clinic=_db.Clinics.FirstOrDefault( c => c.DoctorId == doctor.Id);
                 
-                var clinictiming=await _db.Clinictimings.Where( ct => ct.ClinicId == clinic.Id).ToListAsync();
+                var clinictiming= _db.Clinictimings.Where( ct => ct.ClinicId == clinic.Id).ToList();
 
                 DoctorDTO doctorDTO=null;
                 
