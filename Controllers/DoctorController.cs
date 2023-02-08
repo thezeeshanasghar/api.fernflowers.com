@@ -61,18 +61,65 @@ namespace api.fernflowers.com.Controllers
         
         public async Task<IActionResult>Login(int MobileNumber , string Password)
         {
-            try{
+            try
+            {
                 
-                var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.Isapproved==true);
+                var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.IsApproved==true);
+                var clinic=_db.Clinics.FirstOrDefault( c => c.DoctorId == doctor.Id);
                 
+                var clinictiming=await _db.Clinictimings.Where( ct => ct.ClinicId == clinic.Id).ToListAsync();
 
-                return Ok(doctor);
-
+                DoctorDTO doctorDTO=null;
+                
+                if(doctor != null)
+                {
                     
+                    doctorDTO = new DoctorDTO{
+                    Id=doctor.Id,
+                    Name = doctor.Name,
+                    Email = doctor.Email,
+                    IsApproved = doctor.IsApproved,
+                    IsEnabled = doctor.IsEnabled,
+                    DoctorType = doctor.DoctorType,
+                    MobileNumber = doctor.MobileNumber,
+                    Password = doctor.Password,
+                    PMDC = doctor.PMDC
+                    };
+                
+                    if(clinic!=null)
+                    {
+                        doctorDTO.Clinic = new ClinicDTO{
+                        Id=clinic.Id,
+                        Address = clinic.Address,
+                        Name = clinic.Name,
+                        Number = clinic.Number,
+                        DoctorId=clinic.DoctorId
+                        };
+                    }
+                    if(clinictiming!=null)
+                    {
+                        doctorDTO.Clinic.ClinicTiming=new List<ClinictimingDTO>{};
+                        foreach(var ct in clinictiming)
+                        {
+                            var tmp_clinictiming= new ClinictimingDTO{
+                            Id=ct.Id,
+                            Day = ct.Day,
+                            Session =ct.Session,
+                            StartTime = ct.StartTime,
+                            EndTime = ct.EndTime,
+                            ClinicId=ct.ClinicId
+                            };
+                            doctorDTO.Clinic.ClinicTiming.Add(tmp_clinictiming);
+                        }
+                    }
+                    
+                
+                }
+                return Ok(doctorDTO);
                 
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500,ex.Message); 
             }
         }
 
@@ -83,7 +130,7 @@ namespace api.fernflowers.com.Controllers
                 var doctorEntity = new Doctor{
                 Name = doctor.Name,
                 Email = doctor.Email,
-                Isapproved = doctor.IsApproved,
+                IsApproved = doctor.IsApproved,
                 IsEnabled = doctor.IsEnabled,
                 DoctorType = doctor.DoctorType,
                 MobileNumber = doctor.MobileNumber,
@@ -201,7 +248,7 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetApprovedDoctors(bool approved)
         {
             try{
-                var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
+                var doctor = await _db.Doctors.Where(x => x.IsApproved == approved).ToListAsync();
                 return Ok(doctor);
             }
             catch(Exception ex){
