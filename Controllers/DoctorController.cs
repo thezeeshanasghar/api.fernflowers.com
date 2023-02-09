@@ -68,6 +68,7 @@ namespace api.fernflowers.com.Controllers
                 var clinic=_db.Clinics.FirstOrDefault( c => c.DoctorId == doctor.Id);
                 
                 var clinictiming= _db.Clinictimings.Where( ct => ct.ClinicId == clinic.Id).ToList();
+                var doctor_schedule= _db.DoctorSchedules.Where( ct => ct.DoctorId == doctor.Id).ToList();
 
                 DoctorDTO doctorDTO=null;
                 
@@ -110,6 +111,21 @@ namespace api.fernflowers.com.Controllers
                             ClinicId=ct.ClinicId
                             };
                             doctorDTO.Clinic.ClinicTiming.Add(tmp_clinictiming);
+                        }
+                    }
+
+                    if(doctor_schedule!=null)
+                    {
+                        doctorDTO.DoctorSchedule=new List<DoctorScheduleDTO>{};
+                        foreach(var ds in doctor_schedule)
+                        {
+                            var tmp_doctor_schedule= new  DoctorScheduleDTO{
+                            Id=ds.Id,
+                            DoctorId = ds.DoctorId,
+                            DoseId =ds.DoseId,
+                           
+                            };
+                            doctorDTO.DoctorSchedule.Add(tmp_doctor_schedule);
                         }
                     }
                     
@@ -168,11 +184,14 @@ namespace api.fernflowers.com.Controllers
             }
             
             if(doctor.DoctorSchedule!=null){
-                foreach(var schedule in doctor.DoctorSchedule){
-                        _db.DoctorSchedules.Add(new DoctorsSchedule{
-                            DoctorId = doctorEntity.Id,
-                            DoseId = schedule
-                        });
+                foreach(var  schedule in doctor.DoctorSchedule){
+                     var entityDoctorSchedule = new DoctorsSchedule{
+                        DoctorId=doctorEntity.Id,
+                        DoseId = Convert.ToInt32(schedule.DoseId)
+                       
+                    };
+                    _db.DoctorSchedules.Add(entityDoctorSchedule);
+                  
                 }
                 await _db.SaveChangesAsync();
             }

@@ -13,7 +13,7 @@ namespace api.fernflowers.com.ModelDTO
         public string DoctorType { get; set; }
         public string PMDC { get; set; }
         public ClinicDTO Clinic { get; set; }
-        public List<int> DoctorSchedule { get; set; }
+        public List<DoctorScheduleDTO> DoctorSchedule { get; set; }
     }
 
 }
