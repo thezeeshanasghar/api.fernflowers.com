@@ -96,16 +96,37 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Dose> patchDocument)
+        //  [HttpPatch("{id}")]
+        // public async Task<IActionResult> PatchAsync([FromRoute] int id[FromBody] JsonPatchDocument<Dose> patchDocument)
+        // {
+        //     try{
+        //         var dbDose = await _db.Doses.FindAsync(id);
+        //         if (dbDose == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         patchDocument.ApplyTo(dbDose);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+                
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, "Internal server error"); 
+        //     }
+        // }
+          [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromBody] Dose ds)
         {
             try{
-                var dbDose = await _db.Doses.FindAsync(id);
+                var dbDose = await _db.Doses.FindAsync(ds.Id);
                 if (dbDose == null)
                 {
                     return NotFound();
                 }
-                patchDocument.ApplyTo(dbDose);
+                dbDose.MinGap = ds.MinGap;
+                dbDose.Name = ds.Name;
+                dbDose.MinAge = ds.MinAge;
+                _db.Entry(dbDose).State= EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
