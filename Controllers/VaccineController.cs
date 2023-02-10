@@ -122,5 +122,26 @@ namespace api.fernflowers.com.Controllers
             }
 
         }
+         [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
+        {
+            try{
+                var dbVaccine = await _db.Vaccines.FindAsync(vaccine.Id);
+                if (dbVaccine == null)
+                {
+                    return NotFound();
+                }
+               
+                dbVaccine.Name = vaccine.Name;
+              
+                _db.Entry(dbVaccine).State= EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch(Exception ex){
+                return StatusCode(500, "Internal server error"); 
+            }
+        }
+     
     }
 }

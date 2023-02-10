@@ -98,16 +98,36 @@ namespace api.fernflowers.com.Controllers
             }
         }
         
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Brand> patchDocument)
+        // [HttpPatch("{id}")]
+        // public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Brand> patchDocument)
+        // {
+        //     try{
+        //         var dbBrand = await _db.Brands.FindAsync(id);
+        //         if (dbBrand == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         patchDocument.ApplyTo(dbBrand);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, "Internal server error"); 
+        //     }
+        // }
+              [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromBody] Brand brand)
         {
             try{
-                var dbBrand = await _db.Brands.FindAsync(id);
+                var dbBrand = await _db.Brands.FindAsync(brand.Id);
                 if (dbBrand == null)
                 {
                     return NotFound();
                 }
-                patchDocument.ApplyTo(dbBrand);
+             
+                dbBrand.Name = brand.Name;
+         
+                _db.Entry(dbBrand).State= EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
