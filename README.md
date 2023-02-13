@@ -13,3 +13,5 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 
 dotnet tool install --global dotnet-ef
+
+dotnet watch run --launch-profile https
