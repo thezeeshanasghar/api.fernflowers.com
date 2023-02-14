@@ -11,7 +11,7 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230206080310_InitialCreate")]
+    [Migration("20230213075144_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("VaccineId")
+                    b.Property<int>("VaccineId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -44,7 +44,7 @@ namespace api.fernflowers.com.Migrations
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Child", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -56,7 +56,7 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ClinicId")
+                    b.Property<int?>("ClinicId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DOB")
@@ -232,7 +232,7 @@ namespace api.fernflowers.com.Migrations
                     b.Property<int>("MinAge")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MinGap")
+                    b.Property<int>("MinGap")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -274,16 +274,16 @@ namespace api.fernflowers.com.Migrations
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
                         .WithMany("Brands")
-                        .HasForeignKey("VaccineId");
+                        .HasForeignKey("VaccineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Child", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Clinic", "Clinic")
                         .WithMany()
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClinicId");
 
                     b.Navigation("Clinic");
                 });

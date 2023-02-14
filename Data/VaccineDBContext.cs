@@ -17,7 +17,7 @@ public class VaccineDBContext : DbContext
     public DbSet<Clinic> Clinics { get; set; }
     public DbSet<Clinictiming> Clinictimings { get; set; }
     public DbSet<DoctorsSchedule> DoctorSchedules { get; set; }
-    // public DbSet<BrandAmount> BrandAmounts { get; set; }
-    // public DbSet<BrandInventory> BrandInventories { get; set; }
+    public DbSet<BrandAmount> BrandAmounts { get; set; }
+    public DbSet<BrandInventory> BrandInventories { get; set; }
     public DbSet<Child> Childs { get; set; }
 }

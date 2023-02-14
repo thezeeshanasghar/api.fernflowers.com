@@ -64,7 +64,7 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 
-                var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.IsApproved==true);
+                var doctor=_db.Doctors.FirstOrDefault(a=>a.MobileNumber==MobileNumber && a.Password==Password && a.Isapproved==true);
                 var clinic=_db.Clinics.FirstOrDefault( c => c.DoctorId == doctor.Id);
                 
                 var clinictiming= _db.Clinictimings.Where( ct => ct.ClinicId == clinic.Id).ToList();
@@ -79,7 +79,7 @@ namespace api.fernflowers.com.Controllers
                     Id=doctor.Id,
                     Name = doctor.Name,
                     Email = doctor.Email,
-                    IsApproved = doctor.IsApproved,
+                    Isapproved = doctor.Isapproved,
                     IsEnabled = doctor.IsEnabled,
                     DoctorType = doctor.DoctorType,
                     MobileNumber = doctor.MobileNumber,
@@ -146,7 +146,7 @@ namespace api.fernflowers.com.Controllers
                 var doctorEntity = new Doctor{
                 Name = doctor.Name,
                 Email = doctor.Email,
-                IsApproved = doctor.IsApproved,
+                Isapproved = doctor.Isapproved,
                 IsEnabled = doctor.IsEnabled,
                 DoctorType = doctor.DoctorType,
                 MobileNumber = doctor.MobileNumber,
@@ -267,7 +267,7 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> GetApprovedDoctors(bool approved)
         {
             try{
-                var doctor = await _db.Doctors.Where(x => x.IsApproved == approved).ToListAsync();
+                var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
                 return Ok(doctor);
             }
             catch(Exception ex){

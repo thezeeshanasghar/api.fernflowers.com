@@ -143,7 +143,7 @@ namespace api.fernflowers.com.Migrations
                     IsEPIDone = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     IsVerified = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     IsInactive = table.Column<bool>(type: "tinyint(1)", nullable: true),
-                    ClinicId = table.Column<int>(type: "int", nullable: false)
+                    ClinicId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -152,8 +152,7 @@ namespace api.fernflowers.com.Migrations
                         name: "FK_Childs_Clinics_ClinicId",
                         column: x => x.ClinicId,
                         principalTable: "Clinics",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -165,7 +164,7 @@ namespace api.fernflowers.com.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    VaccineId = table.Column<int>(type: "int", nullable: true)
+                    VaccineId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,7 +173,8 @@ namespace api.fernflowers.com.Migrations
                         name: "FK_Brands_Vaccines_VaccineId",
                         column: x => x.VaccineId,
                         principalTable: "Vaccines",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -187,7 +187,7 @@ namespace api.fernflowers.com.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MinAge = table.Column<int>(type: "int", nullable: false),
-                    MinGap = table.Column<int>(type: "int", nullable: true),
+                    MinGap = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

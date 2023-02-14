@@ -18,8 +18,21 @@ namespace api.fernflowers.com.Controllers
         {
             _db = vaccineDBContext;
         }
+        [HttpGet]
+        [Route("/BrandName")]
+        public async Task<ActionResult<IEnumerable<string>>> Getname()
+        {
+            try{
+                var brandamount = await _db.Brands.ToListAsync();
+                return Ok(brandamount);
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
+            }
+        }
 
         [HttpGet]
+        
         
         public async Task<IActionResult> GetAll()
         {

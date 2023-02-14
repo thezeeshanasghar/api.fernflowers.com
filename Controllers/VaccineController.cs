@@ -78,24 +78,24 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-        {
-            try{
-                var vaccineToDelete = await _db.Vaccines.FindAsync(id);
-                if (vaccineToDelete == null)
-                {
-                    return NotFound();
-                }
-                _db.Vaccines.Remove(vaccineToDelete);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
-            }
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        // {
+        //     try{
+        //         var vaccineToDelete = await _db.Vaccines.FindAsync(id);
+        //         if (vaccineToDelete == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         _db.Vaccines.Remove(vaccineToDelete);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, "Internal server error"); 
+        //     }
 
-        }
+        // }
 
         [HttpGet]
         [Route("vaccine-with-count")]
@@ -141,6 +141,28 @@ namespace api.fernflowers.com.Controllers
             catch(Exception ex){
                 return StatusCode(500, "Internal server error"); 
             }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+
+        {
+            //try {
+            var dbVaccine = _db.Vaccines.Include(X => X.Doses).Include(x => x.Brands).Where(x => x.Id == id).FirstOrDefault();
+            if (dbVaccine.Brands.Count> 0)
+                return  StatusCode(500, "del brand first");
+            else if (dbVaccine.Doses.Count > 0)
+                return StatusCode(500, "del doses first");
+            _db.Vaccines.Remove(dbVaccine);
+            _db.SaveChanges();
+            return NoContent();
+            //    }
+            //    catch (Exception ex)
+            // {
+            // if (ex.InnerException.InnerException.Message.Contains("The DELETE statement conflicted with the REFERENCE constraint"))
+            //     return new Response<string>(false, "Cannot delete vaccine because it's doses exists. Delete the doses first.", null);
+
+            // }
+
         }
      
     }
