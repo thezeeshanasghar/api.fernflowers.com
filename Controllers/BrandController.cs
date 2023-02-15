@@ -56,7 +56,7 @@ namespace api.fernflowers.com.Controllers
                 return Ok(brand);
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, ex.Message); 
             }
         }
 
@@ -69,7 +69,7 @@ namespace api.fernflowers.com.Controllers
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + brand.Id), brand);
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, ex.Message); 
             }
         }
 
@@ -88,7 +88,7 @@ namespace api.fernflowers.com.Controllers
                 return NoContent();
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500,ex.Message); 
             }
         }
 
@@ -107,7 +107,7 @@ namespace api.fernflowers.com.Controllers
                 return NoContent();
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, ex.Message); 
             }
         }
         
@@ -145,7 +145,7 @@ namespace api.fernflowers.com.Controllers
                 return NoContent();
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500,ex.Message); 
             }
         }
     }
