@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
+using api.fernflowers.com.ModelDTO;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -20,15 +21,49 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
         }
 
-        [HttpGet]
+        // [HttpGet]
+        // public async Task<IActionResult> GetAll()
+        // {
+        //     try{
+        //         var brandinventory = await _db.BrandInventories.ToListAsync();
+        //         return Ok(brandinventory);
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, ex.Message); 
+        //     }
+        // }
+           [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try{
                 var brandinventory = await _db.BrandInventories.ToListAsync();
-                return Ok(brandinventory);
+                List<BrandInventoryDTO> BrandInventorydto = null;
+                if(brandinventory!=null)
+                {
+                    BrandInventorydto=new List<BrandInventoryDTO>{};
+                    foreach(var ba in brandinventory)
+                    {
+                        var tmp_brandinventory= new BrandInventoryDTO{
+                        Id=ba.Id,
+                        Count= ba.Count,
+                        BrandId =ba.BrandId,
+                        DoctorId = ba.DoctorId,
+                        };
+                        BrandInventorydto.Add(tmp_brandinventory);
+                    }
+                    var brandIds = brandinventory.Select(bi => bi.BrandId).ToList();
+                    var brands = _db.Brands.Where( b=> brandIds.Contains(b.Id)).ToList();
+                    foreach(var bi in BrandInventorydto)
+                    {
+                        bi.BrandName = brands.FirstOrDefault(b=>b.Id == bi.BrandId).Name;
+                    }
+                }
+               
+
+                return Ok(BrandInventorydto);
             }
             catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+                return StatusCode(500,ex.Message); 
             }
         }
 
