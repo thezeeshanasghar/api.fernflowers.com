@@ -242,21 +242,44 @@ namespace api.fernflowers.com.Controllers
         }
 
 
+        // [HttpPatch("{id}")]
+        // public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        // {
+        //     try{
+        //         var dbDoctor = await _db.Doctors.FindAsync(id);
+        //         if (dbDoctor == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         patchDocument.ApplyTo(dbDoctor);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch(Exception ex){
+        //         return StatusCode(500, "Internal server error"); 
+        //     }
+        // }
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> Update([FromBody] Doctor doc)
         {
             try{
-                var dbDoctor = await _db.Doctors.FindAsync(id);
-                if (dbDoctor == null)
+                var dbDoc = await _db.Doctors.FindAsync(doc.Id);
+                if (dbDoc == null)
                 {
                     return NotFound();
                 }
-                patchDocument.ApplyTo(dbDoctor);
+                dbDoc.Email = doc.Email;
+                dbDoc.Name = doc.Name;
+                dbDoc.Password = doc.Password;
+                dbDoc.DoctorType=doc.DoctorType;
+                dbDoc.MobileNumber=doc.MobileNumber;
+                dbDoc.PMDC=doc.PMDC;
+                _db.Entry(dbDoc).State= EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, ex.Message); 
             }
         }
 
