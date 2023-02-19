@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api.fernflowers.com.Data;
@@ -24,14 +23,11 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-
-                var vaccines = await _db.Vaccines.ToListAsync();
-
-                return Ok(vaccines);
+                return Ok(await _db.Vaccines.ToListAsync());
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -47,7 +43,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -62,7 +58,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -82,28 +78,9 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
-
-        // [HttpDelete("{id}")]
-        // public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-        // {
-        //     try{
-        //         var vaccineToDelete = await _db.Vaccines.FindAsync(id);
-        //         if (vaccineToDelete == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         _db.Vaccines.Remove(vaccineToDelete);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500, "Internal server error"); 
-        //     }
-
-        // }
 
         [HttpGet]
         [Route("vaccine-with-count")]
@@ -128,10 +105,11 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
 
         }
+
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
         {
@@ -151,9 +129,10 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
 
@@ -161,21 +140,12 @@ namespace api.fernflowers.com.Controllers
             //try {
             var dbVaccine = _db.Vaccines.Include(X => X.Doses).Include(x => x.Brands).Where(x => x.Id == id).FirstOrDefault();
             if (dbVaccine.Brands.Count > 0)
-                return StatusCode(500, "del brand first");
+                return StatusCode(500, "Cannot delete Vaccine. Delete the brands of this vaccine first.");
             else if (dbVaccine.Doses.Count > 0)
-                return StatusCode(500, "del doses first");
+                return StatusCode(500, "Cannot delete Vaccine. Delete the doses of this vaccine first.");
             _db.Vaccines.Remove(dbVaccine);
             _db.SaveChanges();
             return NoContent();
-            //    }
-            //    catch (Exception ex)
-            // {
-            // if (ex.InnerException.InnerException.Message.Contains("The DELETE statement conflicted with the REFERENCE constraint"))
-            //     return new Response<string>(false, "Cannot delete vaccine because it's doses exists. Delete the doses first.", null);
-
-            // }
-
         }
-
     }
 }

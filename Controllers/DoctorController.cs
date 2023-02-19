@@ -38,7 +38,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -54,7 +54,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
 
             }
         }
@@ -67,7 +67,6 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-
                 var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.Isapproved == true);
                 var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
 
@@ -240,7 +239,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -261,28 +260,10 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
-
-        // [HttpPatch("{id}")]
-        // public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
-        // {
-        //     try{
-        //         var dbDoctor = await _db.Doctors.FindAsync(id);
-        //         if (dbDoctor == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         patchDocument.ApplyTo(dbDoctor);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500, "Internal server error"); 
-        //     }
-        // }
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Doctor doc)
         {
@@ -309,8 +290,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-
-
         [HttpGet]
         [Route("approved/{approved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool approved)
@@ -322,7 +301,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 

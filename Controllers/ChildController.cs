@@ -29,7 +29,7 @@ namespace api.fernflowers.com.Controllers
         //         return Ok(child);
         //     }
         //     catch(Exception ex){
-        //         return StatusCode(500, "Internal server error"); 
+        //         return StatusCode(500, ex.Message); 
         //     }
         // }
 
@@ -45,7 +45,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -60,7 +60,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -84,7 +84,7 @@ namespace api.fernflowers.com.Controllers
 
         //     }
         //     catch(Exception ex){
-        //         return StatusCode(500, "Internal server error"); 
+        //         return StatusCode(500, ex.Message); 
         //     }
         // }
 
@@ -99,7 +99,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -120,7 +120,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -141,7 +141,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -162,7 +162,7 @@ namespace api.fernflowers.com.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
