@@ -1,6 +1,5 @@
 namespace api.fernflowers.com.ModelDTO
 {
-
     public class ClinicDTO
     {
         public int? Id { get; set; }

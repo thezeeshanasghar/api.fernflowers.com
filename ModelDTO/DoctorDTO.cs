@@ -1,12 +1,11 @@
 namespace api.fernflowers.com.ModelDTO
 {
-
     public class DoctorDTO
     {
         public int? Id { get; set; }
         public string Name { get; set; }
         public int MobileNumber { get; set; }
-        public string Password {get; set;}
+        public string Password { get; set; }
         public bool Isapproved { get; set; }
         public bool IsEnabled { get; set; }
         public string Email { get; set; }
@@ -15,5 +14,4 @@ namespace api.fernflowers.com.ModelDTO
         public ClinicDTO Clinic { get; set; }
         public List<DoctorScheduleDTO> DoctorSchedule { get; set; }
     }
-
 }

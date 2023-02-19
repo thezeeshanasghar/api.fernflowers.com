@@ -10,5 +10,4 @@ public class Clinic
     public string Address { get; set; }
     public int Number { get; set; }
     public int DoctorId { get; set; }
-   
 }

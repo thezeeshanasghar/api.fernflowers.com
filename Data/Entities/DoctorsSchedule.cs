@@ -1,7 +1,7 @@
 namespace api.fernflowers.com.Data.Entities;
 public class DoctorsSchedule
 {
-    public int Id{get;set;}
-    public int DoseId{get;set;}
-    public int DoctorId{get;set;}
+    public int Id { get; set; }
+    public int DoseId { get; set; }
+    public int DoctorId { get; set; }
 }

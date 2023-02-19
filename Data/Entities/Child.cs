@@ -4,7 +4,6 @@ namespace api.fernflowers.com.Data.Entities;
 
 public class Child
 {
-
     public int Id { get; set; }
     public string Name { get; set; }
     public string Guardian { get; set; }
@@ -20,8 +19,4 @@ public class Child
     public bool? IsVerified { get; set; }
     public bool? IsInactive { get; set; }
     public int ClinicId { get; set; }
-    
-
-
-
 }

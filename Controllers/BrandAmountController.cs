@@ -15,7 +15,7 @@ namespace api.fernflowers.com.Controllers
     {
         private readonly VaccineDBContext _db;
 
-        public BrandAmountController (VaccineDBContext vaccineDBContext)
+        public BrandAmountController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -24,81 +24,90 @@ namespace api.fernflowers.com.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
                 var brandamount = await _db.BrandAmounts.ToListAsync();
                 List<BrandAmountDTO> BrandAmountdto = null;
-                if(brandamount!=null)
+                if (brandamount != null)
                 {
-                    BrandAmountdto=new List<BrandAmountDTO>{};
-                    foreach(var ba in brandamount)
+                    BrandAmountdto = new List<BrandAmountDTO> { };
+                    foreach (var ba in brandamount)
                     {
-                        var tmp_brandamount= new BrandAmountDTO{
-                        Id=ba.Id,
-                        Amount= ba.Amount,
-                        BrandId =ba.BrandId,
-                        DoctorId = ba.DoctorId,
+                        var tmp_brandamount = new BrandAmountDTO
+                        {
+                            Id = ba.Id,
+                            Amount = ba.Amount,
+                            BrandId = ba.BrandId,
+                            DoctorId = ba.DoctorId,
                         };
                         BrandAmountdto.Add(tmp_brandamount);
                     }
                     var brandIds = brandamount.Select(ba => ba.BrandId).ToList();
-                    var brands = _db.Brands.Where( b=> brandIds.Contains(b.Id)).ToList();
-                    foreach(var ba in BrandAmountdto)
+                    var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+                    foreach (var ba in BrandAmountdto)
                     {
-                        ba.BrandName = brands.FirstOrDefault(b=>b.Id == ba.BrandId).Name;
+                        ba.BrandName = brands.FirstOrDefault(b => b.Id == ba.BrandId).Name;
                     }
                 }
-               
+
 
                 return Ok(BrandAmountdto);
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brandamount = await _db.BrandAmounts.FindAsync(id);
-                if(brandamount==null)
+                if (brandamount == null)
                     return NotFound();
                 return Ok(brandamount);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] BrandAmount brandamount)
         {
-            try{
+            try
+            {
                 _db.BrandAmounts.Add(brandamount);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + brandamount.Id), brandamount);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandAmount brandamountToUpdate)
         {
-            try{
-                if(id != brandamountToUpdate.Id)
+            try
+            {
+                if (id != brandamountToUpdate.Id)
                     return BadRequest();
                 var dbbrandamount = await _db.BrandAmounts.FindAsync(id);
-                if(dbbrandamount==null)
+                if (dbbrandamount == null)
                     return NotFound();
 
                 _db.BrandAmounts.Update(brandamountToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -106,7 +115,8 @@ namespace api.fernflowers.com.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brandamountToDelete = await _db.BrandAmounts.FindAsync(id);
                 if (brandamountToDelete == null)
                 {
@@ -116,16 +126,18 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<BrandAmount> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<BrandAmount> patchDocument)
         {
-            try{
+            try
+            {
                 var dbbrandamount = await _db.BrandAmounts.FindAsync(id);
                 if (dbbrandamount == null)
                 {
@@ -135,8 +147,9 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
