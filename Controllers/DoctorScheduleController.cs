@@ -16,7 +16,7 @@ namespace api.fernflowers.com.Controllers
     {
         private readonly VaccineDBContext _db;
 
-        public DoctorSchedule (VaccineDBContext vaccineDBContext)
+        public DoctorSchedule(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -24,139 +24,143 @@ namespace api.fernflowers.com.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
                 var schedule = await _db.DoctorSchedules.ToListAsync();
                 return Ok(schedule);
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
-//         [HttpGet("{id}")]
-//         public async Task<IActionResult> GetSingle([FromRoute] int id)
-//         {
-//             try{
-//                 var child = await _db.Childs.FindAsync(id);
-//                 if(child==null)
-//                     return NotFound();
-//                 return Ok(child);
-//             }
-//             catch(Exception ex)
-//             {
-//                 return StatusCode(500, "Internal server error"); 
-//             }
-//         }
-        
-//          [HttpGet("name")]
-//         public async Task<IActionResult> GetAll(string Name,string City,string Gender)
-//         {
-//             try{
-//                 // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
-//                 var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.Gender==Gender ).ToListAsync();
-//                 return Ok(child);
-//             }
-//             catch(Exception ex)
-//             {
-//                 return StatusCode(500, "Internal server error"); 
-//             }
-//         }
-        
-//         // [HttpGet("{name}")]
-        
-//         // public async Task<ActionResult>Search(string Name,string Gender,string City,System.DateTime DOB)
-//         // {
-//         //     try{
-//         //         // var child = await _db.Childs.FindAsync(name,gender,city,dob);
-//         //         // if(child==null){
-//         //         //     return NotFound();
+        //         [HttpGet("{id}")]
+        //         public async Task<IActionResult> GetSingle([FromRoute] int id)
+        //         {
+        //             try{
+        //                 var child = await _db.Childs.FindAsync(id);
+        //                 if(child==null)
+        //                     return NotFound();
+        //                 return Ok(child);
+        //             }
+        //             catch(Exception ex)
+        //             {
+        //                 return StatusCode(500, "Internal server error"); 
+        //             }
+        //         }
 
-//         //         // }
-//         //         // return Ok(child);
-//         //         var list=await _db.Childs.Where(a=>a.Name==Name && a.Gender==Gender && a.City==City && a.DOB==DOB).ToListAsync();
-                
+        //          [HttpGet("name")]
+        //         public async Task<IActionResult> GetAll(string Name,string City,string Gender)
+        //         {
+        //             try{
+        //                 // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
+        //                 var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.Gender==Gender ).ToListAsync();
+        //                 return Ok(child);
+        //             }
+        //             catch(Exception ex)
+        //             {
+        //                 return StatusCode(500, "Internal server error"); 
+        //             }
+        //         }
 
-//         //         return Ok(list);
+        //         // [HttpGet("{name}")]
 
-                    
-                
-//         //     }
-//         //     catch(Exception ex){
-//         //         return StatusCode(500, "Internal server error"); 
-//         //     }
-//         // }
+        //         // public async Task<ActionResult>Search(string Name,string Gender,string City,System.DateTime DOB)
+        //         // {
+        //         //     try{
+        //         //         // var child = await _db.Childs.FindAsync(name,gender,city,dob);
+        //         //         // if(child==null){
+        //         //         //     return NotFound();
+
+        //         //         // }
+        //         //         // return Ok(child);
+        //         //         var list=await _db.Childs.Where(a=>a.Name==Name && a.Gender==Gender && a.City==City && a.DOB==DOB).ToListAsync();
+
+
+        //         //         return Ok(list);
+
+
+
+        //         //     }
+        //         //     catch(Exception ex){
+        //         //         return StatusCode(500, "Internal server error"); 
+        //         //     }
+        //         // }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] DoctorsSchedule doctorschedule)
         {
-            try{
-               
+            try
+            {
+
                 _db.DoctorSchedules.Add(doctorschedule);
                 await _db.SaveChangesAsync();
-                
+
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
-//         [HttpPut]
-//         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Child childToUpdate)
-//         {
-//             try{
-//                 if(id != childToUpdate.Id)
-//                     return BadRequest();
-//                 var dbchild= await _db.Childs.FindAsync(id);
-//                 if(dbchild==null)
-//                     return NotFound();
+        //         [HttpPut]
+        //         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Child childToUpdate)
+        //         {
+        //             try{
+        //                 if(id != childToUpdate.Id)
+        //                     return BadRequest();
+        //                 var dbchild= await _db.Childs.FindAsync(id);
+        //                 if(dbchild==null)
+        //                     return NotFound();
 
-//                 _db.Childs.Update(childToUpdate);
-//                 await _db.SaveChangesAsync();
-//                 return NoContent();
-//             }
-//             catch(Exception ex){
-//                 return StatusCode(500, "Internal server error"); 
-//             }
-//         }
+        //                 _db.Childs.Update(childToUpdate);
+        //                 await _db.SaveChangesAsync();
+        //                 return NoContent();
+        //             }
+        //             catch(Exception ex){
+        //                 return StatusCode(500, "Internal server error"); 
+        //             }
+        //         }
 
-//         [Route("{id}")]
-//         [HttpDelete]
-//         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-//         {
-//             try{
-//                 var childToDelete = await _db.Childs.FindAsync(id);
-//                 if (childToDelete == null)
-//                 {
-//                     return NotFound();
-//                 }
-//                 _db.Childs.Remove(childToDelete);
-//                 await _db.SaveChangesAsync();
-//                 return NoContent();
-//             }
-//             catch(Exception ex){
-//                 return StatusCode(500, "Internal server error"); 
-//             }
-//         }
+        //         [Route("{id}")]
+        //         [HttpDelete]
+        //         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        //         {
+        //             try{
+        //                 var childToDelete = await _db.Childs.FindAsync(id);
+        //                 if (childToDelete == null)
+        //                 {
+        //                     return NotFound();
+        //                 }
+        //                 _db.Childs.Remove(childToDelete);
+        //                 await _db.SaveChangesAsync();
+        //                 return NoContent();
+        //             }
+        //             catch(Exception ex){
+        //                 return StatusCode(500, "Internal server error"); 
+        //             }
+        //         }
 
 
-//         [HttpPatch("{id}")]
-//         public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Child> patchDocument)
-//         {
-//             try{
-//                 var dbchild = await _db.Childs.FindAsync(id);
-//                 if (dbchild == null)
-//                 {
-//                     return NotFound();
-//                 }
-//                 patchDocument.ApplyTo(dbchild);
-//                 await _db.SaveChangesAsync();
-//                 return NoContent();
-//             }
-//             catch(Exception ex){
-//                 return StatusCode(500, "Internal server error"); 
-//             }
-//         }
+        //         [HttpPatch("{id}")]
+        //         public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Child> patchDocument)
+        //         {
+        //             try{
+        //                 var dbchild = await _db.Childs.FindAsync(id);
+        //                 if (dbchild == null)
+        //                 {
+        //                     return NotFound();
+        //                 }
+        //                 patchDocument.ApplyTo(dbchild);
+        //                 await _db.SaveChangesAsync();
+        //                 return NoContent();
+        //             }
+        //             catch(Exception ex){
+        //                 return StatusCode(500, "Internal server error"); 
+        //             }
+        //         }
 
 
 

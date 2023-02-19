@@ -22,58 +22,66 @@ namespace api.fernflowers.com.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
                 var clinics = await _db.Clinics.ToListAsync();
                 return Ok(clinics);
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var clinic = await _db.Clinics.FindAsync(id);
-                if(clinic==null)
+                if (clinic == null)
                     return NotFound();
                 return Ok(clinic);
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Clinic clinic)
         {
-            try{
+            try
+            {
                 _db.Clinics.Add(clinic);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + clinic.Id), clinic);
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Clinic clinicToUpdate)
         {
-            try{
-                if(id != clinicToUpdate.Id)
+            try
+            {
+                if (id != clinicToUpdate.Id)
                     return BadRequest();
                 var dbClinic = await _db.Clinics.FindAsync(id);
-                if(dbClinic==null)
+                if (dbClinic == null)
                     return NotFound();
 
                 _db.Clinics.Update(clinicToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
@@ -81,7 +89,8 @@ namespace api.fernflowers.com.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var clinicToDelete = await _db.Clinics.FindAsync(id);
                 if (clinicToDelete == null)
                 {
@@ -91,15 +100,17 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Clinic> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
         {
-            try{
+            try
+            {
                 var dbClinic = await _db.Clinics.FindAsync(id);
                 if (dbClinic == null)
                 {
@@ -109,8 +120,9 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
     }

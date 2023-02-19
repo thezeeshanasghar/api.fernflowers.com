@@ -16,7 +16,7 @@ namespace api.fernflowers.com.Controllers
     {
         private readonly VaccineDBContext _db;
 
-        public ChildController (VaccineDBContext vaccineDBContext)
+        public ChildController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -36,34 +36,36 @@ namespace api.fernflowers.com.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var child = await _db.Childs.FindAsync(id);
-                if(child==null)
+                if (child == null)
                     return NotFound();
                 return Ok(child);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, "Internal server error");
             }
         }
-        
-         [HttpGet("name")]
-        public async Task<IActionResult> GetAll(string Name,string City,string Gender)
+
+        [HttpGet("name")]
+        public async Task<IActionResult> GetAll(string Name, string City, string Gender)
         {
-            try{
+            try
+            {
                 // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
-                var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.Gender==Gender ).ToListAsync();
+                var child = await _db.Childs.Where(a => a.Name == Name && a.City == City && a.Gender == Gender).ToListAsync();
                 return Ok(child);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error"); 
+                return StatusCode(500, "Internal server error");
             }
         }
-        
+
         // [HttpGet("{name}")]
-        
+
         // public async Task<ActionResult>Search(string Name,string Gender,string City,System.DateTime DOB)
         // {
         //     try{
@@ -74,12 +76,12 @@ namespace api.fernflowers.com.Controllers
         //         // }
         //         // return Ok(child);
         //         var list=await _db.Childs.Where(a=>a.Name==Name && a.Gender==Gender && a.City==City && a.DOB==DOB).ToListAsync();
-                
+
 
         //         return Ok(list);
 
-                    
-                
+
+
         //     }
         //     catch(Exception ex){
         //         return StatusCode(500, "Internal server error"); 
@@ -89,32 +91,36 @@ namespace api.fernflowers.com.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Child child)
         {
-            try{
+            try
+            {
                 _db.Childs.Add(child);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + child.Id), child);
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Child childToUpdate)
         {
-            try{
-                if(id != childToUpdate.Id)
+            try
+            {
+                if (id != childToUpdate.Id)
                     return BadRequest();
-                var dbchild= await _db.Childs.FindAsync(id);
-                if(dbchild==null)
+                var dbchild = await _db.Childs.FindAsync(id);
+                if (dbchild == null)
                     return NotFound();
 
                 _db.Childs.Update(childToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
@@ -122,7 +128,8 @@ namespace api.fernflowers.com.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var childToDelete = await _db.Childs.FindAsync(id);
                 if (childToDelete == null)
                 {
@@ -132,16 +139,18 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Child> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<Child> patchDocument)
         {
-            try{
+            try
+            {
                 var dbchild = await _db.Childs.FindAsync(id);
                 if (dbchild == null)
                 {
@@ -151,8 +160,9 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 

@@ -22,26 +22,30 @@ namespace api.fernflowers.com.Controllers
         [Route("/BrandName")]
         public async Task<ActionResult<IEnumerable<string>>> Getname()
         {
-            try{
+            try
+            {
                 var brandamount = await _db.Brands.ToListAsync();
                 return Ok(brandamount);
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet]
-        
-        
+
+
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
                 var brand = await _db.Brands.ToListAsync();
                 return Ok(brand);
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -49,54 +53,61 @@ namespace api.fernflowers.com.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brand = await _db.Brands.FindAsync(id);
-                if(brand==null)
+                if (brand == null)
                     return NotFound();
                 return Ok(brand);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Brand brand)
         {
-            try{
+            try
+            {
                 _db.Brands.Add(brand);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + brand.Id), brand);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Brand brandToUpdate)
         {
-            try{
-                if(id != brandToUpdate.Id)
+            try
+            {
+                if (id != brandToUpdate.Id)
                     return BadRequest();
                 var dbBrand = await _db.Brands.FindAsync(id);
-                if(dbBrand==null)
+                if (dbBrand == null)
                     return NotFound();
 
                 _db.Brands.Update(brandToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute]  int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brandToDelete = await _db.Brands.FindAsync(id);
                 if (brandToDelete == null)
                 {
@@ -106,11 +117,12 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
-        
+
         // [HttpPatch("{id}")]
         // public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Brand> patchDocument)
         // {
@@ -128,24 +140,26 @@ namespace api.fernflowers.com.Controllers
         //         return StatusCode(500, "Internal server error"); 
         //     }
         // }
-              [HttpPatch("{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Brand brand)
         {
-            try{
+            try
+            {
                 var dbBrand = await _db.Brands.FindAsync(brand.Id);
                 if (dbBrand == null)
                 {
                     return NotFound();
                 }
-             
+
                 dbBrand.Name = brand.Name;
-         
-                _db.Entry(dbBrand).State= EntityState.Modified;
+
+                _db.Entry(dbBrand).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

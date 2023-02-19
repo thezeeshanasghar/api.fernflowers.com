@@ -32,84 +32,93 @@ namespace api.fernflowers.com.Controllers
         //         return StatusCode(500, ex.Message); 
         //     }
         // }
-           [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
                 var brandinventory = await _db.BrandInventories.ToListAsync();
                 List<BrandInventoryDTO> BrandInventorydto = null;
-                if(brandinventory!=null)
+                if (brandinventory != null)
                 {
-                    BrandInventorydto=new List<BrandInventoryDTO>{};
-                    foreach(var ba in brandinventory)
+                    BrandInventorydto = new List<BrandInventoryDTO> { };
+                    foreach (var ba in brandinventory)
                     {
-                        var tmp_brandinventory= new BrandInventoryDTO{
-                        Id=ba.Id,
-                        Count= ba.Count,
-                        BrandId =ba.BrandId,
-                        DoctorId = ba.DoctorId,
+                        var tmp_brandinventory = new BrandInventoryDTO
+                        {
+                            Id = ba.Id,
+                            Count = ba.Count,
+                            BrandId = ba.BrandId,
+                            DoctorId = ba.DoctorId,
                         };
                         BrandInventorydto.Add(tmp_brandinventory);
                     }
                     var brandIds = brandinventory.Select(bi => bi.BrandId).ToList();
-                    var brands = _db.Brands.Where( b=> brandIds.Contains(b.Id)).ToList();
-                    foreach(var bi in BrandInventorydto)
+                    var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+                    foreach (var bi in BrandInventorydto)
                     {
-                        bi.BrandName = brands.FirstOrDefault(b=>b.Id == bi.BrandId).Name;
+                        bi.BrandName = brands.FirstOrDefault(b => b.Id == bi.BrandId).Name;
                     }
                 }
-               
+
 
                 return Ok(BrandInventorydto);
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brandinventory = await _db.BrandInventories.FindAsync(id);
-                if(brandinventory==null)
+                if (brandinventory == null)
                     return NotFound();
                 return Ok(brandinventory);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] BrandInventory brandinventory)
         {
-            try{
+            try
+            {
                 _db.BrandInventories.Add(brandinventory);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + brandinventory.Id), brandinventory);
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandInventory brandinventoryToUpdate)
         {
-            try{
-                if(id != brandinventoryToUpdate.Id)
+            try
+            {
+                if (id != brandinventoryToUpdate.Id)
                     return BadRequest();
                 var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
-                if(dbbrandinventory==null)
+                if (dbbrandinventory == null)
                     return NotFound();
 
                 _db.BrandInventories.Update(brandinventoryToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -117,7 +126,8 @@ namespace api.fernflowers.com.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var brandinventoryToDelete = await _db.BrandInventories.FindAsync(id);
                 if (brandinventoryToDelete == null)
                 {
@@ -127,16 +137,18 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<BrandInventory> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<BrandInventory> patchDocument)
         {
-            try{
+            try
+            {
                 var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
                 if (dbbrandinventory == null)
                 {
@@ -146,14 +158,15 @@ namespace api.fernflowers.com.Controllers
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
 
 
-        
+
 
     }
 }

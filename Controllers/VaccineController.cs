@@ -22,59 +22,67 @@ namespace api.fernflowers.com.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try{
+            try
+            {
 
                 var vaccines = await _db.Vaccines.ToListAsync();
-                
+
                 return Ok(vaccines);
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
-            try{
+            try
+            {
                 var vaccine = await _db.Vaccines.FindAsync(id);
-                if(vaccine==null)
+                if (vaccine == null)
                     return NotFound();
                 return Ok(vaccine);
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody]  Vaccine vaccine)
+        public async Task<IActionResult> PostNew([FromBody] Vaccine vaccine)
         {
-            try{
+            try
+            {
                 _db.Vaccines.Add(vaccine);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + vaccine.Id), vaccine);
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody]  Vaccine vaccineToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Vaccine vaccineToUpdate)
         {
-            try{
-                if(id != vaccineToUpdate.Id)
+            try
+            {
+                if (id != vaccineToUpdate.Id)
                     return BadRequest();
                 var dbVaccine = await _db.Vaccines.FindAsync(id);
-                if(dbVaccine==null)
+                if (dbVaccine == null)
                     return NotFound();
                 _db.Vaccines.Update(vaccineToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
 
@@ -101,8 +109,9 @@ namespace api.fernflowers.com.Controllers
         [Route("vaccine-with-count")]
         public async Task<IActionResult> GetVaccineWithCounts()
         {
-            try{
-         
+            try
+            {
+
                 var vaccines = await _db.Vaccines.ToListAsync();
                 List<VaccineWithCountDTO> listDTO = new List<VaccineWithCountDTO>();
                 foreach (var item in vaccines)
@@ -117,29 +126,32 @@ namespace api.fernflowers.com.Controllers
                 }
                 return Ok(listDTO);
             }
-             catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
 
         }
-         [HttpPatch("{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
         {
-            try{
+            try
+            {
                 var dbVaccine = await _db.Vaccines.FindAsync(vaccine.Id);
                 if (dbVaccine == null)
                 {
                     return NotFound();
                 }
-               
+
                 dbVaccine.Name = vaccine.Name;
-              
-                _db.Entry(dbVaccine).State= EntityState.Modified;
+
+                _db.Entry(dbVaccine).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch(Exception ex){
-                return StatusCode(500, "Internal server error"); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
         }
         [HttpDelete("{id}")]
@@ -148,8 +160,8 @@ namespace api.fernflowers.com.Controllers
         {
             //try {
             var dbVaccine = _db.Vaccines.Include(X => X.Doses).Include(x => x.Brands).Where(x => x.Id == id).FirstOrDefault();
-            if (dbVaccine.Brands.Count> 0)
-                return  StatusCode(500, "del brand first");
+            if (dbVaccine.Brands.Count > 0)
+                return StatusCode(500, "del brand first");
             else if (dbVaccine.Doses.Count > 0)
                 return StatusCode(500, "del doses first");
             _db.Vaccines.Remove(dbVaccine);
@@ -164,6 +176,6 @@ namespace api.fernflowers.com.Controllers
             // }
 
         }
-     
+
     }
 }

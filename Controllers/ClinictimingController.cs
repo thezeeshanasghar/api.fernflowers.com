@@ -56,12 +56,13 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 List<Clinictiming> clinictimings = new List<Clinictiming>();
-                foreach(var item in data){
+                foreach (var item in data)
+                {
                     var clinictiming = JsonConvert.DeserializeObject<Clinictiming>(item);
                     _db.Clinictimings.Add(clinictiming);
                 }
                 await _db.SaveChangesAsync();
-                return Ok(new {Message = "Sucessfully Added"});
+                return Ok(new { Message = "Sucessfully Added" });
             }
             catch (Exception ex)
             {
