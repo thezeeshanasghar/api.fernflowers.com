@@ -1,5 +1,6 @@
 using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
+using api.fernflowers.com.ModelDTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.JsonPatch;
@@ -20,12 +21,35 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllc()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
+                List<DoseDTO> doseDTOList = new List<DoseDTO>();
                 var doses = await _db.Doses.ToListAsync();
-                return Ok(doses);
+                DateTime ? doseDate = null;
+                int ? lastVaccineId = null;
+                foreach(var dos in doses){
+                    var dosDTo = new DoseDTO{
+                        Id = dos.Id,
+                        Name = dos.Name,
+                        MinGap = dos.MinGap,
+                        VaccineId = dos.VaccineId
+                    };
+                    if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
+                        doseDate = DateTime.Now;
+                    }else{
+                        var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
+                        if(dateOfLastDoseOfSameVaccine!=null){
+                           doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
+                        }
+                    }
+                    dosDTo.DoseDate = doseDate; 
+                    doseDTOList.Add(dosDTo);
+                    lastVaccineId = dosDTo.VaccineId;                   
+                }
+                
+                return Ok(doseDTOList);
             }
             catch (Exception ex)
             {

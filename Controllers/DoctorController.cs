@@ -290,6 +290,27 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        
+        [HttpPatch()]
+        [Route("notapproved/{id}")]
+        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        {
+            try{
+                var dbDoc = await _db.Doctors.FindAsync(id);
+                if (dbDoc == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbDoc);
+                await _db.SaveChangesAsync();
+                return NoContent();
+                
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
+            }
+        }
+
         [HttpGet]
         [Route("approved/{approved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool approved)

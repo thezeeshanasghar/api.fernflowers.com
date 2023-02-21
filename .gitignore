@@ -36,3 +36,5 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 api.fernflowers.com.sln
+appsettings.Development.json
+appsettings.Development.json
