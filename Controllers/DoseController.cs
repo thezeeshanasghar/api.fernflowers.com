@@ -21,11 +21,13 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet]
+        [Route("/doseschedule_date")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
+                List<DoseSchedule> doseScheduleList = new List<DoseSchedule>();
                 var doses = await _db.Doses.ToListAsync();
                 DateTime ? doseDate = null;
                 int ? lastVaccineId = null;
@@ -36,6 +38,9 @@ namespace api.fernflowers.com.Controllers
                         MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
+                    var doseSchedule = new DoseSchedule{
+                        DoseId = dos.Id
+                    };
                     if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
                         doseDate = DateTime.Now;
                     }else{
@@ -44,11 +49,14 @@ namespace api.fernflowers.com.Controllers
                            doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
                         }
                     }
-                    dosDTo.DoseDate = doseDate; 
-                    doseDTOList.Add(dosDTo);
+                    dosDTo.DoseDate = doseDate;
+                    doseDTOList.Add(dosDTo); 
+                    doseSchedule.Date = doseDate.Value;
+                    doseScheduleList.Add(doseSchedule);
                     lastVaccineId = dosDTo.VaccineId;                   
                 }
-                
+                _db.DoseSchedules.AddRange(doseScheduleList);
+                _db.SaveChanges();
                 return Ok(doseDTOList);
             }
             catch (Exception ex)
@@ -70,6 +78,18 @@ namespace api.fernflowers.com.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet]
+         [Route("/alldoses")]
+         public async Task<IActionResult> GetAllc()
+        {
+            try{
+                var doses = await _db.Doses.ToListAsync();
+                return Ok(doses);
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
             }
         }
 

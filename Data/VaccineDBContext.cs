@@ -20,4 +20,5 @@ public class VaccineDBContext : DbContext
     public DbSet<BrandAmount> BrandAmounts { get; set; }
     public DbSet<BrandInventory> BrandInventories { get; set; }
     public DbSet<Child> Childs { get; set; }
+    public DbSet<DoseSchedule> DoseSchedules { get; set; }
 }
