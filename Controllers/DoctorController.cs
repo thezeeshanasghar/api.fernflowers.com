@@ -122,7 +122,7 @@ namespace api.fernflowers.com.Controllers
 
                     if (doctor_schedule != null)
                     {
-                        doctorDTO.DoctorSchedule = new List<DoctorScheduleDTO> { };
+                        doctorDTO.DoctorSchedule = new List<DoctorScheduleDTO> ();
                         foreach (var ds in doctor_schedule)
                         {
                             var tmp_doctor_schedule = new DoctorScheduleDTO
@@ -130,13 +130,10 @@ namespace api.fernflowers.com.Controllers
                                 Id = ds.Id,
                                 DoctorId = ds.DoctorId,
                                 DoseId = ds.DoseId,
-
                             };
                             doctorDTO.DoctorSchedule.Add(tmp_doctor_schedule);
                         }
                     }
-
-
                 }
                 return Ok(doctorDTO);
 
