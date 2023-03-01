@@ -1,4 +1,5 @@
 using api.fernflowers.com.Data;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql;
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson(options => { options.UseMemberCasing(); });
+builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider()));
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => { builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader(); }));
 
 builder.Services.AddEndpointsApiExplorer();

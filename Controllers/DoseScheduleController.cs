@@ -1,3 +1,4 @@
+using System.Linq;
 using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
 using api.fernflowers.com.ModelDTO;
@@ -42,30 +43,28 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-        [Route("updateDate")]
+        [Route("updateDate/{date}")]
         [HttpPatch]
         
-        public async Task<IActionResult> UpdateAll([FromBody] DoseSchedule ds)
+      
+         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoseSchedule> patchDocument)
         {
-            try
-            {
-                var dbDoseSchedule =  _db.DoseSchedules.Find(ds.Date);
-                if (dbDoseSchedule == null)
+            try{
+                var dbDoc = _db.DoseSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+                if (dbDoc == null)
                 {
                     return NotFound();
                 }
-               
-                dbDoseSchedule.Date = ds.Date;
-                _db.Entry(dbDoseSchedule).State = EntityState.Modified;
+                dbDoc.ForEach(d => patchDocument.ApplyTo(d));
                 await _db.SaveChangesAsync();
                 return NoContent();
+                
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
             }
-            
         }
+    
         [HttpGet]
         public async Task<IActionResult>Getnew()
         {
