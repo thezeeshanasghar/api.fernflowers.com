@@ -95,7 +95,7 @@ namespace api.fernflowers.com.Controllers
                     }
                     dsDTOList.Add(dsDTO);
                 };
-                return Ok(dsDTOList);
+                return Ok(dsDTOList.OrderBy(x=>x.Date));
 
             }
             catch (Exception ex)

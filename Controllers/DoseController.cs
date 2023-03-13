@@ -120,6 +120,20 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet("dose_name/{vaccineId}")]
+        public  async Task<IActionResult>GetDoseName(int vaccineId)
+        {
+            {
+                var dose = _db.Doses.Where(b => b.VaccineId == vaccineId).Select(b => b.Name).ToList();
+                if (dose == null)
+                {
+                    return NotFound();
+                }
+                return Ok(dose);
+            }
+        }
+
+        
         [HttpGet]
          [Route("/alldoses")]
          public async Task<IActionResult> GetAllc()
@@ -158,6 +172,7 @@ namespace api.fernflowers.com.Controllers
                 var dbDose = await _db.Doses.FindAsync(id);
                 if (dbDose == null)
                     return NotFound();
+
 
                 _db.Doses.Update(doseToUpdate);
                 await _db.SaveChangesAsync();

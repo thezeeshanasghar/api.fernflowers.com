@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace api.fernflowers.com.Data.Entities;
 
-public class DoseSchedule
+public class AdminDoseSchedule
 {
     public int Id { get; set; }
  

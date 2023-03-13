@@ -33,6 +33,19 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        [HttpGet("/{vaccineId}")]
+        public IActionResult GetBrandName(int vaccineId)
+        {
+            {
+                var brand = _db.Brands.Where(b => b.VaccineId == vaccineId).Select(b => b.Name).ToList();
+                if (brand == null)
+                {
+                    return NotFound();
+                }
+                return Ok(brand);
+            }
+        }
+
         [HttpGet]
 
 

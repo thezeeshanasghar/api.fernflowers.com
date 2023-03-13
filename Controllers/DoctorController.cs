@@ -63,7 +63,7 @@ namespace api.fernflowers.com.Controllers
         [Route("login")]
         [HttpGet()]
 
-        public async Task<IActionResult> Login(int MobileNumber, string Password)
+        public async Task<IActionResult> Login(string MobileNumber, string Password)
         {
             try
             {
@@ -261,8 +261,9 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update([FromBody] Doctor doc)
+        [HttpPatch()]
+        [Route("UpdateDoctor/{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] Doctor doc)
         {
             try
             {
@@ -271,15 +272,30 @@ namespace api.fernflowers.com.Controllers
                 {
                     return NotFound();
                 }
-                dbDoc.Email = doc.Email;
-                dbDoc.Name = doc.Name;
-                dbDoc.Password = doc.Password;
-                dbDoc.DoctorType = doc.DoctorType;
-                dbDoc.MobileNumber = doc.MobileNumber;
-                dbDoc.PMDC = doc.PMDC;
-                _db.Entry(dbDoc).State = EntityState.Modified;
+                if (!string.IsNullOrEmpty(doc.Name))
+                {
+                    dbDoc.Name = doc.Name;
+                }
+                if (!string.IsNullOrEmpty(doc.Email))
+                {
+                    dbDoc.Email = doc.Email;
+                }
+                if (doc.MobileNumber!=null)
+                {
+                    dbDoc.MobileNumber = doc.MobileNumber;
+                }
+                if (!string.IsNullOrEmpty(doc.PMDC))
+                {
+                    dbDoc.PMDC = doc.PMDC;
+                }
+                if (!string.IsNullOrEmpty(doc.DoctorType))
+                {
+                    dbDoc.DoctorType = doc.DoctorType;
+                }
                 await _db.SaveChangesAsync();
+
                 return NoContent();
+
             }
             catch (Exception ex)
             {
@@ -316,6 +332,27 @@ namespace api.fernflowers.com.Controllers
             {
                 var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
                 return Ok(doctor);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPatch()]
+        [Route("password/{id}")]
+        public async Task<IActionResult> password([FromRoute] int id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
+        {
+            try
+            {
+                var dbDoc = await _db.Doctors.FindAsync(id);
+                if (dbDoc == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbDoc);
+                await _db.SaveChangesAsync();
+                return NoContent();
+
             }
             catch (Exception ex)
             {

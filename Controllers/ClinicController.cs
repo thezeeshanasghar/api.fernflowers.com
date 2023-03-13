@@ -20,6 +20,20 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet]
+        [Route("/ClinicName")]
+        public async Task<ActionResult<IEnumerable<string>>> Getname()
+        {
+            try
+            {
+                var clinic = await _db.Clinics.ToListAsync();
+                return Ok(clinic);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
