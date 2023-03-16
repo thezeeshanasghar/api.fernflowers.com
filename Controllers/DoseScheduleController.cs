@@ -103,6 +103,48 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPatch]
+        [Route("/updateDate")]
+        
+        public async Task<IActionResult> UpdateDate_BackUp(string dt,int DoseId,int VaccineId)
+        {
+            try
+            {
+              
+                var doseSchedule = await _db.DoseSchedules.Where(x=>x.DoseId==DoseId).FirstOrDefaultAsync();
+                if(doseSchedule!=null)
+                {
+                    doseSchedule.Date = Convert.ToDateTime(dt);
+                    await _db.SaveChangesAsync();
+
+                    DateTime newdt = Convert.ToDateTime(dt);
+
+                    var doses = await _db.Doses.Where(x => x.VaccineId == VaccineId && x.Id > DoseId).ToListAsync();
+
+                    foreach (var dose in doses)
+                    {
+                        var minGap = dose.MinGap;
+                        newdt = newdt.AddDays(minGap);
+                        
+                        var newDoseSchedule = await _db.DoseSchedules.Where(x => x.DoseId == dose.Id).FirstOrDefaultAsync();
+                        if(newDoseSchedule!=null)
+                        {
+                            newDoseSchedule.Date= newdt;
+                            await _db.SaveChangesAsync();
+                        }
+                        
+                    }
+                }
+                
+                
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
     }
 }
