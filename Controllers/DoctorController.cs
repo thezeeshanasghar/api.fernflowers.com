@@ -280,7 +280,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     dbDoc.Email = doc.Email;
                 }
-                if (doc.MobileNumber!=null)
+                if (!string.IsNullOrEmpty(doc.MobileNumber))
                 {
                     dbDoc.MobileNumber = doc.MobileNumber;
                 }
@@ -324,6 +324,8 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+
+
         [HttpGet]
         [Route("approved/{approved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool approved)
@@ -338,6 +340,10 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+
+
         [HttpPatch()]
         [Route("password/{id}")]
         public async Task<IActionResult> password([FromRoute] int id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
