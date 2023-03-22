@@ -38,7 +38,7 @@ namespace api.fernflowers.com.Controllers
         public IActionResult GetBrandName(int vaccineId)
         {
             {
-                var brand = _db.Brands.Where(b => b.VaccineId == vaccineId).Select(b => b.Name).ToList();
+                var brand = _db.Brands.Where(b => b.VaccineId == vaccineId).ToList();
                 if (brand == null)
                 {
                     return NotFound();

@@ -124,7 +124,7 @@ namespace api.fernflowers.com.Controllers
         public  async Task<IActionResult>GetDoseName(int vaccineId)
         {
             {
-                var dose = _db.Doses.Where(b => b.VaccineId == vaccineId).Select(b => b.Name).ToList();
+                var dose = _db.Doses.Where(b => b.VaccineId == vaccineId).ToList();
                 if (dose == null)
                 {
                     return NotFound();
