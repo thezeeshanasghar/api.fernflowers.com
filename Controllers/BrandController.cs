@@ -33,8 +33,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("/BrandName_with_vaccine")]
+        [HttpGet("brand_name/{vaccineId}")]
         
         public IActionResult GetBrandName(int vaccineId)
         {
