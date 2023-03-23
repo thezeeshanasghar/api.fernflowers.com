@@ -19,4 +19,5 @@ public class Child
     public bool? IsVerified { get; set; }
     public bool? IsInactive { get; set; }
     public int ClinicId { get; set; }
+    public int DoctorId { get; set; }
 }

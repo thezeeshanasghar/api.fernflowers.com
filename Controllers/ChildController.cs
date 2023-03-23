@@ -49,19 +49,34 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet("name")]
-        public async Task<IActionResult> GetAll(string Name, string City, string Gender)
+        // [HttpGet("name")]
+        // public async Task<IActionResult> GetAll(string Name, string City, string Gender,DateTime DOB,int DoctorId)
+        // {
+        //     try
+        //     {
+        //         // var dIds = _db.Doctors.Select(d=> d.Id).ToList();
+        //         // var doctor = _db.Childs.Where(x => dIds.Contains(x.DoctorId));
+                
+        //         var child = await _db.Childs.Where(a => a.Name.ToLower().Trim() == Name.ToLower().Trim() || a.City == City && a.Gender == Gender || a.DOB.Date==DOB || a.DoctorId==DoctorId).ToListAsync();
+            
+        //         return Ok(child);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [HttpGet("search-by-doctor-name")]
+        public ActionResult<IEnumerable<Child>>SearchByDoctorName(string doctorName,string Name, string City, string Gender,DateTime DOB)
         {
-            try
-            {
-                // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
-                var child = await _db.Childs.Where(a => a.Name == Name && a.City == City && a.Gender == Gender).ToListAsync();
-                return Ok(child);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var patients = _db.Childs.Join(_db.Doctors, p => p.DoctorId, d => d.Id, (p, d) => new { Child = p, Doctor = d })
+                .Where(pd => pd.Doctor.Name.Contains(doctorName)|| pd.Child.Name==Name || pd.Child.City==City && pd.Child.Gender==Gender|| pd.Child.DOB.Date==DOB)
+                .Select(pd => pd.Child)
+                .ToList();
+
+
+            return Ok(patients);
         }
 
         // [HttpGet("{name}")]
