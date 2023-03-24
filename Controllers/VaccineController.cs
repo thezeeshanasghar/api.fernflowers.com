@@ -147,5 +147,21 @@ namespace api.fernflowers.com.Controllers
             _db.SaveChanges();
             return NoContent();
         }
+        
+        [HttpPatch()]
+        
+
+        public async Task<IActionResult> Updatenew(int id, VaccineDTO vaccineDTO)
+        {
+            var dbVaccine = _db.Vaccines.Where(x => x.Id == id).FirstOrDefault();
+            //VaccineDTO vaccineDTOs = _mapper.Map<VaccineDTO>(dbVaccine);
+            //  dbVaccine = Mapper.Map<VaccineDTO, Vaccine>(vaccineDTO, dbVaccine);
+            dbVaccine.Name = vaccineDTO.Name;
+            dbVaccine.Infinite = vaccineDTO.Infinite;
+            dbVaccine.IsSpecial = vaccineDTO.IsSpecial;
+            _db.SaveChanges();
+            return Ok();
+
+        }
     }
 }
