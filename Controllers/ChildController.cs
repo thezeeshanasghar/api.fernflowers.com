@@ -56,9 +56,9 @@ namespace api.fernflowers.com.Controllers
         //     {
         //         // var dIds = _db.Doctors.Select(d=> d.Id).ToList();
         //         // var doctor = _db.Childs.Where(x => dIds.Contains(x.DoctorId));
-                
+
         //         var child = await _db.Childs.Where(a => a.Name.ToLower().Trim() == Name.ToLower().Trim() || a.City == City && a.Gender == Gender || a.DOB.Date==DOB || a.DoctorId==DoctorId).ToListAsync();
-            
+
         //         return Ok(child);
         //     }
         //     catch (Exception ex)
@@ -68,10 +68,10 @@ namespace api.fernflowers.com.Controllers
         // }
 
         [HttpGet("search-by-doctor-name")]
-        public ActionResult<IEnumerable<Child>>SearchByDoctorName(string doctorName,string Name, string City, string Gender,DateTime DOB)
+        public ActionResult<IEnumerable<Child>> SearchByDoctorName(string doctorName, string Name, string City, string Gender, DateTime DOB)
         {
             var patients = _db.Childs.Join(_db.Doctors, p => p.DoctorId, d => d.Id, (p, d) => new { Child = p, Doctor = d })
-                .Where(pd => pd.Doctor.Name.Contains(doctorName)|| pd.Child.Name==Name || pd.Child.City==City && pd.Child.Gender==Gender|| pd.Child.DOB.Date==DOB)
+                .Where(pd => pd.Doctor.Name.Contains(doctorName) || pd.Child.Name == Name || pd.Child.City == City || pd.Child.Gender == Gender || pd.Child.DOB.Date == DOB)
                 .Select(pd => pd.Child)
                 .ToList();
 
