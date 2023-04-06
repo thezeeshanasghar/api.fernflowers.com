@@ -72,17 +72,34 @@ namespace api.fernflowers.com.Controllers
         // }
 
         [HttpGet("search-by-doctor-name")]
-        public ActionResult<IEnumerable<Child>> SearchByDoctorName( [SwaggerParameter(Required = false)] string? doctorName=null,[SwaggerParameter(Required = false)] string Name=null,[SwaggerParameter(Required = false)] string? City=null,[SwaggerParameter(Required = false)] string? Gender=null,[SwaggerParameter(Required = false)] DateTime? DOB=null)
+        public ActionResult<IEnumerable<Child>> SearchByDoctorName( [SwaggerParameter(Required = false)] string? doctorName=null,[SwaggerParameter(Required = false)] string? Name=null,[SwaggerParameter(Required = false)] string? City=null,[SwaggerParameter(Required = false)] string? Gender=null,[SwaggerParameter(Required = false)] DateTime? DOB=null)
         {
             var patients = _db.Childs.Join(_db.Doctors, p => p.DoctorId, d => d.Id, (p, d) => new { Child = p, Doctor = d })
                 .Where(pd =>
-                (doctorName==null || pd.Doctor.Name.Contains(doctorName)) ||
-                (Name==null || pd.Child.Name == Name ) &&
+                (doctorName==null || pd.Doctor.Name.Contains(doctorName)) &&
+                (string.IsNullOrEmpty(Name) || pd.Child.Name == Name ) &&
                 (City==null || pd.Child.City == City) && 
                 (Gender==null ||pd.Child.Gender == Gender) &&
                 (DOB ==null ||  pd.Child.DOB.Date == DOB))
-                .Select(pd => pd.Child)
-                .ToList();
+                .Select(pd => new {
+                    pd.Child.Id,
+                    pd.Child.Name,
+                    pd.Child.Guardian,
+                    pd.Child.FatherName,
+                    pd.Child.Email,
+                    pd.Child.DOB,
+                    pd.Child.Gender,
+                    pd.Child.Type,
+                    pd.Child.City,
+                    pd.Child.CNIC,
+                    pd.Child.PreferredSchedule,
+                    pd.Child.IsEPIDone,
+                    pd.Child.IsVerified,
+                    pd.Child.IsInactive,
+                    pd.Child.ClinicId,
+                    pd.Child.DoctorId,
+                    DoctorName = pd.Doctor.Name 
+                }).ToList();
 
 
             return Ok(patients);
