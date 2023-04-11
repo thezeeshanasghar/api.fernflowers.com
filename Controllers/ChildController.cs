@@ -101,8 +101,12 @@ namespace api.fernflowers.com.Controllers
                     DoctorName = pd.Doctor.Name 
                 }).ToList();
 
-
+            if(patients.Count==0){
+                return StatusCode(500, "Not Found .Add more details");
+            }
+            
             return Ok(patients);
+            
         }
     //  [HttpGet]
     // public IActionResult Search([FromQuery] string Name = "",
