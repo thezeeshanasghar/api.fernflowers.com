@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230320131856_InitialCreateSeed")]
-    partial class InitialCreateSeed
+    [Migration("20230502071641_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -505,6 +505,9 @@ namespace api.fernflowers.com.Migrations
                     b.Property<DateTime>("DOB")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -564,8 +567,9 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -578,7 +582,7 @@ namespace api.fernflowers.com.Migrations
                             Address = "b17",
                             DoctorId = 1,
                             Name = "Ali s clinic ",
-                            Number = 123
+                            Number = "3333333"
                         });
                 });
 
@@ -657,6 +661,9 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("ValidUpto")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Doctors");
@@ -672,7 +679,8 @@ namespace api.fernflowers.com.Migrations
                             MobileNumber = "03352920239",
                             Name = "Ali",
                             PMDC = "a1234",
-                            Password = "123"
+                            Password = "123",
+                            ValidUpto = new DateTime(2023, 8, 2, 12, 16, 40, 824, DateTimeKind.Utc).AddTicks(4503)
                         });
                 });
 

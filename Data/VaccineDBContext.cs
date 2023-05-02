@@ -38,7 +38,8 @@ public class VaccineDBContext : DbContext
                             IsEnabled=true,
                             Email="ali.iiui1234@gmail.com",
                             DoctorType="Child Specialist",
-                            PMDC="a1234"
+                            PMDC="a1234",
+                            ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3)
 
                         }
                     );
@@ -47,7 +48,7 @@ public class VaccineDBContext : DbContext
                         new Clinic{
                             Id=1,
                             Name="Ali s clinic ",
-                            Number=123,
+                            Number="3333333",
                             Address="b17",
                             DoctorId=1
 

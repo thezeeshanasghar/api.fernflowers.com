@@ -88,7 +88,9 @@ namespace api.fernflowers.com.Controllers
                         DoctorType = doctor.DoctorType,
                         MobileNumber = doctor.MobileNumber,
                         Password = doctor.Password,
-                        PMDC = doctor.PMDC
+                        PMDC = doctor.PMDC,
+                        ValidUpto=doctor.ValidUpto
+                        
                     };
 
                     if (clinic != null)
@@ -158,7 +160,9 @@ namespace api.fernflowers.com.Controllers
                     DoctorType = doctor.DoctorType,
                     MobileNumber = doctor.MobileNumber,
                     Password = doctor.Password,
-                    PMDC = doctor.PMDC
+                    PMDC = doctor.PMDC,
+                    ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3) 
+                 
                 };
 
                 _db.Doctors.Add(doctorEntity);
@@ -292,6 +296,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     dbDoc.DoctorType = doc.DoctorType;
                 }
+                
                 await _db.SaveChangesAsync();
 
                 return NoContent();
@@ -302,7 +307,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         
         [HttpPatch()]
         [Route("notapproved/{id}")]
@@ -365,6 +369,33 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPatch()]
+        [Route("UpdateValidUpto/{id}")]
+        public async Task<IActionResult> UpdateValidUpto([FromRoute] int id, [FromBody] Doctor doc)
+        {
+            try
+            {
+                var dbDoc = await _db.Doctors.FindAsync(doc.Id);
+                if (dbDoc == null)
+                {
+                    return NotFound();
+                }
+               if (doc.ValidUpto != null)
+                {
+                    dbDoc.ValidUpto = doc.ValidUpto;
+                }
+                
+                await _db.SaveChangesAsync();
+
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
 
     }
 }
