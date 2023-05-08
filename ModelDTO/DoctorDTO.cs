@@ -11,7 +11,7 @@ namespace api.fernflowers.com.ModelDTO
         public string Email { get; set; }
         public string DoctorType { get; set; }
         public string PMDC { get; set; }
-        public DateTime ValidUpto { get; set; }
+        public string ValidUpto{get;set;}
         public ClinicDTO Clinic { get; set; }
         public List<DoctorScheduleDTO> DoctorSchedule { get; set; }
     }

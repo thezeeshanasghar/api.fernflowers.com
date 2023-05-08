@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
 using api.fernflowers.com.ModelDTO;
 using System.Linq;
+using System.Globalization;
+
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -89,8 +91,7 @@ namespace api.fernflowers.com.Controllers
                         MobileNumber = doctor.MobileNumber,
                         Password = doctor.Password,
                         PMDC = doctor.PMDC,
-                        ValidUpto=doctor.ValidUpto
-                        
+                        ValidUpto=doctor.ValidUpto.Date.ToString("yyyy-MM-dd")
                     };
 
                     if (clinic != null)

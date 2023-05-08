@@ -152,14 +152,34 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        
+    [HttpGet("doctor-vaccine-price/{doctorId}")]
+    public IActionResult GetDoctorVaccinePrices(int doctorId)
+    {
+        var brandAmounts = _db.BrandAmounts.Where(ba => ba.DoctorId == doctorId).ToList();
+        var result = new List<object>();
+        foreach (var ba in brandAmounts)
+        {
+            var brandName = _db.Brands.Where(b => b.Id == ba.BrandId).Select(b => b.Name).FirstOrDefault();
+            var vaccineName = _db.Vaccines.Where(v => v.Brands.Any(b => b.Id == ba.BrandId)).Select(v => v.Name).FirstOrDefault();
+            var obj = new {
+                VaccineName = vaccineName,
+                Brand = brandName,
+                Price = ba.Amount
+            };
+            result.Add(obj);
+        }
+        return Ok(result);
+    }
 
 
-        // [HttpGet]
-        // [Route("/BrandName")]
-        // public async Task<IActionResult> GetBrandAmount()
-        // {
-        //     return Ok( ) ;
-        // }
+
+
+
+
+
+
+      
 
 
 
