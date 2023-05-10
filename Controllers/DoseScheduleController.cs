@@ -145,6 +145,97 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        // [HttpPost]
+        // public async Task<IActionResult> Getandsave()
+        // {
+        //     try
+        //     {
+        //         var doseSchedule = _db.AdminDoseSchedules.ToList();
+
+        //         List<DoseSchedule> doseScheduleList = new List<DoseSchedule>();
+
+        //         foreach (var ds in doseSchedule)
+        //         {
+        //             var doseScheduleEntry = new DoseSchedule
+        //             {
+        //                 Date = ds.Date,
+        //                 DoseId = ds.DoseId,
+        //                 DoctorId = _db.DoctorSchedules.FirstOrDefault(ds => ds.DoseId == ds.DoseId)?.DoctorId ?? 0
+        //             };
+
+        //             doseScheduleList.Add(doseScheduleEntry);
+        //         }
+
+        //         _db.DoseSchedules.AddRange(doseScheduleList);
+        //         await _db.SaveChangesAsync();
+
+        //         return Ok(doseScheduleList.OrderBy(x => x.Date));
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+        [HttpPost]
+        public async Task<IActionResult> Getnewandsave(int doctorId)
+        {
+            try
+            {
+                var doseSchedule = _db.AdminDoseSchedules.ToList();
+
+                List<DoseSchedule> doseScheduleList = new List<DoseSchedule>();
+
+                foreach (var ds in doseSchedule)
+                {
+                    var doseScheduleEntry = new DoseSchedule
+                    {
+                        Date = ds.Date,
+                        DoseId = ds.DoseId,
+                        DoctorId = doctorId
+                    };
+
+                    doseScheduleList.Add(doseScheduleEntry);
+                }
+
+                _db.DoseSchedules.AddRange(doseScheduleList);
+                await _db.SaveChangesAsync();
+
+                return Ok(doseScheduleList.OrderBy(x => x.Date));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPatch]
+        [Route("/Vaccation")]
+        public async Task<IActionResult> UpdateDoseDates(int doctorId, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                var dosesToUpdate = _db.DoseSchedules
+                    .Where(ds => ds.Date >= fromDate && ds.Date <= toDate && ds.DoctorId == doctorId)
+                    .ToList();
+
+                foreach (var dose in dosesToUpdate)
+                {
+                    var gap = (toDate - fromDate).TotalDays;
+                    dose.Date = dose.Date.AddDays(gap); // Add the gap to the existing date
+                }
+
+                await _db.SaveChangesAsync();
+
+                return Ok("Dose dates updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
 
     }
 }
