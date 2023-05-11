@@ -282,6 +282,13 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+         [HttpGet("count")]
+        public async Task<IActionResult> GetChildCount(int doctorId)
+        {
+            int count = await _db.Childs.CountAsync(c => c.DoctorId == doctorId);
+            return Ok(count);
+        }
+
 
 
     }
