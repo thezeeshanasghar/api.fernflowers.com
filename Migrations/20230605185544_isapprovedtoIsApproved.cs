@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace api.fernflowers.com.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class isapprovedtoIsApproved : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -153,7 +153,7 @@ namespace api.fernflowers.com.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Isapproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -175,6 +175,7 @@ namespace api.fernflowers.com.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DoseId = table.Column<int>(type: "int", nullable: false),
                     DoctorId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -191,7 +192,8 @@ namespace api.fernflowers.com.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DoseId = table.Column<int>(type: "int", nullable: false)
+                    DoseId = table.Column<int>(type: "int", nullable: false),
+                    DoctorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,8 +276,8 @@ namespace api.fernflowers.com.Migrations
 
             migrationBuilder.InsertData(
                 table: "Doctors",
-                columns: new[] { "Id", "DoctorType", "Email", "IsEnabled", "Isapproved", "MobileNumber", "Name", "PMDC", "Password", "ValidUpto" },
-                values: new object[] { 1, "Child Specialist", "ali.iiui1234@gmail.com", true, true, "03352920239", "Ali", "a1234", "123", new DateTime(2023, 8, 2, 12, 16, 40, 824, DateTimeKind.Utc).AddTicks(4503) });
+                columns: new[] { "Id", "DoctorType", "Email", "IsApproved", "IsEnabled", "MobileNumber", "Name", "PMDC", "Password", "ValidUpto" },
+                values: new object[] { 1, "Child Specialist", "ali.iiui1234@gmail.com", true, true, "03352920239", "Ali", "a1234", "123", new DateTime(2023, 9, 5, 23, 55, 43, 934, DateTimeKind.Utc).AddTicks(7822) });
 
             migrationBuilder.InsertData(
                 table: "Vaccines",

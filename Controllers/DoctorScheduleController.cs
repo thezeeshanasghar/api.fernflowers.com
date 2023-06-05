@@ -21,83 +21,53 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("doctor_schedule/{doctorId}")]
+        public ActionResult<IEnumerable<DoctorsSchedule>> GetDoctorSchedule(int doctorId)
         {
             try
             {
-                var schedule = await _db.DoctorSchedules.ToListAsync();
-                return Ok(schedule);
+                var doctorSchedule = _db.DoctorSchedules
+                    .Where(ds => ds.DoctorId == doctorId)
+                    .OrderBy(ds => ds.Date)
+                    .ToList();
+
+                return Ok(doctorSchedule);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
-
-        //         [HttpGet("{id}")]
-        //         public async Task<IActionResult> GetSingle([FromRoute] int id)
-        //         {
-        //             try{
-        //                 var child = await _db.Childs.FindAsync(id);
-        //                 if(child==null)
-        //                     return NotFound();
-        //                 return Ok(child);
-        //             }
-        //             catch(Exception ex)
-        //             {
-        //                 return StatusCode(500, ex.Message); 
-        //             }
-        //         }
-
-        //          [HttpGet("name")]
-        //         public async Task<IActionResult> GetAll(string Name,string City,string Gender)
-        //         {
-        //             try{
-        //                 // string date = DOB.ToString("mmddyyyy", CultureInfo.InvariantCulture);
-        //                 var child = await _db.Childs.Where(a=>a.Name==Name && a.City==City  && a.Gender==Gender ).ToListAsync();
-        //                 return Ok(child);
-        //             }
-        //             catch(Exception ex)
-        //             {
-        //                 return StatusCode(500, ex.Message); 
-        //             }
-        //         }
-
-        //         // [HttpGet("{name}")]
-
-        //         // public async Task<ActionResult>Search(string Name,string Gender,string City,System.DateTime DOB)
-        //         // {
-        //         //     try{
-        //         //         // var child = await _db.Childs.FindAsync(name,gender,city,dob);
-        //         //         // if(child==null){
-        //         //         //     return NotFound();
-
-        //         //         // }
-        //         //         // return Ok(child);
-        //         //         var list=await _db.Childs.Where(a=>a.Name==Name && a.Gender==Gender && a.City==City && a.DOB==DOB).ToListAsync();
-
-
-        //         //         return Ok(list);
-
-
-
-        //         //     }
-        //         //     catch(Exception ex){
-        //         //         return StatusCode(500, ex.Message); 
-        //         //     }
-        //         // }
-
+        [Route("doctor_post_schedule")]
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] DoctorsSchedule doctorschedule)
+        public async Task<IActionResult> Getnewandsave(int doctorId)
         {
             try
             {
+                if(_db.DoctorSchedules.Any(d=>d.DoctorId==doctorId))
+                {
+                    return Ok("Schedule already exist");
+                }
+                var doctorsSchedule = _db.AdminDoseSchedules.ToList();
 
-                _db.DoctorSchedules.Add(doctorschedule);
+                List<DoctorsSchedule> doseScheduleList = new List<DoctorsSchedule>();
+
+                foreach (var ds in doctorsSchedule)
+                {
+                    var doseScheduleEntry = new DoctorsSchedule
+                    {
+                        Date = ds.Date,
+                        DoseId = ds.DoseId,
+                        DoctorId = doctorId
+                    };
+
+                    doseScheduleList.Add(doseScheduleEntry);
+                }
+                
+                _db.DoctorSchedules.AddRange(doseScheduleList);
                 await _db.SaveChangesAsync();
 
-                return NoContent();
+                return Ok(doseScheduleList.OrderBy(x => x.Date));
             }
             catch (Exception ex)
             {
@@ -105,63 +75,73 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        //         [HttpPut]
-        //         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Child childToUpdate)
-        //         {
-        //             try{
-        //                 if(id != childToUpdate.Id)
-        //                     return BadRequest();
-        //                 var dbchild= await _db.Childs.FindAsync(id);
-        //                 if(dbchild==null)
-        //                     return NotFound();
+        [Route("single_updateDate")]
 
-        //                 _db.Childs.Update(childToUpdate);
-        //                 await _db.SaveChangesAsync();
-        //                 return NoContent();
-        //             }
-        //             catch(Exception ex){
-        //                 return StatusCode(500, ex.Message); 
-        //             }
-        //         }
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] DoctorsSchedule ds)
+        {
+            try{
+                var dbDoc = await _db.DoctorSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
+                if (dbDoc == null)
+                {
+                    return NotFound();
+                }
+             
+                dbDoc.Date = ds.Date;
+                _db.Entry(dbDoc).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+                
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
+            }
+        }
+        [Route("doctor_bulk_updateDate/{date}")]
+        [HttpPatch]
+         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoctorsSchedule> patchDocument)
+        {
+            try{
+                var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+                if (dbDocS == null)
+                {
+                    return NotFound();
+                }
+                dbDocS.ForEach(d => patchDocument.ApplyTo(d));
+                await _db.SaveChangesAsync();
+                return NoContent();
+                
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
+            }
+        }
+    
 
-        //         [Route("{id}")]
-        //         [HttpDelete]
-        //         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-        //         {
-        //             try{
-        //                 var childToDelete = await _db.Childs.FindAsync(id);
-        //                 if (childToDelete == null)
-        //                 {
-        //                     return NotFound();
-        //                 }
-        //                 _db.Childs.Remove(childToDelete);
-        //                 await _db.SaveChangesAsync();
-        //                 return NoContent();
-        //             }
-        //             catch(Exception ex){
-        //                 return StatusCode(500, ex.Message); 
-        //             }
-        //         }
+        [HttpPatch]
+        [Route("/update_date_for_Vaccations")]
+        public async Task<IActionResult> UpadateDoseDates(int doctorId, DateTime fromDate,DateTime toDate)
+        {
+            try
+            {
+                var dosesToUpdate= _db.DoctorSchedules
+                    .Where(ds=>ds.Date >= fromDate && ds.Date <=toDate && ds.DoctorId==doctorId).ToList();
 
+                foreach(var dose in dosesToUpdate)
+                {
+                    var gap=(toDate - fromDate).TotalDays;
+                    dose.Date=dose.Date.AddDays(gap);
+                }
+                await _db.SaveChangesAsync();
+                return Ok("Dose Dates Updated for vacations");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500,ex.Message);
+            }
+        }
 
-        //         [HttpPatch("{id}")]
-        //         public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Child> patchDocument)
-        //         {
-        //             try{
-        //                 var dbchild = await _db.Childs.FindAsync(id);
-        //                 if (dbchild == null)
-        //                 {
-        //                     return NotFound();
-        //                 }
-        //                 patchDocument.ApplyTo(dbchild);
-        //                 await _db.SaveChangesAsync();
-        //                 return NoContent();
-        //             }
-        //             catch(Exception ex){
-        //                 return StatusCode(500, ex.Message); 
-        //             }
-        //         }
-
+  
 
 
     }

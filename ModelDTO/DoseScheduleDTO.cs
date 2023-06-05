@@ -9,6 +9,7 @@ namespace api.fernflowers.com.ModelDTO {
         public DateTime? Date { get; set; }
         public int? DoseId { get; set; }
         public DoseDTO Dose { get; set; }
+        
     }
 
 }

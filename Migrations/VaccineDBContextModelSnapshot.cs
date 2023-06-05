@@ -636,10 +636,10 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsEnabled")
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Isapproved")
+                    b.Property<bool>("IsEnabled")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MobileNumber")
@@ -671,13 +671,13 @@ namespace api.fernflowers.com.Migrations
                             Id = 1,
                             DoctorType = "Child Specialist",
                             Email = "ali.iiui1234@gmail.com",
+                            IsApproved = true,
                             IsEnabled = true,
-                            Isapproved = true,
                             MobileNumber = "03352920239",
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 8, 9, 13, 33, 23, 193, DateTimeKind.Utc).AddTicks(4047)
+                            ValidUpto = new DateTime(2023, 9, 5, 23, 55, 43, 934, DateTimeKind.Utc).AddTicks(7822)
                         });
                 });
 
@@ -686,6 +686,9 @@ namespace api.fernflowers.com.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");

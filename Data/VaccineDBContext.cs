@@ -34,7 +34,7 @@ public class VaccineDBContext : DbContext
                             Name="Ali",
                             MobileNumber="03352920239",
                             Password="123",
-                            Isapproved=true,
+                            IsApproved=true,
                             IsEnabled=true,
                             Email="ali.iiui1234@gmail.com",
                             DoctorType="Child Specialist",

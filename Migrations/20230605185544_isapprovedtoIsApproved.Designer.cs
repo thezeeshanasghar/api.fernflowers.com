@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230502071641_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230605185544_isapprovedtoIsApproved")]
+    partial class isapprovedtoIsApproved
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -639,10 +639,10 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsEnabled")
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Isapproved")
+                    b.Property<bool>("IsEnabled")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MobileNumber")
@@ -674,13 +674,13 @@ namespace api.fernflowers.com.Migrations
                             Id = 1,
                             DoctorType = "Child Specialist",
                             Email = "ali.iiui1234@gmail.com",
+                            IsApproved = true,
                             IsEnabled = true,
-                            Isapproved = true,
                             MobileNumber = "03352920239",
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 8, 2, 12, 16, 40, 824, DateTimeKind.Utc).AddTicks(4503)
+                            ValidUpto = new DateTime(2023, 9, 5, 23, 55, 43, 934, DateTimeKind.Utc).AddTicks(7822)
                         });
                 });
 
@@ -689,6 +689,9 @@ namespace api.fernflowers.com.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
@@ -1177,6 +1180,9 @@ namespace api.fernflowers.com.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
 
                     b.Property<int>("DoseId")
                         .HasColumnType("int");

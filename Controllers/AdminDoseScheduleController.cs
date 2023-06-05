@@ -26,6 +26,9 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
+                if(_db.AdminDoseSchedules.Any()){
+                    return Ok("schedule already exist");
+                }
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
                 List<AdminDoseSchedule> doseScheduleList = new List<AdminDoseSchedule>();
                 var doses = await _db.Doses.ToListAsync();
@@ -64,9 +67,9 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-    [Route("Admin_single_updateDate")]
+        [Route("Admin_single_updateDate")]
 
-     [HttpPatch]
+        [HttpPatch]
         public async Task<IActionResult> Update([FromBody] AdminDoseSchedule ds)
         {
             try{
@@ -88,8 +91,6 @@ namespace api.fernflowers.com.Controllers
         }
         [Route("Admin_bulk_updateDate/{date}")]
         [HttpPatch]
-        
-      
          public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<AdminDoseSchedule> patchDocument)
         {
             try{

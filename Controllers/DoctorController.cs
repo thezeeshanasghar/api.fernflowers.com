@@ -26,8 +26,6 @@ namespace api.fernflowers.com.Controllers
         public DoctorController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
-
-
         }
 
         [HttpGet]
@@ -69,12 +67,11 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.Isapproved == true);
+                var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.IsApproved == true);
                 var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
 
                 var clinictiming = _db.Clinictimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
-                var doctor_schedule = _db.DoctorSchedules.Where(ct => ct.DoctorId == doctor.Id).ToList();
-
+                
                 DoctorDTO doctorDTO = null;
 
                 if (doctor != null)
@@ -85,7 +82,7 @@ namespace api.fernflowers.com.Controllers
                         Id = doctor.Id,
                         Name = doctor.Name,
                         Email = doctor.Email,
-                        Isapproved = doctor.Isapproved,
+                        IsApproved = doctor.IsApproved,
                         IsEnabled = doctor.IsEnabled,
                         DoctorType = doctor.DoctorType,
                         MobileNumber = doctor.MobileNumber,
@@ -123,20 +120,7 @@ namespace api.fernflowers.com.Controllers
                         }
                     }
 
-                    if (doctor_schedule != null)
-                    {
-                        doctorDTO.DoctorSchedule = new List<DoctorScheduleDTO> ();
-                        foreach (var ds in doctor_schedule)
-                        {
-                            var tmp_doctor_schedule = new DoctorScheduleDTO
-                            {
-                                Id = ds.Id,
-                                DoctorId = ds.DoctorId,
-                                DoseId = ds.DoseId,
-                            };
-                            doctorDTO.DoctorSchedule.Add(tmp_doctor_schedule);
-                        }
-                    }
+                    
                 }
                 return Ok(doctorDTO);
 
@@ -156,7 +140,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     Name = doctor.Name,
                     Email = doctor.Email,
-                    Isapproved = doctor.Isapproved,
+                    IsApproved = doctor.IsApproved,
                     IsEnabled = doctor.IsEnabled,
                     DoctorType = doctor.DoctorType,
                     MobileNumber = doctor.MobileNumber,
@@ -200,21 +184,7 @@ namespace api.fernflowers.com.Controllers
                     }
                 }
 
-                if (doctor.DoctorSchedule != null)
-                {
-                    foreach (var schedule in doctor.DoctorSchedule)
-                    {
-                        var entityDoctorSchedule = new DoctorsSchedule
-                        {
-                            DoctorId = doctorEntity.Id,
-                            DoseId = Convert.ToInt32(schedule.DoseId)
-
-                        };
-                        _db.DoctorSchedules.Add(entityDoctorSchedule);
-
-                    }
-                    await _db.SaveChangesAsync();
-                }
+             
 
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
             }
@@ -332,12 +302,12 @@ namespace api.fernflowers.com.Controllers
 
 
         [HttpGet]
-        [Route("approved/{approved:bool}")]
-        public async Task<IActionResult> GetApprovedDoctors(bool approved)
+        [Route("IsApproved/{IsApproved:bool}")]
+        public async Task<IActionResult> GetApprovedDoctors(bool IsApproved)
         {
             try
             {
-                var doctor = await _db.Doctors.Where(x => x.Isapproved == approved).ToListAsync();
+                var doctor = await _db.Doctors.Where(x => x.IsApproved == IsApproved).ToListAsync();
                 return Ok(doctor);
             }
             catch (Exception ex)
