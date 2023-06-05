@@ -64,7 +64,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-    
+    [Route("Admin_single_updateDate")]
 
      [HttpPatch]
         public async Task<IActionResult> Update([FromBody] AdminDoseSchedule ds)
@@ -86,7 +86,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-        [Route("Admin_updateDate/{date}")]
+        [Route("Admin_bulk_updateDate/{date}")]
         [HttpPatch]
         
       

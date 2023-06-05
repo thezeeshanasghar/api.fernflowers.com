@@ -72,7 +72,12 @@ namespace api.fernflowers.com.Controllers
         // }
 
         [HttpGet("search-by-doctor-name")]
-        public ActionResult<IEnumerable<Child>> SearchByDoctorName( [SwaggerParameter(Required = false)] string? doctorName=null,[SwaggerParameter(Required = false)] string? Name=null,[SwaggerParameter(Required = false)] string? City=null,[SwaggerParameter(Required = false)] string? Gender=null,[SwaggerParameter(Required = false)] DateTime? DOB=null)
+        public ActionResult<IEnumerable<Child>> SearchByDoctorName( [SwaggerParameter(Required = false)] string? doctorName=null,[SwaggerParameter(Required = false)] string? Name=null,[SwaggerParameter(Required = false)] string? City=null,[SwaggerParameter(Required = false)] string? Gender=null, [SwaggerParameter(Required = false)] int? fromDay = null,
+    [SwaggerParameter(Required = false)] int? toDay = null,
+    [SwaggerParameter(Required = false)] int? fromMonth = null,
+    [SwaggerParameter(Required = false)] int? toMonth = null,
+    [SwaggerParameter(Required = false)] int? fromYear = null,
+    [SwaggerParameter(Required = false)] int? toYear = null)
         {
             var patients = _db.Childs.Join(_db.Doctors, p => p.DoctorId, d => d.Id, (p, d) => new { Child = p, Doctor = d })
                 .Where(pd =>
@@ -80,7 +85,14 @@ namespace api.fernflowers.com.Controllers
                 (string.IsNullOrEmpty(Name) || pd.Child.Name == Name ) &&
                 (City==null || pd.Child.City == City) && 
                 (Gender==null ||pd.Child.Gender == Gender) &&
-                (DOB ==null ||  pd.Child.DOB.Date == DOB))
+                (fromDay == null || pd.Child.DOB.Day >= fromDay) &&
+                (toDay == null || pd.Child.DOB.Day <= toDay) &&
+                (fromMonth == null || pd.Child.DOB.Month >= fromMonth) &&
+                (toMonth == null || pd.Child.DOB.Month <= toMonth) &&
+                (fromYear == null || pd.Child.DOB.Year >= fromYear) &&
+                (toYear == null || pd.Child.DOB.Year <= toYear))
+                
+                
                 .Select(pd => new {
                     pd.Child.Id,
                     pd.Child.Name,
