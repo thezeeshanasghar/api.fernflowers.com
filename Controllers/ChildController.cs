@@ -302,6 +302,29 @@ namespace api.fernflowers.com.Controllers
         }
 
 
+        [HttpGet("/patients")]
+        public IActionResult GetChildrenByDoctorId(int doctorId)
+        {
+            try
+            {
+                var children = _db.Childs.Where(c => c.DoctorId == doctorId).ToList();
+
+                if (children.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(children);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
 
     }
+    
+
 }
