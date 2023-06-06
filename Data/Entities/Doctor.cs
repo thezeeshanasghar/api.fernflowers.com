@@ -8,6 +8,7 @@ public class Doctor
     public int Id { get; set; }
     public string Name { get; set; }
     public string MobileNumber { get; set; }
+   [Required(AllowEmptyStrings = true)]
     public string Password { get; set; }
     public bool IsApproved { get; set; }
     public bool IsEnabled { get; set; }

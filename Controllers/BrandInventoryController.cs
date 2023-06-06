@@ -21,17 +21,7 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
         }
 
-        // [HttpGet]
-        // public async Task<IActionResult> GetAll()
-        // {
-        //     try{
-        //         var brandinventory = await _db.BrandInventories.ToListAsync();
-        //         return Ok(brandinventory);
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500, ex.Message); 
-        //     }
-        // }
+      
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -182,10 +172,6 @@ namespace api.fernflowers.com.Controllers
         
         return Ok(result);
     }
-
-
-
-
 
     }
 }

@@ -366,6 +366,59 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPatch()]
+        [Route("doctors/{id}")]
+        public async Task<IActionResult> UpdateDoctorto([FromRoute] int id, [FromBody] Doctor doc)
+        {
+            try
+            {
+                var dbDoc = await _db.Doctors.FindAsync(doc.Id);
+                if (dbDoc == null)
+                {
+                    return NotFound();
+                }
+             
+                 if (doc.Name != null)
+                {
+                    dbDoc.Name = doc.Name;
+                }
+                  if (doc.Email != null)
+                {
+                    dbDoc.Email = doc.Email;
+                }
+                  if (doc.MobileNumber != null)
+                {
+                    dbDoc.MobileNumber = doc.MobileNumber;
+                }
+                  if (doc.IsEnabled != null)
+                {
+                    dbDoc.IsEnabled = doc.IsEnabled;
+                }
+                  if (doc.DoctorType != null)
+                {
+                    dbDoc.DoctorType = doc.DoctorType;
+                }
+                  if (doc.PMDC != null)
+                {
+                    dbDoc.PMDC = doc.PMDC;
+                }
+                
+                await _db.SaveChangesAsync();
+
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
+
+
         
 
     }
