@@ -81,6 +81,16 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
+                 var existingBrandInv = _db.BrandInventories.SingleOrDefault(b => b.BrandId == brandinventory.BrandId && b.DoctorId == brandinventory.DoctorId);
+        
+                if (existingBrandInv != null)
+                {
+                    // If the BrandId already exists for the DoctorId, add the amount to the existing row
+                    existingBrandInv.Count = brandinventory.Count;;
+                    await _db.SaveChangesAsync();
+                    
+                    return Ok(existingBrandInv);
+                }
                 _db.BrandInventories.Add(brandinventory);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + brandinventory.Id), brandinventory);
