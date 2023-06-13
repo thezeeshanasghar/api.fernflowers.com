@@ -102,7 +102,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-            [Route("patient_bulk_updateDone/{isDone}")]
+            [Route("patient_bulk_updateDone")]
             [HttpPatch]
             public async Task<IActionResult> PatchAsync(bool isDone,[FromBody] JsonPatchDocument<PattientsSchedule> patchDocument)
             {
@@ -189,6 +189,26 @@ namespace api.fernflowers.com.Controllers
             }
         }
     
+
+    [Route("patient_bulk_update_isSkip")]
+        [HttpPatch]
+         public async Task<IActionResult> PatchisSKip(DateTime date,[FromBody] JsonPatchDocument<PattientsSchedule> patchDocument)
+        {
+            try{
+                var dbPS = _db.PatientSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+                if (dbPS == null)
+                {
+                    return NotFound();
+                }
+                dbPS.ForEach(d => patchDocument.ApplyTo(d));
+                await _db.SaveChangesAsync();
+                return NoContent();
+                
+            }
+            catch(Exception ex){
+                return StatusCode(500,ex.Message); 
+            }
+        }
 
             
         
