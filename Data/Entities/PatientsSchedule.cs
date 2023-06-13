@@ -5,4 +5,6 @@ public class PattientsSchedule{
     public int DoseId { get; set; }
     public int DoctorId { get; set; }
     public int childId {get;set;}
+    public bool isSkip {get;set;} 
+    public bool isDone {get;set;} 
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230613140900_isskip")]
+    partial class isskip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -677,7 +680,7 @@ namespace api.fernflowers.com.Migrations
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 9, 13, 19, 13, 54, 350, DateTimeKind.Utc).AddTicks(1014)
+                            ValidUpto = new DateTime(2023, 9, 13, 19, 9, 0, 258, DateTimeKind.Utc).AddTicks(5533)
                         });
                 });
 
@@ -1206,9 +1209,6 @@ namespace api.fernflowers.com.Migrations
 
                     b.Property<int>("childId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isDone")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("isSkip")
                         .HasColumnType("tinyint(1)");
