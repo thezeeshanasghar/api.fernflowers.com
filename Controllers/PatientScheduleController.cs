@@ -22,46 +22,89 @@ namespace api.fernflowers.com.Controllers
         }
 
        
-       [Route("doctor_post_schedule/child")]
-        [HttpPost]
-        public async Task<IActionResult> GetAndSaveWithChildId(int doctorId, int childId)
+    //    [Route("doctor_post_schedule/child")]
+    //     [HttpPost]
+    //     public async Task<IActionResult> GetAndSaveWithChildId(int doctorId, int childId)
+    //     {
+    //         try
+    //         {
+    //             if (_db.PatientSchedules.Any(c => c.childId == childId ))
+    //             {
+    //                 return Ok("Schedule already exists");
+    //             }
+
+    //             var dsSchedule = _db.DoctorSchedules.Where(d => d.DoctorId == doctorId).ToList();
+
+    //             List<PattientsSchedule> patientScheduleList = new List<PattientsSchedule>();
+
+    //             foreach (var ds in dsSchedule)
+    //             {
+    //                 var doseScheduleEntry = new PattientsSchedule
+    //                 {
+    //                     Date = ds.Date,
+    //                     DoseId = ds.DoseId,
+    //                     DoctorId = doctorId,
+    //                     childId = childId , // Add the child ID to each schedule entry
+    //                     isSkip=false,
+    //                     isDone=false
+    //                 };
+
+    //                 patientScheduleList.Add(doseScheduleEntry);
+    //             }
+
+    //             _db.PatientSchedules.AddRange(patientScheduleList);
+    //             await _db.SaveChangesAsync();
+
+    //             return Ok(patientScheduleList.OrderBy(x => x.Date));
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             return StatusCode(500, ex.Message);
+    //         }
+    //     }
+    [Route("doctor_post_schedule")]
+[HttpPost]
+public async Task<IActionResult> Getnewandsave(int doctorId, int childId)
+{
+    try
+    {
+        if (_db.PatientSchedules.Any(d => d.childId == childId))
         {
-            try
-            {
-                if (_db.PatientSchedules.Any(c => c.childId == childId ))
-                {
-                    return Ok("Schedule already exists");
-                }
-
-                var dsSchedule = _db.DoctorSchedules.Where(d => d.DoctorId == doctorId).ToList();
-
-                List<PattientsSchedule> patientScheduleList = new List<PattientsSchedule>();
-
-                foreach (var ds in dsSchedule)
-                {
-                    var doseScheduleEntry = new PattientsSchedule
-                    {
-                        Date = ds.Date,
-                        DoseId = ds.DoseId,
-                        DoctorId = doctorId,
-                        childId = childId , // Add the child ID to each schedule entry
-                        isSkip=false,
-                        isDone=false
-                    };
-
-                    patientScheduleList.Add(doseScheduleEntry);
-                }
-
-                _db.PatientSchedules.AddRange(patientScheduleList);
-                await _db.SaveChangesAsync();
-
-                return Ok(patientScheduleList.OrderBy(x => x.Date));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok("Schedule already exists");
         }
+
+        var doctorsSchedule = await _db.DoctorSchedules.ToListAsync();
+
+        List<PattientsSchedule> patientScheduleList = new List<PattientsSchedule>();
+
+        foreach (var ds in doctorsSchedule)
+        {
+            var doseScheduleEntry = new PattientsSchedule
+            {
+                DoseId = ds.DoseId,
+                DoctorId = doctorId,
+                childId = childId
+            };
+
+            var child = _db.Childs.FirstOrDefault(c => c.Id == childId);
+doseScheduleEntry.Date = child != null
+    ? child.DOB.AddDays(ds.Date.Day - 1) // Adjust the date based on the child's date of birth
+    : DateTime.MinValue;
+
+            patientScheduleList.Add(doseScheduleEntry);
+        }
+
+        _db.PatientSchedules.AddRange(patientScheduleList);
+        await _db.SaveChangesAsync();
+
+        return Ok(patientScheduleList.OrderBy(x => x.Date));
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
 
         [HttpGet("patient_schedule/{childId}")]
         public ActionResult<IEnumerable<PattientsSchedule>> GetPatientSchedule(int childId)
@@ -209,10 +252,60 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
+        // [HttpGet("today")]
+        // public ActionResult<IEnumerable<PattientsSchedule>> GetPatientsWithTodayDate()
+        // {
+        //     try
+        //     {
+        //         DateTime today = DateTime.Today;
+        //         var patients = _db.PatientSchedules
+        //             .Where(p => p.Date.Date == today)
+        //             .GroupBy(p => p.childId)
+        //             .Select(g => g.First())
+        //             .ToList();
+
+        //         if (patients == null || patients.Count == 0)
+        //             return Ok("No patient is visiting");
+
+        //         return Ok(patients);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+        [HttpGet("today_alert")]
+public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
+{
+    try
+    {
+        DateTime today = DateTime.Today;
+        var childIds = _db.PatientSchedules
+            .Where(p => p.Date.Date == today)
+            .Select(p => p.childId)
+            .Distinct()
+            .ToList();
+
+        var children = _db.Childs
+            .Where(c => childIds.Contains(c.Id))
+            .ToList();
+
+        if (children == null || children.Count == 0)
+            return NotFound();
+
+        return Ok(children);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+
 
             
         
 
 
-            }
-        }
+     }
+ }

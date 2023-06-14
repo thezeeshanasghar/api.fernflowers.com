@@ -58,6 +58,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+
         // [HttpGet("name")]
         // public async Task<IActionResult> GetAll(string Name, string City, string Gender,DateTime DOB,int DoctorId)
         // {
