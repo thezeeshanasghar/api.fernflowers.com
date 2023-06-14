@@ -291,7 +291,7 @@ public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
             .ToList();
 
         if (children == null || children.Count == 0)
-            return NotFound();
+            return Ok("no one visiting today");
 
         return Ok(children);
     }
