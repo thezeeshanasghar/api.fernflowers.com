@@ -22,7 +22,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Publish --no-restore
+    - name: Publish
       run: dotnet publish --configuration Release --output ./publish
     - name: 📂 Sync files to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
