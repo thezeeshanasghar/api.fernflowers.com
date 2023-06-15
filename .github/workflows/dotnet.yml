@@ -30,9 +30,8 @@ jobs:
         server: 192.185.11.184
         username: myapi
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish/*
-        exclude: |
-         web.config
+        local-dir: ./publish/
+        
         
          
 
