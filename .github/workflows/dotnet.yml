@@ -32,5 +32,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
         exclude: |
-         api.fernflowers.com.dll
+         web.config
+         appsettings.json
 
