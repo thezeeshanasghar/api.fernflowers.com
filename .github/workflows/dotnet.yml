@@ -31,7 +31,7 @@ jobs:
         username: myapi
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
-        
+        exclude: appsetting.json    
         
          
 
