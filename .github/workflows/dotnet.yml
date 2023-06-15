@@ -32,7 +32,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
         exclude: |
-         appsettings.json
          web.config
         
          
