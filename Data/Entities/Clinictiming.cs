@@ -1,6 +1,6 @@
 ﻿namespace api.fernflowers.com.Data.Entities
 {
-    public class Clinictiming
+    public class ClinicTiming
     {
         public int Id { get; set; }
         public string Day { get; set; }

@@ -11,11 +11,11 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClinictimingController : ControllerBase
+    public class ClinicTimingController : ControllerBase
     {
         private readonly VaccineDBContext _db;
 
-        public ClinictimingController(VaccineDBContext vaccineDBContext)
+        public ClinicTimingController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -25,7 +25,7 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var clinictimings = await _db.Clinictimings.ToListAsync();
+                var clinictimings = await _db.ClinicTimings.ToListAsync();
                 return Ok(clinictimings);
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var clinictimings = await _db.Clinictimings.FindAsync(id);
+                var clinictimings = await _db.ClinicTimings.FindAsync(id);
                 if (clinictimings == null)
                     return NotFound();
                 return Ok(clinictimings);
@@ -55,11 +55,11 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                List<Clinictiming> clinictimings = new List<Clinictiming>();
+                List<ClinicTiming> clinictimings = new List<ClinicTiming>();
                 foreach (var item in data)
                 {
-                    var clinictiming = JsonConvert.DeserializeObject<Clinictiming>(item);
-                    _db.Clinictimings.Add(clinictiming);
+                    var clinictiming = JsonConvert.DeserializeObject<ClinicTiming>(item);
+                    _db.ClinicTimings.Add(clinictiming);
                 }
                 await _db.SaveChangesAsync();
                 return Ok(new { Message = "Sucessfully Added" });
@@ -71,17 +71,17 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Clinictiming clinictimingToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] ClinicTiming clinictimingToUpdate)
         {
             try
             {
                 if (id != clinictimingToUpdate.Id)
                     return BadRequest();
-                var dbClinic = await _db.Clinictimings.FindAsync(id);
+                var dbClinic = await _db.ClinicTimings.FindAsync(id);
                 if (dbClinic == null)
                     return NotFound();
 
-                _db.Clinictimings.Update(clinictimingToUpdate);
+                _db.ClinicTimings.Update(clinictimingToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -97,12 +97,12 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var clinictimeToDelete = await _db.Clinictimings.FindAsync(id);
+                var clinictimeToDelete = await _db.ClinicTimings.FindAsync(id);
                 if (clinictimeToDelete == null)
                 {
                     return NotFound();
                 }
-                _db.Clinictimings.Remove(clinictimeToDelete);
+                _db.ClinicTimings.Remove(clinictimeToDelete);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -113,11 +113,11 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<Clinictiming> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<ClinicTiming> patchDocument)
         {
             try
             {
-                var dbClinictime = await _db.Clinictimings.FindAsync(id);
+                var dbClinictime = await _db.ClinicTimings.FindAsync(id);
                 if (dbClinictime == null)
                 {
                     return NotFound();

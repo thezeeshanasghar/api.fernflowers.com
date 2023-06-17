@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace api.fernflowers.com.ModelDTO
 {
-    public class ClinictimingDTO
+    public class ClinicTimingDTO
     {
         public int? Id { get; set; }
         public string Day { get; set; }

@@ -16,7 +16,7 @@ public class VaccineDBContext : DbContext
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Clinic> Clinics { get; set; }
-    public DbSet<Clinictiming> Clinictimings { get; set; }
+    public DbSet<ClinicTiming> ClinicTimings { get; set; }
     public DbSet<DoctorsSchedule> DoctorSchedules { get; set; }
     public DbSet<BrandAmount> BrandAmounts { get; set; }
     public DbSet<BrandInventory> BrandInventories { get; set; }
@@ -55,8 +55,8 @@ public class VaccineDBContext : DbContext
 
                         }
                     ); 
-                    modelBuilder.Entity< Clinictiming >().HasData(
-                        new Clinictiming{
+                    modelBuilder.Entity< ClinicTiming >().HasData(
+                        new ClinicTiming{
                             Id=1,
                             Day="Monday",
                             Session="one",
@@ -73,7 +73,6 @@ public class VaccineDBContext : DbContext
                             Name="BCG",
                             IsSpecial=false,
                             Infinite=false
-
                         },
                         new Vaccine{
                             Id=2,

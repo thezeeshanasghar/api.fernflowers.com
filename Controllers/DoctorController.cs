@@ -70,7 +70,7 @@ namespace api.fernflowers.com.Controllers
                 var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.IsApproved == true);
                 var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
 
-                var clinictiming = _db.Clinictimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
+                var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
                 
                 DoctorDTO doctorDTO = null;
 
@@ -104,10 +104,10 @@ namespace api.fernflowers.com.Controllers
                     }
                     if (clinictiming != null)
                     {
-                        doctorDTO.Clinic.ClinicTiming = new List<ClinictimingDTO> { };
+                        doctorDTO.Clinic.ClinicTiming = new List<ClinicTimingDTO> { };
                         foreach (var ct in clinictiming)
                         {
-                            var tmp_clinictiming = new ClinictimingDTO
+                            var tmp_clinictiming = new ClinicTimingDTO
                             {
                                 Id = ct.Id,
                                 Day = ct.Day,
@@ -170,7 +170,7 @@ namespace api.fernflowers.com.Controllers
                     {
                         foreach (var ct in doctor.Clinic.ClinicTiming)
                         {
-                            var entityClinicTiming = new Clinictiming
+                            var entityClinicTiming = new ClinicTiming
                             {
                                 Day = ct.Day,
                                 Session = ct.Session,
@@ -178,7 +178,7 @@ namespace api.fernflowers.com.Controllers
                                 EndTime = ct.EndTime,
                                 ClinicId = clinicEntity.Id
                             };
-                            _db.Clinictimings.Add(entityClinicTiming);
+                            _db.ClinicTimings.Add(entityClinicTiming);
                         }
                         await _db.SaveChangesAsync();
                     }

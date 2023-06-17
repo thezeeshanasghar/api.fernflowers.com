@@ -122,7 +122,7 @@ namespace api.fernflowers.com.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Clinictimings",
+                name: "ClinicTimings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -137,7 +137,7 @@ namespace api.fernflowers.com.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clinictimings", x => x.Id);
+                    table.PrimaryKey("PK_ClinicTimings", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -270,7 +270,7 @@ namespace api.fernflowers.com.Migrations
                 values: new object[] { 1, "b17", 1, "Ali s clinic ", "3333333" });
 
             migrationBuilder.InsertData(
-                table: "Clinictimings",
+                table: "ClinicTimings",
                 columns: new[] { "Id", "ClinicId", "Day", "EndTime", "Session", "StartTime" },
                 values: new object[] { 1, 1, "Monday", new TimeSpan(0, 3, 0, 0, 0), "one", new TimeSpan(0, 2, 0, 0, 0) });
 
@@ -478,7 +478,7 @@ namespace api.fernflowers.com.Migrations
                 name: "Clinics");
 
             migrationBuilder.DropTable(
-                name: "Clinictimings");
+                name: "ClinicTimings");
 
             migrationBuilder.DropTable(
                 name: "Doctors");

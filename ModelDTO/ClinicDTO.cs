@@ -7,6 +7,6 @@ namespace api.fernflowers.com.ModelDTO
         public string Address { get; set; }
         public string Number { get; set; }
         public int? DoctorId { get; set; }
-        public List<ClinictimingDTO> ClinicTiming { get; set; }
+        public List<ClinicTimingDTO> ClinicTiming { get; set; }
     }
 }

@@ -586,7 +586,7 @@ namespace api.fernflowers.com.Migrations
                         });
                 });
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinictiming", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.ClinicTiming", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -611,7 +611,7 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clinictimings");
+                    b.ToTable("ClinicTimings");
 
                     b.HasData(
                         new
