@@ -1,4 +1,4 @@
-
+namespace api.fernflowers.com.Data.Entities;
 public class Response<T>
 {
     public T ResponseData { get; set; }

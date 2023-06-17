@@ -12,102 +12,61 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PatientSchedule : ControllerBase
+    public class PatientScheduleController : ControllerBase
     {
         private readonly VaccineDBContext _db;
 
-        public PatientSchedule(VaccineDBContext vaccineDBContext)
+        public PatientScheduleController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
 
-       
-    //    [Route("doctor_post_schedule/child")]
-    //     [HttpPost]
-    //     public async Task<IActionResult> GetAndSaveWithChildId(int doctorId, int childId)
-    //     {
-    //         try
-    //         {
-    //             if (_db.PatientSchedules.Any(c => c.childId == childId ))
-    //             {
-    //                 return Ok("Schedule already exists");
-    //             }
-
-    //             var dsSchedule = _db.DoctorSchedules.Where(d => d.DoctorId == doctorId).ToList();
-
-    //             List<PattientsSchedule> patientScheduleList = new List<PattientsSchedule>();
-
-    //             foreach (var ds in dsSchedule)
-    //             {
-    //                 var doseScheduleEntry = new PattientsSchedule
-    //                 {
-    //                     Date = ds.Date,
-    //                     DoseId = ds.DoseId,
-    //                     DoctorId = doctorId,
-    //                     childId = childId , // Add the child ID to each schedule entry
-    //                     isSkip=false,
-    //                     isDone=false
-    //                 };
-
-    //                 patientScheduleList.Add(doseScheduleEntry);
-    //             }
-
-    //             _db.PatientSchedules.AddRange(patientScheduleList);
-    //             await _db.SaveChangesAsync();
-
-    //             return Ok(patientScheduleList.OrderBy(x => x.Date));
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             return StatusCode(500, ex.Message);
-    //         }
-    //     }
-    [Route("doctor_post_schedule")]
-[HttpPost]
-public async Task<IActionResult> Getnewandsave(int doctorId, int childId)
-{
-    try
-    {
-        if (_db.PatientSchedules.Any(d => d.childId == childId))
+        [Route("doctor_post_schedule")]
+        [HttpPost]
+        public async Task<IActionResult> Getnewandsave(int doctorId, int childId)
         {
-            return Ok("Schedule already exists");
-        }
-
-        var doctorsSchedule = await _db.DoctorSchedules.ToListAsync();
-
-        List<PattientsSchedule> patientScheduleList = new List<PattientsSchedule>();
-
-        foreach (var ds in doctorsSchedule)
-        {
-            var doseScheduleEntry = new PattientsSchedule
+            try
             {
-                DoseId = ds.DoseId,
-                DoctorId = doctorId,
-                childId = childId
-            };
+                if (_db.PatientSchedules.Any(d => d.childId == childId))
+                {
+                    return Ok("Schedule already exists");
+                }
 
-            var child = _db.Childs.FirstOrDefault(c => c.Id == childId);
-doseScheduleEntry.Date = child != null
-    ? child.DOB.AddDays(ds.Date.Day - 1) // Adjust the date based on the child's date of birth
-    : DateTime.MinValue;
+                var doctorsSchedule = await _db.DoctorSchedules.ToListAsync();
 
-            patientScheduleList.Add(doseScheduleEntry);
+                List<PatientSchedule> patientScheduleList = new List<PatientSchedule>();
+
+                foreach (var ds in doctorsSchedule)
+                {
+                    var doseScheduleEntry = new PatientSchedule
+                    {
+                        DoseId = ds.DoseId,
+                        DoctorId = doctorId,
+                        childId = childId
+                    };
+
+                    var child = _db.Childs.FirstOrDefault(c => c.Id == childId);
+                    doseScheduleEntry.Date =
+                        child != null
+                            ? child.DOB.AddDays(ds.Date.Day - 1) // Adjust the date based on the child's date of birth
+                            : DateTime.MinValue;
+
+                    patientScheduleList.Add(doseScheduleEntry);
+                }
+
+                _db.PatientSchedules.AddRange(patientScheduleList);
+                await _db.SaveChangesAsync();
+
+                return Ok(patientScheduleList.OrderBy(x => x.Date));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-
-        _db.PatientSchedules.AddRange(patientScheduleList);
-        await _db.SaveChangesAsync();
-
-        return Ok(patientScheduleList.OrderBy(x => x.Date));
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message);
-    }
-}
-
 
         [HttpGet("patient_schedule/{childId}")]
-        public ActionResult<IEnumerable<PattientsSchedule>> GetPatientSchedule(int childId)
+        public ActionResult<IEnumerable<PatientSchedule>> GetPatientSchedule(int childId)
         {
             try
             {
@@ -123,101 +82,116 @@ doseScheduleEntry.Date = child != null
                 return StatusCode(500, ex.Message);
             }
         }
-         [Route("single_updateDate")]
 
+        [Route("single_updateDate")]
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] PattientsSchedule ps)
+        public async Task<IActionResult> Update([FromBody] PatientSchedule ps)
         {
-            try{
-                var dbps = await _db.PatientSchedules.Where(x=>x.DoseId==ps.DoseId).FirstOrDefaultAsync();
+            try
+            {
+                var dbps = await _db.PatientSchedules
+                    .Where(x => x.DoseId == ps.DoseId)
+                    .FirstOrDefaultAsync();
                 if (dbps == null)
                 {
                     return NotFound();
                 }
-             
+
                 dbps.Date = ps.Date;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
-                
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
-            [Route("patient_bulk_updateDone")]
-            [HttpPatch]
-            public async Task<IActionResult> PatchAsync(bool isDone,[FromBody] JsonPatchDocument<PattientsSchedule> patchDocument)
-            {
-                try{
-                    var dbPS = _db.PatientSchedules.Where(d=>d.isDone==isDone).ToList(); 
-                    if (dbPS == null)
-                    {
-                        return NotFound();
-                    }
-                    dbPS.ForEach(d => patchDocument.ApplyTo(d));
-                    await _db.SaveChangesAsync();
-                    return NoContent();
-                    
-                }
-                catch(Exception ex){
-                    return StatusCode(500,ex.Message); 
-                }
-            }
 
+        [Route("patient_bulk_updateDone")]
+        [HttpPatch]
+        public async Task<IActionResult> PatchAsync(
+            bool isDone,
+            [FromBody] JsonPatchDocument<PatientSchedule> patchDocument
+        )
+        {
+            try
+            {
+                var dbPS = _db.PatientSchedules.Where(d => d.isDone == isDone).ToList();
+                if (dbPS == null)
+                {
+                    return NotFound();
+                }
+                dbPS.ForEach(d => patchDocument.ApplyTo(d));
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [Route("single_updateDone")]
-
         [HttpPatch]
-        public async Task<IActionResult> UpdateDone([FromBody] PattientsSchedule ps)
+        public async Task<IActionResult> UpdateDone([FromBody] PatientSchedule ps)
         {
-            try{
-                var dbps = await _db.PatientSchedules.Where(x=>x.DoseId==ps.DoseId).FirstOrDefaultAsync();
+            try
+            {
+                var dbps = await _db.PatientSchedules
+                    .Where(x => x.DoseId == ps.DoseId)
+                    .FirstOrDefaultAsync();
                 if (dbps == null)
                 {
                     return NotFound();
                 }
-             
+
                 dbps.isDone = ps.isDone;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
-                
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
-        [Route("single_update_Skip")]
 
+        [Route("single_update_Skip")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateSkip([FromBody] PattientsSchedule ps)
+        public async Task<IActionResult> UpdateSkip([FromBody] PatientSchedule ps)
         {
-            try{
-                var dbps = await _db.PatientSchedules.Where(x=>x.DoseId==ps.DoseId).FirstOrDefaultAsync();
+            try
+            {
+                var dbps = await _db.PatientSchedules
+                    .Where(x => x.DoseId == ps.DoseId)
+                    .FirstOrDefaultAsync();
                 if (dbps == null)
                 {
                     return NotFound();
                 }
-             
+
                 dbps.isSkip = ps.isSkip;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
-                
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
-
 
         [Route("patient_bulk_updateDate/{date}")]
         [HttpPatch]
-         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<PattientsSchedule> patchDocument)
+        public async Task<IActionResult> PatchAsync(
+            DateTime date,
+            [FromBody] JsonPatchDocument<PatientSchedule> patchDocument
+        )
         {
-            try{
-                var dbPS = _db.PatientSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+            try
+            {
+                var dbPS = _db.PatientSchedules.Where(d => d.Date.Date == date.Date).ToList();
                 if (dbPS == null)
                 {
                     return NotFound();
@@ -225,35 +199,38 @@ doseScheduleEntry.Date = child != null
                 dbPS.ForEach(d => patchDocument.ApplyTo(d));
                 await _db.SaveChangesAsync();
                 return NoContent();
-                
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
-    
 
-    [Route("patient_bulk_update_isSkip")]
+        [Route("patient_bulk_update_isSkip")]
         [HttpPatch]
-         public async Task<IActionResult> PatchisSKip(DateTime date,[FromBody] JsonPatchDocument<PattientsSchedule> patchDocument)
+        public async Task<IActionResult> PatchisSKip(
+            DateTime date,
+            [FromBody] JsonPatchDocument<PatientSchedule> patchDocument
+        )
         {
-            try{
-                var dbPS = _db.PatientSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+            try
+            {
+                var dbPS = _db.PatientSchedules.Where(d => d.Date.Date == date.Date).ToList();
                 if (dbPS == null)
-                {
                     return NotFound();
-                }
+
                 dbPS.ForEach(d => patchDocument.ApplyTo(d));
                 await _db.SaveChangesAsync();
                 return NoContent();
-                
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
+
         // [HttpGet("today")]
-        // public ActionResult<IEnumerable<PattientsSchedule>> GetPatientsWithTodayDate()
+        // public ActionResult<IEnumerable<PatientSchedule>> GetPatientsWithTodayDate()
         // {
         //     try
         //     {
@@ -275,37 +252,28 @@ doseScheduleEntry.Date = child != null
         //     }
         // }
         [HttpGet("today_alert")]
-public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
-{
-    try
-    {
-        DateTime today = DateTime.Today;
-        var childIds = _db.PatientSchedules
-            .Where(p => p.Date.Date == today)
-            .Select(p => p.childId)
-            .Distinct()
-            .ToList();
+        public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
+        {
+            try
+            {
+                DateTime today = DateTime.Today;
+                var childIds = _db.PatientSchedules
+                    .Where(p => p.Date.Date == today)
+                    .Select(p => p.childId)
+                    .Distinct()
+                    .ToList();
 
-        var children = _db.Childs
-            .Where(c => childIds.Contains(c.Id))
-            .ToList();
+                var children = _db.Childs.Where(c => childIds.Contains(c.Id)).ToList();
 
-        if (children == null || children.Count == 0)
-            return Ok("no one visiting today");
+                if (children == null || children.Count == 0)
+                    return Ok("no one visiting today");
 
-        return Ok(children);
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message);
+                return Ok(children);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
-
-
-
-            
-        
-
-
-     }
- }

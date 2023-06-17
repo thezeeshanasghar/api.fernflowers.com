@@ -1,15 +1,15 @@
 using Newtonsoft.Json;
 
-namespace api.fernflowers.com.ModelDTO{
-
-public class DoseDTO
+namespace api.fernflowers.com.ModelDTO
 {
-    public int? Id { get; set; }
-    public string Name { get; set; }
-    public int? MinAge { get; set; }
-    public int? MinGap { get; set; }
-    public int? VaccineId { get; set; }
-   
-    public DateTime? DoseDate { get; set; }    
-}
+    public class DoseDTO
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public int? MinAge { get; set; }
+        public int? MinGap { get; set; }
+        public int? VaccineId { get; set; }
+
+        public DateTime? DoseDate { get; set; }
+    }
 }

@@ -23,7 +23,7 @@ public class VaccineDBContext : DbContext
     public DbSet<Child> Childs { get; set; }
     public DbSet<DoseSchedule> DoseSchedules { get; set; }
     public DbSet<AdminSchedule> AdminSchedules { get; set; }
-    public DbSet<PattientsSchedule> PatientSchedules { get; set; }
+    public DbSet<PatientSchedule> PatientSchedules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
