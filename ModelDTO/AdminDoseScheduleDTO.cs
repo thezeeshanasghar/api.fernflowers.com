@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace api.fernflowers.com.ModelDTO {
-    public class AdminDoseScheduleDTO
+    public class AdminScheduleDTO
     {
         public int Id { get; set; }
        

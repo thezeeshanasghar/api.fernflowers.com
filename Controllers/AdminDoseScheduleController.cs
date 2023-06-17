@@ -12,11 +12,11 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminDoseScheduleController : ControllerBase
+    public class AdminScheduleController : ControllerBase
     {
          private readonly VaccineDBContext _db;
 
-        public AdminDoseScheduleController(VaccineDBContext vaccineDBContext)
+        public AdminScheduleController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
@@ -26,11 +26,11 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                if(_db.AdminDoseSchedules.Any()){
+                if(_db.AdminSchedules.Any()){
                     return Ok("schedule already exist");
                 }
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
-                List<AdminDoseSchedule> doseScheduleList = new List<AdminDoseSchedule>();
+                List<AdminSchedule> doseScheduleList = new List<AdminSchedule>();
                 var doses = await _db.Doses.ToListAsync();
                 DateTime ? doseDate = null;
                 int ? lastVaccineId = null;
@@ -41,7 +41,7 @@ namespace api.fernflowers.com.Controllers
                         MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
-                    var doseSchedule = new AdminDoseSchedule{
+                    var doseSchedule = new AdminSchedule{
                         DoseId = dos.Id
                     };
                     if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
@@ -58,7 +58,7 @@ namespace api.fernflowers.com.Controllers
                     doseScheduleList.Add(doseSchedule);
                     lastVaccineId = dosDTo.VaccineId;                   
                 }
-                _db.AdminDoseSchedules.AddRange(doseScheduleList);
+                _db.AdminSchedules.AddRange(doseScheduleList);
                 _db.SaveChanges();
                 return Ok(doseDTOList);
             }
@@ -70,10 +70,10 @@ namespace api.fernflowers.com.Controllers
         [Route("Admin_single_updateDate")]
 
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] AdminDoseSchedule ds)
+        public async Task<IActionResult> Update([FromBody] AdminSchedule ds)
         {
             try{
-                var dbDoc = await _db.AdminDoseSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
+                var dbDoc = await _db.AdminSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
                 if (dbDoc == null)
                 {
                     return NotFound();
@@ -91,10 +91,10 @@ namespace api.fernflowers.com.Controllers
         }
         [Route("Admin_bulk_updateDate/{date}")]
         [HttpPatch]
-         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<AdminDoseSchedule> patchDocument)
+         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
         {
             try{
-                var dbDoc = _db.AdminDoseSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+                var dbDoc = _db.AdminSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
                 if (dbDoc == null)
                 {
                     return NotFound();
@@ -114,12 +114,12 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var doseSchedule =  _db.AdminDoseSchedules.ToList();
+                var doseSchedule =  _db.AdminSchedules.ToList();
                 var doseIds = doseSchedule.Select(d=> d.DoseId).ToList();
                 var doses = _db.Doses.Where(x => doseIds.Contains(x.Id));
-                List<AdminDoseScheduleDTO> dsDTOList = new List<AdminDoseScheduleDTO>();
+                List<AdminScheduleDTO> dsDTOList = new List<AdminScheduleDTO>();
                 foreach(var ds in doseSchedule){
-                    var dsDTO = new AdminDoseScheduleDTO
+                    var dsDTO = new AdminScheduleDTO
                     {
                         Id = ds.Id,
                         Date = ds.Date,

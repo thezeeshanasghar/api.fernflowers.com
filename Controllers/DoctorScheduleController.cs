@@ -48,7 +48,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     return Ok("Schedule already exist");
                 }
-                var doctorsSchedule = _db.AdminDoseSchedules.ToList();
+                var doctorsSchedule = _db.AdminSchedules.ToList();
 
                 List<DoctorsSchedule> doseScheduleList = new List<DoctorsSchedule>();
 

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace api.fernflowers.com.Data.Entities;
 
-public class AdminDoseSchedule
+public class AdminSchedule
 {
     public int Id { get; set; }
  

@@ -19,7 +19,7 @@ namespace api.fernflowers.com.Migrations
                 .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminDoseSchedule", b =>
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,7 +33,7 @@ namespace api.fernflowers.com.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdminDoseSchedules");
+                    b.ToTable("AdminSchedules");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>

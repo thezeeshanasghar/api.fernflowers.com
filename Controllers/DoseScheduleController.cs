@@ -151,7 +151,7 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var doseSchedule = _db.AdminDoseSchedules.ToList();
+                var doseSchedule = _db.AdminSchedules.ToList();
 
                 List<DoseSchedule> doseScheduleList = new List<DoseSchedule>();
 

@@ -18,7 +18,7 @@ namespace api.fernflowers.com.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AdminDoseSchedules",
+                name: "AdminSchedules",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -28,7 +28,7 @@ namespace api.fernflowers.com.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdminDoseSchedules", x => x.Id);
+                    table.PrimaryKey("PK_AdminSchedules", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -460,7 +460,7 @@ namespace api.fernflowers.com.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AdminDoseSchedules");
+                name: "AdminSchedules");
 
             migrationBuilder.DropTable(
                 name: "BrandAmounts");
