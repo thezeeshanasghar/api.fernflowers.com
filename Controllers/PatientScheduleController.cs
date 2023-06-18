@@ -27,22 +27,19 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                if (_db.PatientSchedules.Any(d => d.childId == childId))
-                {
+                if (_db.PatientSchedules.Any(d => d.ChildId == childId))
                     return Ok("Schedule already exists");
-                }
+                
 
                 var doctorsSchedule = await _db.DoctorSchedules.ToListAsync();
-
                 List<PatientSchedule> patientScheduleList = new List<PatientSchedule>();
-
                 foreach (var ds in doctorsSchedule)
                 {
                     var doseScheduleEntry = new PatientSchedule
                     {
                         DoseId = ds.DoseId,
                         DoctorId = doctorId,
-                        childId = childId
+                        ChildId = childId
                     };
 
                     var child = _db.Childs.FirstOrDefault(c => c.Id == childId);
@@ -71,7 +68,7 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 var pSchedule = _db.PatientSchedules
-                    .Where(ps => ps.childId == childId)
+                    .Where(ps => ps.ChildId == childId)
                     .OrderBy(ds => ds.Date)
                     .ToList();
 
@@ -110,14 +107,11 @@ namespace api.fernflowers.com.Controllers
 
         [Route("patient_bulk_updateDone")]
         [HttpPatch]
-        public async Task<IActionResult> PatchAsync(
-            bool isDone,
-            [FromBody] JsonPatchDocument<PatientSchedule> patchDocument
-        )
+        public async Task<IActionResult> PatchAsync(bool IsDone, [FromBody] JsonPatchDocument<PatientSchedule> patchDocument)
         {
             try
             {
-                var dbPS = _db.PatientSchedules.Where(d => d.isDone == isDone).ToList();
+                var dbPS = _db.PatientSchedules.Where(d => d.IsDone == IsDone).ToList();
                 if (dbPS == null)
                 {
                     return NotFound();
@@ -146,7 +140,7 @@ namespace api.fernflowers.com.Controllers
                     return NotFound();
                 }
 
-                dbps.isDone = ps.isDone;
+                dbps.IsDone = ps.IsDone;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
@@ -171,7 +165,7 @@ namespace api.fernflowers.com.Controllers
                     return NotFound();
                 }
 
-                dbps.isSkip = ps.isSkip;
+                dbps.IsSkip = ps.IsSkip;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
@@ -259,7 +253,7 @@ namespace api.fernflowers.com.Controllers
                 DateTime today = DateTime.Today;
                 var childIds = _db.PatientSchedules
                     .Where(p => p.Date.Date == today)
-                    .Select(p => p.childId)
+                    .Select(p => p.ChildId)
                     .Distinct()
                     .ToList();
 

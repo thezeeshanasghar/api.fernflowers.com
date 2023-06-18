@@ -84,7 +84,7 @@ namespace api.fernflowers.com.Controllers
                         Email = doctor.Email,
                         IsApproved = doctor.IsApproved,
                         IsEnabled = doctor.IsEnabled,
-                        DoctorType = doctor.DoctorType,
+                        
                         MobileNumber = doctor.MobileNumber,
                         Password = doctor.Password,
                         PMDC = doctor.PMDC,
@@ -93,18 +93,18 @@ namespace api.fernflowers.com.Controllers
 
                     if (clinic != null)
                     {
-                        doctorDTO.Clinic = new ClinicDTO
+                        doctorDTO.Clinics.Add( new ClinicDTO
                         {
                             Id = clinic.Id,
                             Address = clinic.Address,
                             Name = clinic.Name,
                             Number = clinic.Number,
                             DoctorId = clinic.DoctorId
-                        };
+                        });
                     }
                     if (clinictiming != null)
                     {
-                        doctorDTO.Clinic.ClinicTiming = new List<ClinicTimingDTO> { };
+                        doctorDTO.Clinics[0].ClinicTimings = new List<ClinicTimingDTO> { };
                         foreach (var ct in clinictiming)
                         {
                             var tmp_clinictiming = new ClinicTimingDTO
@@ -116,7 +116,7 @@ namespace api.fernflowers.com.Controllers
                                 EndTime = ct.EndTime,
                                 ClinicId = ct.ClinicId
                             };
-                            doctorDTO.Clinic.ClinicTiming.Add(tmp_clinictiming);
+                            doctorDTO.Clinics[0].ClinicTimings.Add(tmp_clinictiming);
                         }
                     }
 
@@ -142,7 +142,6 @@ namespace api.fernflowers.com.Controllers
                     Email = doctor.Email,
                     IsApproved = doctor.IsApproved,
                     IsEnabled = doctor.IsEnabled,
-                    DoctorType = doctor.DoctorType,
                     MobileNumber = doctor.MobileNumber,
                     Password = doctor.Password,
                     PMDC = doctor.PMDC,
@@ -153,22 +152,22 @@ namespace api.fernflowers.com.Controllers
                 _db.Doctors.Add(doctorEntity);
                 await _db.SaveChangesAsync();
 
-                if (doctor.Clinic != null)
+                if (doctor.Clinics != null)
                 {
                     var clinicEntity = new Clinic
                     {
-                        Address = doctor.Clinic.Address,
-                        Name = doctor.Clinic.Name,
-                        Number = doctor.Clinic.Number
+                        Address = doctor.Clinics[0].Address,
+                        Name = doctor.Clinics[0].Name,
+                        Number = doctor.Clinics[0].Number
                     };
                     clinicEntity.DoctorId = doctorEntity.Id;
                     _db.Clinics.Add(clinicEntity);
                     await _db.SaveChangesAsync();
 
 
-                    if (doctor.Clinic.ClinicTiming != null)
+                    if (doctor.Clinics[0].ClinicTimings != null)
                     {
-                        foreach (var ct in doctor.Clinic.ClinicTiming)
+                        foreach (var ct in doctor.Clinics[0].ClinicTimings)
                         {
                             var entityClinicTiming = new ClinicTiming
                             {
@@ -262,10 +261,6 @@ namespace api.fernflowers.com.Controllers
                 if (!string.IsNullOrEmpty(doc.PMDC))
                 {
                     dbDoc.PMDC = doc.PMDC;
-                }
-                if (!string.IsNullOrEmpty(doc.DoctorType))
-                {
-                    dbDoc.DoctorType = doc.DoctorType;
                 }
                 
                 await _db.SaveChangesAsync();
@@ -393,10 +388,6 @@ namespace api.fernflowers.com.Controllers
                   if (doc.IsEnabled != null)
                 {
                     dbDoc.IsEnabled = doc.IsEnabled;
-                }
-                  if (doc.DoctorType != null)
-                {
-                    dbDoc.DoctorType = doc.DoctorType;
                 }
                   if (doc.PMDC != null)
                 {

@@ -1,15 +1,16 @@
+using api.fernflowers.com.Data.Entities;
+using System.Text.Json.Serialization;
 
-using Newtonsoft.Json;
+namespace api.fernflowers.com.ModelDTO;
 
-namespace api.fernflowers.com.ModelDTO
+public class ClinicTimingDTO
 {
-    public class ClinicTimingDTO
-    {
-        public int? Id { get; set; }
-        public string Day { get; set; }
-        public string Session { get; set; }
-        public System.TimeSpan StartTime { get; set; }
-        public System.TimeSpan EndTime { get; set; }
-        public int? ClinicId { get; set; }
-    }
+    public long Id { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public DayOfWeek Day { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public Session Session { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
+    public long ClinicId { get; set; }
 }

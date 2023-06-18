@@ -17,11 +17,10 @@ public class VaccineDBContext : DbContext
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Clinic> Clinics { get; set; }
     public DbSet<ClinicTiming> ClinicTimings { get; set; }
-    public DbSet<DoctorsSchedule> DoctorSchedules { get; set; }
+    public DbSet<DoctorSchedule> DoctorSchedules { get; set; }
     public DbSet<BrandAmount> BrandAmounts { get; set; }
     public DbSet<BrandInventory> BrandInventories { get; set; }
     public DbSet<Child> Childs { get; set; }
-    public DbSet<DoseSchedule> DoseSchedules { get; set; }
     public DbSet<AdminSchedule> AdminSchedules { get; set; }
     public DbSet<PatientSchedule> PatientSchedules { get; set; }
 
@@ -38,7 +37,6 @@ public class VaccineDBContext : DbContext
                             IsApproved=true,
                             IsEnabled=true,
                             Email="ali.iiui1234@gmail.com",
-                            DoctorType="Child Specialist",
                             PMDC="a1234",
                             ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3)
 
@@ -58,8 +56,8 @@ public class VaccineDBContext : DbContext
                     modelBuilder.Entity< ClinicTiming >().HasData(
                         new ClinicTiming{
                             Id=1,
-                            Day="Monday",
-                            Session="one",
+                            Day=DayOfWeek.Monday,
+                            Session=Session.Morning,
                             StartTime=new TimeSpan(2,0,0),
                             EndTime=new TimeSpan(3,0,0),
                             ClinicId=1

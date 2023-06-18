@@ -20,6 +20,7 @@ namespace api.fernflowers.com.Controllers
         {
             _db = vaccineDBContext;
         }
+
         [HttpGet]
         [Route("/admin_post_doseSchedule")]
         public async Task<IActionResult> Get()
@@ -33,7 +34,7 @@ namespace api.fernflowers.com.Controllers
                 List<AdminSchedule> doseScheduleList = new List<AdminSchedule>();
                 var doses = await _db.Doses.ToListAsync();
                 DateTime ? doseDate = null;
-                int ? lastVaccineId = null;
+                long lastVaccineId = -1;
                 foreach(var dos in doses){
                     var dosDTo = new DoseDTO{
                         Id = dos.Id,
@@ -47,12 +48,12 @@ namespace api.fernflowers.com.Controllers
                     if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
                         doseDate = DateTime.Now;
                     }else{
-                        var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
-                        if(dateOfLastDoseOfSameVaccine!=null){
-                           doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
-                        }
+                        // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
+                        // if(dateOfLastDoseOfSameVaccine!=null){
+                        //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
+                        // }
                     }
-                    dosDTo.DoseDate = doseDate;
+                    // dosDTo.DoseDate = doseDate;
                     doseDTOList.Add(dosDTo); 
                     doseSchedule.Date = doseDate.Value;
                     doseScheduleList.Add(doseSchedule);
@@ -130,7 +131,7 @@ namespace api.fernflowers.com.Controllers
                     {
                         dsDTO.Dose = new DoseDTO {
                             Id= dose.Id,
-                            DoseDate = dsDTO.Date,
+                            // DoseDate = dsDTO.Date,
                             MinAge = dose.MinAge,
                             MinGap = dose.MinGap,
                             Name = dose.Name ,

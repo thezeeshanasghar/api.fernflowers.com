@@ -2,11 +2,28 @@
 {
     public class ClinicTiming
     {
-        public int Id { get; set; }
-        public string Day { get; set; }
-        public string Session { get; set; }
-        public System.TimeSpan StartTime { get; set; }
-        public System.TimeSpan EndTime { get; set; }
-        public int ClinicId { get; set; }
+        public long Id { get; set; }
+        public DayOfWeek Day { get; set; }
+        public Session Session { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public long ClinicId { get; set; }
     }
+}
+
+public enum DayOfWeek
+{
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
+}
+
+public enum Session
+{
+    Morning,
+    Evening
 }

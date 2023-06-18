@@ -29,7 +29,7 @@ namespace api.fernflowers.com.Controllers
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
                 var doses = await _db.Doses.ToListAsync();
                 DateTime ? doseDate = null;
-                int ? lastVaccineId = null;
+                long lastVaccineId = -1;
                 foreach(var dos in doses){
                     var dosDTo = new DoseDTO{
                         Id = dos.Id,
@@ -41,12 +41,12 @@ namespace api.fernflowers.com.Controllers
                     if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
                         doseDate = DateTime.Now;
                     }else{
-                        var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
-                        if(dateOfLastDoseOfSameVaccine!=null){
-                           doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
-                        }
+                        // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
+                        // if(dateOfLastDoseOfSameVaccine!=null){
+                        //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
+                        // }
                     }
-                    dosDTo.DoseDate = doseDate;
+                    // dosDTo.DoseDate = doseDate;
                     doseDTOList.Add(dosDTo); 
                    
                     lastVaccineId = dosDTo.VaccineId;                   
@@ -67,10 +67,10 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
-                List<DoseSchedule> doseScheduleList = new List<DoseSchedule>();
+                List<AdminSchedule> doseScheduleList = new List<AdminSchedule>();
                 var doses = await _db.Doses.ToListAsync();
                 DateTime ? doseDate = null;
-                int ? lastVaccineId = null;
+                long lastVaccineId = -1;
                 foreach(var dos in doses){
                     var dosDTo = new DoseDTO{
                         Id = dos.Id,
@@ -78,24 +78,24 @@ namespace api.fernflowers.com.Controllers
                         MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
-                    var doseSchedule = new DoseSchedule{
+                    var doseSchedule = new AdminSchedule{
                         DoseId = dos.Id
                     };
                     if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
                         doseDate = DateTime.Now;
                     }else{
-                        var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
-                        if(dateOfLastDoseOfSameVaccine!=null){
-                           doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
-                        }
+                        // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
+                        // if(dateOfLastDoseOfSameVaccine!=null){
+                        //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
+                        // }
                     }
-                    dosDTo.DoseDate = doseDate;
+                    // dosDTo.DoseDate = doseDate;
                     doseDTOList.Add(dosDTo); 
                     doseSchedule.Date = doseDate.Value;
                     doseScheduleList.Add(doseSchedule);
                     lastVaccineId = dosDTo.VaccineId;                   
                 }
-                _db.DoseSchedules.AddRange(doseScheduleList);
+                _db.AdminSchedules.AddRange(doseScheduleList);
                 _db.SaveChanges();
                 return Ok(doseDTOList);
             }

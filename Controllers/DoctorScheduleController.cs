@@ -12,17 +12,17 @@ namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorSchedule : ControllerBase
+    public class DoctorScheduleController : ControllerBase
     {
         private readonly VaccineDBContext _db;
 
-        public DoctorSchedule(VaccineDBContext vaccineDBContext)
+        public DoctorScheduleController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
         }
 
         [HttpGet("doctor_schedule/{doctorId}")]
-        public ActionResult<IEnumerable<DoctorsSchedule>> GetDoctorSchedule(int doctorId)
+        public ActionResult<IEnumerable<DoctorSchedule>> GetDoctorSchedule(int doctorId)
         {
             try
             {
@@ -50,11 +50,11 @@ namespace api.fernflowers.com.Controllers
                 }
                 var doctorsSchedule = _db.AdminSchedules.ToList();
 
-                List<DoctorsSchedule> doseScheduleList = new List<DoctorsSchedule>();
+                List<DoctorSchedule> doseScheduleList = new List<DoctorSchedule>();
 
                 foreach (var ds in doctorsSchedule)
                 {
-                    var doseScheduleEntry = new DoctorsSchedule
+                    var doseScheduleEntry = new DoctorSchedule
                     {
                         Date = ds.Date,
                         DoseId = ds.DoseId,
@@ -78,7 +78,7 @@ namespace api.fernflowers.com.Controllers
         [Route("single_updateDate")]
 
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] DoctorsSchedule ds)
+        public async Task<IActionResult> Update([FromBody] DoctorSchedule ds)
         {
             try{
                 var dbDoc = await _db.DoctorSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
@@ -99,7 +99,7 @@ namespace api.fernflowers.com.Controllers
         }
         [Route("doctor_bulk_updateDate/{date}")]
         [HttpPatch]
-         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoctorsSchedule> patchDocument)
+         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoctorSchedule> patchDocument)
         {
             try{
                 var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 

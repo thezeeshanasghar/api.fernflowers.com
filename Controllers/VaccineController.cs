@@ -90,18 +90,7 @@ namespace api.fernflowers.com.Controllers
             {
 
                 var vaccines = await _db.Vaccines.ToListAsync();
-                List<VaccineWithCountDTO> listDTO = new List<VaccineWithCountDTO>();
-                foreach (var item in vaccines)
-                {
-                    listDTO
-                        .Add(new VaccineWithCountDTO
-                        {
-                            vaccine = item,
-                            DoseCount = _db.Doses.Where(x => x.VaccineId == item.Id).Count(),
-                            BrandCount = _db.Brands.Where(x => x.VaccineId == item.Id).Count()
-                        });
-                }
-                return Ok(listDTO);
+                return Ok(vaccines);
             }
             catch (Exception ex)
             {
@@ -154,8 +143,6 @@ namespace api.fernflowers.com.Controllers
         public async Task<IActionResult> Updatenew(int id, VaccineDTO vaccineDTO)
         {
             var dbVaccine = _db.Vaccines.Where(x => x.Id == id).FirstOrDefault();
-            //VaccineDTO vaccineDTOs = _mapper.Map<VaccineDTO>(dbVaccine);
-            //  dbVaccine = Mapper.Map<VaccineDTO, Vaccine>(vaccineDTO, dbVaccine);
             dbVaccine.Name = vaccineDTO.Name;
             dbVaccine.Infinite = vaccineDTO.Infinite;
             dbVaccine.IsSpecial = vaccineDTO.IsSpecial;
