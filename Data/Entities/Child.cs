@@ -4,7 +4,7 @@ namespace api.fernflowers.com.Data.Entities;
 
 public class Child
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; }
     public string FatherName { get; set; }
     public string Email { get; set; }

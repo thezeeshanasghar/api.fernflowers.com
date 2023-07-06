@@ -18,38 +18,32 @@ namespace api.fernflowers.com.Controllers
         {
             _db = vaccineDBContext;
         }
-        [HttpGet]
-        [Route("/BrandName")]
-        public async Task<ActionResult<IEnumerable<string>>> Getname()
-        {
-            try
-            {
-                var brandamount = await _db.Brands.ToListAsync();
-                return Ok(brandamount);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+
+        // [HttpGet]
+        // [Route("/BrandName")]
+        // public async Task<ActionResult<IEnumerable<string>>> Getname()
+        // {
+        //     try
+        //     {
+        //         var brandamount = await _db.Brands.ToListAsync();
+        //         return Ok(brandamount);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
         [HttpGet("brand_name/{vaccineId}")]
-        
-        public IActionResult GetBrandName(int vaccineId)
+        public IActionResult GetBrandName(long vaccineId)
         {
-            {
                 var brand = _db.Brands.Where(b => b.VaccineId == vaccineId).ToList();
                 if (brand == null)
-                {
                     return NotFound();
-                }
                 return Ok(brand);
-            }
         }
 
         [HttpGet]
-
-
         public async Task<IActionResult> GetAll()
         {
             try
@@ -65,7 +59,7 @@ namespace api.fernflowers.com.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -96,7 +90,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Brand brandToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Brand brandToUpdate)
         {
             try
             {
@@ -118,7 +112,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {

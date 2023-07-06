@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
 using api.fernflowers.com.ModelDTO;
-
+using AutoMapper;
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -12,12 +12,12 @@ namespace api.fernflowers.com.Controllers
     public class VaccineController : ControllerBase
     {
         private readonly VaccineDBContext _db;
-
-        public VaccineController(VaccineDBContext vaccineDBContext)
+        private readonly IMapper _mapper;
+        public VaccineController(VaccineDBContext vaccineDBContext, IMapper mapper)
         {
             _db = vaccineDBContext;
+            _mapper = mapper;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -30,15 +30,13 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
         {
             try
             {
                 var vaccine = await _db.Vaccines.FindAsync(id);
-                if (vaccine == null)
-                    return NotFound();
+                if (vaccine == null) return NotFound();
                 return Ok(vaccine);
             }
             catch (Exception ex)
@@ -46,7 +44,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Vaccine vaccine)
         {
@@ -61,17 +58,14 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Vaccine vaccineToUpdate)
         {
             try
             {
-                if (id != vaccineToUpdate.Id)
-                    return BadRequest();
+                if (id != vaccineToUpdate.Id) return BadRequest();
                 var dbVaccine = await _db.Vaccines.FindAsync(id);
-                if (dbVaccine == null)
-                    return NotFound();
+                if (dbVaccine == null) return NotFound();
                 _db.Vaccines.Update(vaccineToUpdate);
                 await _db.SaveChangesAsync();
                 return NoContent();
@@ -81,37 +75,16 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        [HttpGet]
-        [Route("vaccine-with-count")]
-        public async Task<IActionResult> GetVaccineWithCounts()
-        {
-            try
-            {
-
-                var vaccines = await _db.Vaccines.ToListAsync();
-                return Ok(vaccines);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-
-        }
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
         {
             try
             {
                 var dbVaccine = await _db.Vaccines.FindAsync(vaccine.Id);
-                if (dbVaccine == null)
-                {
-                    return NotFound();
-                }
-
+                if (dbVaccine == null) return NotFound();
                 dbVaccine.Name = vaccine.Name;
-
+                dbVaccine.Infinite = vaccine.Infinite;
+                dbVaccine.IsSpecial = vaccine.IsSpecial;
                 _db.Entry(dbVaccine).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
@@ -121,34 +94,40 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-
+        public async Task<IActionResult> Delete(long id)
         {
-            //try {
-            var dbVaccine = _db.Vaccines.Include(X => X.Doses).Include(x => x.Brands).Where(x => x.Id == id).FirstOrDefault();
-            if (dbVaccine.Brands.Count > 0)
-                return StatusCode(500, "Cannot delete Vaccine. Delete the brands of this vaccine first.");
-            else if (dbVaccine.Doses.Count > 0)
-                return StatusCode(500, "Cannot delete Vaccine. Delete the doses of this vaccine first.");
+            var dbVaccine = await _db.Vaccines.Include(X => X.Doses).Include(x => x.Brands).Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (dbVaccine == null) return NotFound();
+            if (dbVaccine.Brands.Count > 0) return StatusCode(500, "Cannot delete Vaccine. Delete the brands of this vaccine first.");
+            else if (dbVaccine.Doses.Count > 0) return StatusCode(500, "Cannot delete Vaccine. Delete the doses of this vaccine first.");
             _db.Vaccines.Remove(dbVaccine);
             _db.SaveChanges();
             return NoContent();
         }
-        
-        [HttpPatch()]
-        
-
-        public async Task<IActionResult> Updatenew(int id, VaccineDTO vaccineDTO)
+        [HttpGet("{id}/brands")]
+        public async Task<IActionResult> GetBrands(long id)
         {
-            var dbVaccine = _db.Vaccines.Where(x => x.Id == id).FirstOrDefault();
-            dbVaccine.Name = vaccineDTO.Name;
-            dbVaccine.Infinite = vaccineDTO.Infinite;
-            dbVaccine.IsSpecial = vaccineDTO.IsSpecial;
-            _db.SaveChanges();
-            return Ok();
-
+            var dbvaccine = await _db.Vaccines.Include(x => x.Brands).FirstOrDefaultAsync(x => x.Id == id);
+            if (dbvaccine == null) return NotFound();
+            else
+            {
+                var dbBrands = dbvaccine.Brands;
+                var brandDTOs = _mapper.Map<List<BrandDTO>>(dbBrands);
+                return Ok(brandDTOs);
+            }
+        }
+        [HttpGet("{id}/doses")]
+        public async Task<IActionResult> GetDoses(long id)
+        {
+            var dbvaccine = await _db.Vaccines.Include(x => x.Doses).FirstOrDefaultAsync(x => x.Id == id);
+            if (dbvaccine == null) return NotFound();
+            else
+            {
+                var dbDoses = dbvaccine.Doses;
+                var dosesDTOs = _mapper.Map<List<DoseDTO>>(dbDoses);
+                return Ok(dosesDTOs);
+            }
         }
     }
 }

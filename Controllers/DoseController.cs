@@ -28,30 +28,26 @@ namespace api.fernflowers.com.Controllers
             {
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
                 var doses = await _db.Doses.ToListAsync();
-                DateTime ? doseDate = null;
+                DateTime? doseDate = null;
                 long lastVaccineId = -1;
-                foreach(var dos in doses){
-                    var dosDTo = new DoseDTO{
+                foreach (var dos in doses)
+                {
+                    var dosDTo = new DoseDTO
+                    {
                         Id = dos.Id,
                         Name = dos.Name,
                         MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
-                  
-                    if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
+
+                    if (doseDate == null || (dosDTo.VaccineId != lastVaccineId))
+                    {
                         doseDate = DateTime.Now;
-                    }else{
-                        // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
-                        // if(dateOfLastDoseOfSameVaccine!=null){
-                        //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
-                        // }
                     }
-                    // dosDTo.DoseDate = doseDate;
-                    doseDTOList.Add(dosDTo); 
-                   
-                    lastVaccineId = dosDTo.VaccineId;                   
+                    doseDTOList.Add(dosDTo);
+                    lastVaccineId = dosDTo.VaccineId;
                 }
-              
+
                 return Ok(doseDTOList);
             }
             catch (Exception ex)
@@ -69,31 +65,37 @@ namespace api.fernflowers.com.Controllers
                 List<DoseDTO> doseDTOList = new List<DoseDTO>();
                 List<AdminSchedule> doseScheduleList = new List<AdminSchedule>();
                 var doses = await _db.Doses.ToListAsync();
-                DateTime ? doseDate = null;
+                DateTime? doseDate = null;
                 long lastVaccineId = -1;
-                foreach(var dos in doses){
-                    var dosDTo = new DoseDTO{
+                foreach (var dos in doses)
+                {
+                    var dosDTo = new DoseDTO
+                    {
                         Id = dos.Id,
                         Name = dos.Name,
                         MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
-                    var doseSchedule = new AdminSchedule{
+                    var doseSchedule = new AdminSchedule
+                    {
                         DoseId = dos.Id
                     };
-                    if(doseDate == null || (dosDTo.VaccineId != lastVaccineId)){
+                    if (doseDate == null || (dosDTo.VaccineId != lastVaccineId))
+                    {
                         doseDate = DateTime.Now;
-                    }else{
+                    }
+                    else
+                    {
                         // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
                         // if(dateOfLastDoseOfSameVaccine!=null){
                         //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
                         // }
                     }
                     // dosDTo.DoseDate = doseDate;
-                    doseDTOList.Add(dosDTo); 
+                    doseDTOList.Add(dosDTo);
                     doseSchedule.Date = doseDate.Value;
                     doseScheduleList.Add(doseSchedule);
-                    lastVaccineId = dosDTo.VaccineId;                   
+                    lastVaccineId = dosDTo.VaccineId;
                 }
                 _db.AdminSchedules.AddRange(doseScheduleList);
                 _db.SaveChanges();
@@ -104,6 +106,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] int id)
@@ -120,30 +123,19 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("dose_name/{vaccineId}")]
-        public  async Task<IActionResult>GetDoseName(int vaccineId)
-        {
-            {
-                var dose = _db.Doses.Where(b => b.VaccineId == vaccineId).ToList();
-                if (dose == null)
-                {
-                    return NotFound();
-                }
-                return Ok(dose);
-            }
-        }
 
-        
         [HttpGet]
-         [Route("/alldoses")]
-         public async Task<IActionResult> GetAllc()
+        [Route("/alldoses")]
+        public async Task<IActionResult> GetAllc()
         {
-            try{
+            try
+            {
                 var doses = await _db.Doses.ToListAsync();
                 return Ok(doses);
             }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -186,7 +178,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -245,6 +237,5 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }

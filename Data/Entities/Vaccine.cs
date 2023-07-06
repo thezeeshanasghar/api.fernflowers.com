@@ -10,7 +10,7 @@ public class Vaccine
         this.Doses = new HashSet<Dose>();
     }
 
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; }
     public bool IsSpecial { get; set; }
     public bool Infinite { get; set; }
