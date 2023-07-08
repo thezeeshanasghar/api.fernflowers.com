@@ -5,6 +5,7 @@ using api.fernflowers.com.Data;
 using api.fernflowers.com.Data.Entities;
 using api.fernflowers.com.ModelDTO;
 using AutoMapper;
+
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -18,6 +19,7 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
             _mapper = mapper;
         }
+        
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
