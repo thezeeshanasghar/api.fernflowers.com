@@ -255,7 +255,7 @@ public class VaccineDBContext : DbContext
                             Id=1,
                             Name="BCG",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=1
 
                         },
@@ -263,7 +263,7 @@ public class VaccineDBContext : DbContext
                             Id=2,
                             Name="OPV # 1",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=2
 
                         },
@@ -271,7 +271,7 @@ public class VaccineDBContext : DbContext
                             Id=3,
                             Name="HBV",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=3
 
                         },
@@ -279,7 +279,7 @@ public class VaccineDBContext : DbContext
                             Id=4,
                             Name="Hep B 1",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=4
 
                         },
@@ -287,7 +287,7 @@ public class VaccineDBContext : DbContext
                             Id=5,
                             Name="Hep B 2",
                             MinAge=28,
-                            MinGap=28,
+                            
                             VaccineId=4
 
                         },
@@ -295,7 +295,7 @@ public class VaccineDBContext : DbContext
                             Id=6,
                             Name="Hep B 3",
                             MinAge=168,
-                            MinGap=140,
+                            
                             VaccineId=4
 
                         },
@@ -304,7 +304,7 @@ public class VaccineDBContext : DbContext
                             Id=7,
                             Name="Pre-Exp Rabies-1",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=5
 
                         },
@@ -312,7 +312,6 @@ public class VaccineDBContext : DbContext
                             Id=8,
                             Name="Pre-Exp Rabies-2",
                             MinAge=1,
-                            MinGap=1,
                             VaccineId=5
 
                         },
@@ -320,7 +319,6 @@ public class VaccineDBContext : DbContext
                             Id=9,
                             Name="Pre-Exp Rabies-3",
                             MinAge=28,
-                            MinGap=21,
                             VaccineId=5
 
                         },
@@ -328,7 +326,7 @@ public class VaccineDBContext : DbContext
                             Id=10,
                             Name="RABIES#1",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=6
 
                         },
@@ -336,7 +334,6 @@ public class VaccineDBContext : DbContext
                             Id=11,
                             Name="RABIES#2",
                             MinAge=4,
-                            MinGap=3,
                             VaccineId=6
 
                         },
@@ -344,7 +341,6 @@ public class VaccineDBContext : DbContext
                             Id=12,
                             Name="RABIES#3",
                             MinAge=8,
-                            MinGap=4,
                             VaccineId=6
 
                         },
@@ -352,7 +348,6 @@ public class VaccineDBContext : DbContext
                             Id=13,
                             Name="RABIES#4",
                             MinAge=28,
-                            MinGap=21,
                             VaccineId=6
 
                         },
@@ -360,7 +355,7 @@ public class VaccineDBContext : DbContext
                             Id=14,
                             Name="Tetanus",
                             MinAge=0,
-                            MinGap=0,
+                            
                             VaccineId=7
 
                         },
@@ -368,7 +363,7 @@ public class VaccineDBContext : DbContext
                             Id=15,
                             Name="Rota Virus GE # 1",
                             MinAge=42,
-                            MinGap=0,
+                            
                             VaccineId=8
 
                         },
@@ -376,7 +371,7 @@ public class VaccineDBContext : DbContext
                             Id=16,
                             Name="Rota Virus GE # 2",
                             MinAge=70,
-                            MinGap=28,
+                            
                             VaccineId=8
 
                         },
@@ -384,7 +379,7 @@ public class VaccineDBContext : DbContext
                             Id=17,
                             Name="Rota Virus GE # 3",
                             MinAge=98,
-                            MinGap=28,
+                            
                             VaccineId=8
 
                         },
@@ -392,7 +387,7 @@ public class VaccineDBContext : DbContext
                             Id=18,
                             Name="OPV/IPV+HBV+DPT+Hib # 1",
                             MinAge=42,
-                            MinGap=0,
+                            
                             VaccineId=9
 
                         },
@@ -400,7 +395,7 @@ public class VaccineDBContext : DbContext
                             Id=19,
                             Name="OPV/IPV+HBV+DPT+Hib # 2",
                             MinAge=70,
-                            MinGap=28,
+                            
                             VaccineId=9
 
                         },
@@ -408,7 +403,7 @@ public class VaccineDBContext : DbContext
                             Id=20,
                             Name="OPV/IPV+HBV+DPT+Hib # 3",
                             MinAge=98,
-                            MinGap=28,
+                            
                             VaccineId=9
 
                         },
@@ -416,7 +411,6 @@ public class VaccineDBContext : DbContext
                             Id=21,
                             Name="OPV/IPV+HBV+DPT+Hib # 4",
                             MinAge=365,
-                            MinGap=168,
                             VaccineId=9
 
                         },
@@ -424,7 +418,7 @@ public class VaccineDBContext : DbContext
                             Id=22,
                             Name="Pneumococcal # 1",
                             MinAge=42,
-                            MinGap=0,
+                            
                             VaccineId=10
 
                         },
@@ -432,7 +426,7 @@ public class VaccineDBContext : DbContext
                             Id=23,
                             Name="Pneumococcal # 2",
                             MinAge=70,
-                            MinGap=28,
+                            
                             VaccineId=10
 
                         },
@@ -440,7 +434,7 @@ public class VaccineDBContext : DbContext
                             Id=24,
                             Name="Pneumococcal # 3",
                             MinAge=98,
-                            MinGap=28,
+                            
                             VaccineId=10
 
                         },
@@ -448,7 +442,6 @@ public class VaccineDBContext : DbContext
                             Id=25,
                             Name="Pneumococcal # 4",
                             MinAge=365,
-                            MinGap=168,
                             VaccineId=10
 
                         },
@@ -456,7 +449,7 @@ public class VaccineDBContext : DbContext
                             Id=26,
                             Name="HBV+DPT+Hib # 1",
                             MinAge=42,
-                            MinGap=0,
+                            
                             VaccineId=11
 
                         },
@@ -464,7 +457,7 @@ public class VaccineDBContext : DbContext
                             Id=27,
                             Name="HBV+DPT+Hib # 2",
                             MinAge=70,
-                            MinGap=28,
+                            
                             VaccineId=11
 
                         },
@@ -472,7 +465,7 @@ public class VaccineDBContext : DbContext
                             Id=28,
                             Name="HBV+DPT+Hib # 3",
                             MinAge=98,
-                            MinGap=28,
+                            
                             VaccineId=11
 
                         },
@@ -480,7 +473,7 @@ public class VaccineDBContext : DbContext
                             Id=29,
                             Name="MenB Vaccine # 1",
                             MinAge=56,
-                            MinGap=0,
+                            
                             VaccineId=12
 
                         },
@@ -488,7 +481,6 @@ public class VaccineDBContext : DbContext
                             Id=30,
                             Name="MenB Vaccine # 2",
                             MinAge=112,
-                            MinGap=56,
                             VaccineId=12
 
                         },
@@ -496,7 +488,7 @@ public class VaccineDBContext : DbContext
                             Id=31,
                             Name="Flu",
                             MinAge=168,
-                            MinGap=0,
+                            
                             VaccineId=13
 
                         },
@@ -504,7 +496,7 @@ public class VaccineDBContext : DbContext
                             Id=32,
                             Name="MEASLES # 1",
                             MinAge=168,
-                            MinGap=0,
+                            
                             VaccineId=14
 
                         },
@@ -512,7 +504,7 @@ public class VaccineDBContext : DbContext
                             Id=33,
                             Name="MEASLES # 2",
                             MinAge=365,
-                            MinGap=168,
+                            
                             VaccineId=14
 
                         },
@@ -520,7 +512,7 @@ public class VaccineDBContext : DbContext
                             Id=34,
                             Name="MenACWY # 1",
                             MinAge=274,
-                            MinGap=0,
+                            
                             VaccineId=15
 
                         },
@@ -528,7 +520,6 @@ public class VaccineDBContext : DbContext
                             Id=35,
                             Name="MenACWY # 2",
                             MinAge=365,
-                            MinGap=84,
                             VaccineId=15
 
                         },
@@ -536,7 +527,7 @@ public class VaccineDBContext : DbContext
                             Id=36,
                             Name="Yellow Fever # 1",
                             MinAge=274,
-                            MinGap=0,
+                            
                             VaccineId=16
 
                         },
@@ -544,7 +535,7 @@ public class VaccineDBContext : DbContext
                             Id=37,
                             Name="Typhoid",
                             MinAge=274,
-                            MinGap=0,
+                            
                             VaccineId=17
 
                         },
@@ -552,7 +543,7 @@ public class VaccineDBContext : DbContext
                             Id=38,
                             Name="MR#1",
                             MinAge=274,
-                            MinGap=0,
+                            
                             VaccineId=18
 
                         },
@@ -560,7 +551,6 @@ public class VaccineDBContext : DbContext
                             Id=39,
                             Name="MR#2",
                             MinAge=365,
-                            MinGap=84,
                             VaccineId=18
 
                         },
@@ -568,7 +558,7 @@ public class VaccineDBContext : DbContext
                             Id=40,
                             Name="Chicken Pox # 1",
                             MinAge=365,
-                            MinGap=0,
+                            
                             VaccineId=19
 
                         },
@@ -576,7 +566,6 @@ public class VaccineDBContext : DbContext
                             Id=41,
                             Name="Chicken Pox # 2",
                             MinAge=456,
-                            MinGap=84,
                             VaccineId=19
 
                         },
@@ -584,7 +573,7 @@ public class VaccineDBContext : DbContext
                             Id=42,
                             Name="Chicken Pox # 3",
                             MinAge=547,
-                            MinGap=0,
+                            
                             VaccineId=19
 
                         },
@@ -592,7 +581,7 @@ public class VaccineDBContext : DbContext
                             Id=43,
                             Name="MMR # 1",
                             MinAge=365,
-                            MinGap=0,
+                            
                             VaccineId=20
 
                         },
@@ -600,7 +589,7 @@ public class VaccineDBContext : DbContext
                             Id=44,
                             Name="MMR # 2",
                             MinAge=547,
-                            MinGap=168,
+                            
                             VaccineId=20
 
                         },
@@ -608,7 +597,7 @@ public class VaccineDBContext : DbContext
                             Id=45,
                             Name="MMR # 3",
                             MinAge=4745,
-                            MinGap=0,
+                            
                             VaccineId=20
 
                         },
@@ -616,7 +605,7 @@ public class VaccineDBContext : DbContext
                             Id=46,
                             Name="MMR # 4",
                             MinAge=730,
-                            MinGap=0,
+                            
                             VaccineId=20
 
                         },
@@ -624,7 +613,7 @@ public class VaccineDBContext : DbContext
                             Id=47,
                             Name="Hepatitis A #1",
                             MinAge=365,
-                            MinGap=0,
+                            
                             VaccineId=21
 
                         },
@@ -632,7 +621,7 @@ public class VaccineDBContext : DbContext
                             Id=48,
                             Name="Hepatitis A #2",
                             MinAge=547,
-                            MinGap=168,
+                            
                             VaccineId=21
 
                         },
@@ -640,7 +629,7 @@ public class VaccineDBContext : DbContext
                             Id=49,
                             Name="PPSV/PCV",
                             MinAge=730,
-                            MinGap=0,
+                            
                             VaccineId=22
 
                         },
@@ -648,7 +637,7 @@ public class VaccineDBContext : DbContext
                             Id=50,
                             Name="DTaP # 1",
                             MinAge=1825,
-                            MinGap=0,
+                            
                             VaccineId=23
 
                         },
@@ -656,7 +645,7 @@ public class VaccineDBContext : DbContext
                             Id=51,
                             Name="DTaP # 2",
                             MinAge=3650,
-                            MinGap=1825,
+                            
                             VaccineId=23
 
                         },
@@ -664,7 +653,7 @@ public class VaccineDBContext : DbContext
                             Id=52,
                             Name="HPV # 1",
                             MinAge=3285,
-                            MinGap=0,
+                            
                             VaccineId=25
 
                         },
@@ -672,7 +661,7 @@ public class VaccineDBContext : DbContext
                             Id=53,
                             Name="HPV # 2",
                             MinAge=3315,
-                            MinGap=28,
+                            
                             VaccineId=25
 
                         },
@@ -680,7 +669,7 @@ public class VaccineDBContext : DbContext
                             Id=54,
                             Name="Dengue Fever #1",
                             MinAge=3650,
-                            MinGap=0,
+                            
                             VaccineId=26
 
                         },
@@ -688,7 +677,7 @@ public class VaccineDBContext : DbContext
                             Id=55,
                             Name="Dengue Fever #2",
                             MinAge=3833,
-                            MinGap=168,
+                            
                             VaccineId=26
 
                         }

@@ -36,7 +36,6 @@ namespace api.fernflowers.com.Controllers
                     {
                         Id = dos.Id,
                         Name = dos.Name,
-                        MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
 
@@ -73,7 +72,6 @@ namespace api.fernflowers.com.Controllers
                     {
                         Id = dos.Id,
                         Name = dos.Name,
-                        MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
                     var doseSchedule = new AdminSchedule
@@ -225,7 +223,6 @@ namespace api.fernflowers.com.Controllers
                 {
                     return NotFound();
                 }
-                dbDose.MinGap = ds.MinGap;
                 dbDose.Name = ds.Name;
                 dbDose.MinAge = ds.MinAge;
                 _db.Entry(dbDose).State = EntityState.Modified;

@@ -43,7 +43,6 @@ namespace api.fernflowers.com.Controllers
                     {
                         Id = dos.Id,
                         Name = dos.Name,
-                        MinGap = dos.MinGap,
                         VaccineId = dos.VaccineId
                     };
                     var doseSchedule = new AdminSchedule
