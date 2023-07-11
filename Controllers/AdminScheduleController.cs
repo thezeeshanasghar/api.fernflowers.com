@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-
+using System.Globalization;
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -176,74 +176,198 @@ public IActionResult Get()
             }
         }
 
-        [Route("Admin_bulk_updateDate/{date}")]
-        [HttpPatch]
-        public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
-        {
-            try
-            {
-                var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
-                if (dbDoc == null)
-                {
-                    return NotFound();
-                }
-                dbDoc.ForEach(d => patchDocument.ApplyTo(d));
-                await _db.SaveChangesAsync();
-                return NoContent();
+        // [Route("Admin_bulk_updateDate/{date}")]
+        // [HttpPatch]
+        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        // {
+        //     try
+        //     {
+        //         // var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
+        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
+        //         if (dbDoc == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         foreach (var doc in dbDoc)
+        //         {
+        //             var patchedDoc = new AdminSchedule();
+        //             patchDocument.ApplyTo(patchedDoc);
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+        //             // Update the Date property with the patched date
+        //             doc.Date = patchedDoc.Date;
+        //         }
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+//      [Route("Admin_bulk_updateDate/{date}")]
+// [HttpPatch]
+// public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] DateTime newDate)
+// {
+//     try
+//     {
+//         var targetDate = System.DateOnly.FromDateTime(date);
+//         var targetNewDate = System.DateOnly.FromDateTime(newDate);
+
+//         var dbDocs = _db.AdminSchedules.Where(d => d.Date == targetDate).ToList();
+//         if (dbDocs == null)
+//         {
+//             return NotFound();
+//         }
+
+//         foreach (var doc in dbDocs)
+//         {
+//             doc.Date = targetNewDate;
+//         }
+
+//         await _db.SaveChangesAsync();
+//         return NoContent();
+//     }
+//     catch (Exception ex)
+//     {
+//         return StatusCode(500, ex.Message);
+//     }
+// }
+
+[Route("Admin_bulk_updateDate/{date}")]
+[HttpPatch]
+public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+{
+    try
+    {
+        var dbDoc = _db.AdminSchedules.Where(d => d.Date == DateOnly.FromDateTime(date.Date)).ToList();
+        if (dbDoc == null)
+        {
+            return NotFound();
         }
+        dbDoc.ForEach(d => patchDocument.ApplyTo(d));
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+
+
+
+        // [HttpGet]
+        // [Route("new")]
+        // public async Task<IActionResult> GetNew()
+        // {
+        //     try
+        //     {
+        //         var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+        //         Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+                
+        //         var today = DateOnly.FromDateTime(DateTime.Now);
+        //         foreach (var dos in doses)
+        //         {
+        //             var newDate = today.AddDays(dos.MinAge);
+        //             var dto = _mapper.Map<DoseDTO> (dos);
+        //             if (dict.ContainsKey(newDate))
+        //                 dict[newDate].Add(dto);
+        //             else
+        //                 dict.Add(newDate, new List<DoseDTO>() { dto });
+
+
+        //             if (!_db.AdminSchedules.Any())
+        //             {
+        //                 // Save AdminSchedule, {date, dose_id} to update
+        //                 var adminSchedule = new AdminSchedule
+        //                 {
+        //                     Date = newDate,
+        //                     DoseId = dos.Id
+        //                 };
+        //                 _db.AdminSchedules.Add(adminSchedule);
+        //             }
+        //         }
+        //         if (!_db.AdminSchedules.Any())
+
+        //             await _db.SaveChangesAsync();
+
+
+            
+            
+        //         // save AdminSchedule, {date,dose_id} to update
+
+        //         // get 
+        //         return Ok(dict);
+                
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+
 
         [HttpGet]
-        [Route("new")]
-        public async Task<IActionResult> GetNew()
+[Route("new")]
+public async Task<IActionResult> GetNew()
+{
+    try
+    {
+        Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+        if (!_db.AdminSchedules.Any())
         {
-            try
+            var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            foreach (var dos in doses)
             {
-                var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
-                Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
-                
-                var today = DateOnly.FromDateTime(DateTime.Now);
-                foreach (var dos in doses)
+                var newDate = today.AddDays(dos.MinAge);
+                var dto = _mapper.Map<DoseDTO>(dos);
+                if (dict.ContainsKey(newDate))
+                    dict[newDate].Add(dto);
+                else
+                    dict.Add(newDate, new List<DoseDTO>() { dto });
+
+                // Save AdminSchedule, {date, dose_id} to update
+                var adminSchedule = new AdminSchedule
                 {
-                    var newDate = today.AddDays(dos.MinAge);
-                    var dto = _mapper.Map<DoseDTO> (dos);
-                    if (dict.ContainsKey(newDate))
-                        dict[newDate].Add(dto);
-                    else
-                        dict.Add(newDate, new List<DoseDTO>() { dto });
-
-
-                    if (!_db.AdminSchedules.Any())
-                    {
-                        // Save AdminSchedule, {date, dose_id} to update
-                        var adminSchedule = new AdminSchedule
-                        {
-                            Date = newDate,
-                            DoseId = dos.Id
-                        };
-                        _db.AdminSchedules.Add(adminSchedule);
-                    }
-                }
-                if (!_db.AdminSchedules.Any())
-
-                    await _db.SaveChangesAsync();
-
-        
-                // save AdminSchedule, {date,dose_id} to update
-
-                // get 
-                return Ok(dict);
+                    Date = newDate,
+                    DoseId = dos.Id
+                };
+                _db.AdminSchedules.Add(adminSchedule);
             }
-            catch (Exception ex)
+
+            await _db.SaveChangesAsync();
+        }
+        else
+        {
+            var adminSchedules = await _db.AdminSchedules.ToListAsync();
+
+            foreach (var adminSchedule in adminSchedules)
             {
-                return StatusCode(500, ex.Message);
+                var newDate = (adminSchedule.Date);
+                var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
+                var dto = _mapper.Map<DoseDTO>(dose);
+
+                if (dict.ContainsKey(newDate))
+                    dict[newDate].Add(dto);
+                else
+                    dict.Add(newDate, new List<DoseDTO>() { dto });
             }
         }
+
+        return Ok(dict);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
 
     }
 }
