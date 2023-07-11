@@ -60,54 +60,53 @@ namespace api.fernflowers.com.Controllers
         }
 
 
+        
+
+
+
         [Route("login")]
         [HttpGet()]
-
         public async Task<IActionResult> Login(string MobileNumber, string Password)
         {
             try
             {
                 var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.IsApproved == true);
-                var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
-
-                var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
-                
-                DoctorDTO doctorDTO = null;
 
                 if (doctor != null)
                 {
-
-                    doctorDTO = new DoctorDTO
-                    {
-                        Id = doctor.Id,
-                        Name = doctor.Name,
-                        Email = doctor.Email,
-                        IsApproved = doctor.IsApproved,
-                        IsEnabled = doctor.IsEnabled,
-                        
-                        MobileNumber = doctor.MobileNumber,
-                        Password = doctor.Password,
-                        PMDC = doctor.PMDC,
-                        ValidUpto=doctor.ValidUpto.Date.ToString("yyyy-MM-dd")
-                    };
+                    var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
 
                     if (clinic != null)
                     {
-                        doctorDTO.Clinics.Add( new ClinicDTO
+                        var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
+
+                        DoctorDTO doctorDTO = new DoctorDTO
+                        {
+                            Id = doctor.Id,
+                            Name = doctor.Name,
+                            Email = doctor.Email,
+                            IsApproved = doctor.IsApproved,
+                            IsEnabled = doctor.IsEnabled,
+                            MobileNumber = doctor.MobileNumber,
+                            Password = doctor.Password,
+                            PMDC = doctor.PMDC,
+                            ValidUpto = doctor.ValidUpto.Date.ToString("yyyy-MM-dd"),
+                            Clinics = new List<ClinicDTO>()
+                        };
+
+                        ClinicDTO clinicDTO = new ClinicDTO
                         {
                             Id = clinic.Id,
                             Address = clinic.Address,
                             Name = clinic.Name,
                             Number = clinic.Number,
-                            DoctorId = clinic.DoctorId
-                        });
-                    }
-                    if (clinictiming != null)
-                    {
-                        doctorDTO.Clinics[0].ClinicTimings = new List<ClinicTimingDTO> { };
+                            DoctorId = clinic.DoctorId,
+                            ClinicTimings = new List<ClinicTimingDTO>()
+                        };
+
                         foreach (var ct in clinictiming)
                         {
-                            var tmp_clinictiming = new ClinicTimingDTO
+                            ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
                             {
                                 Id = ct.Id,
                                 Day = ct.Day,
@@ -116,14 +115,25 @@ namespace api.fernflowers.com.Controllers
                                 EndTime = ct.EndTime,
                                 ClinicId = ct.ClinicId
                             };
-                            doctorDTO.Clinics[0].ClinicTimings.Add(tmp_clinictiming);
+
+                            clinicDTO.ClinicTimings.Add(clinicTimingDTO);
                         }
+
+                        doctorDTO.Clinics.Add(clinicDTO);
+
+                        return Ok(doctorDTO);
                     }
-
-                    
+                    else
+                    {
+                        // Handle the case where clinic is null
+                        return NotFound("No clinic associated with the doctor.");
+                    }
                 }
-                return Ok(doctorDTO);
-
+                else
+                {
+                    // Handle the case where doctor is null
+                    return NotFound("Invalid MobileNumber or Password.");
+                }
             }
             catch (Exception ex)
             {
