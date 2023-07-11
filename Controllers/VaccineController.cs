@@ -33,7 +33,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -60,23 +60,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Vaccine vaccineToUpdate)
-        {
-            try
-            {
-                if (id != vaccineToUpdate.Id) return BadRequest();
-                var dbVaccine = await _db.Vaccines.FindAsync(id);
-                if (dbVaccine == null) return NotFound();
-                _db.Vaccines.Update(vaccineToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+  
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
         {

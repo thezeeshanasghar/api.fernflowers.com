@@ -43,7 +43,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace api.fernflowers.com.Controllers
 
         [HttpPatch()]
         [Route("UpdateDoctor/{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> Update([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
@@ -326,7 +326,7 @@ namespace api.fernflowers.com.Controllers
 
         [HttpPatch()]
         [Route("password/{id}")]
-        public async Task<IActionResult> password([FromRoute] int id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> password([FromRoute] long id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
         {
             try
             {
@@ -347,7 +347,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpPatch()]
         [Route("UpdateValidUpto/{id}")]
-        public async Task<IActionResult> UpdateValidUpto([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> UpdateValidUpto([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
