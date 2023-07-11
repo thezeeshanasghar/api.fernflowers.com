@@ -7,6 +7,6 @@ namespace api.fernflowers.com.Data.Entities;
 public class AdminSchedule
 {
     public long Id { get; set; }
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
     public long DoseId { get; set; }
 }

@@ -56,7 +56,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     var doseScheduleEntry = new DoctorSchedule
                     {
-                        Date = ds.Date,
+                        // Date = ds.Date,
                         DoseId = ds.DoseId,
                         DoctorId = doctorId
                     };
@@ -74,14 +74,13 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [Route("single_updateDate")]
-
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] DoctorSchedule ds)
+        public async Task<IActionResult> Update(int Id,[FromBody] DoctorSchedule ds)
         {
             try{
-                var dbDoc = await _db.DoctorSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
+                
+                var dbDoc = await _db.DoctorSchedules.FirstOrDefaultAsync(d => d.Id == Id); 
                 if (dbDoc == null)
                 {
                     return NotFound();
@@ -99,10 +98,10 @@ namespace api.fernflowers.com.Controllers
         }
         [Route("doctor_bulk_updateDate/{date}")]
         [HttpPatch]
-         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoctorSchedule> patchDocument)
+         public async Task<IActionResult> PatchAsync(DateTime date,int doctorId,[FromBody] JsonPatchDocument<DoctorSchedule> patchDocument)
         {
             try{
-                var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
+                var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date && d.DoctorId==doctorId).ToList(); 
                 if (dbDocS == null)
                 {
                     return NotFound();
@@ -116,7 +115,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-    
 
         [HttpPatch]
         [Route("/update_date_for_Vaccations")]
@@ -140,9 +138,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message);
             }
         }
-
-  
-
 
     }
 }

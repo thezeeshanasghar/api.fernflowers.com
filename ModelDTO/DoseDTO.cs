@@ -8,5 +8,6 @@ namespace api.fernflowers.com.ModelDTO
         public string Name { get; set; }
         public int MinAge { get; set; }
         public long VaccineId { get; set; }
+        
     }
 }

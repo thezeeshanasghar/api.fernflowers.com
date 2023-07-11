@@ -91,7 +91,7 @@ namespace api.fernflowers.com.Controllers
                     }
                     // dosDTo.DoseDate = doseDate;
                     doseDTOList.Add(dosDTo);
-                    doseSchedule.Date = doseDate.Value;
+                    // doseSchedule.Date = doseDate.Value;
                     doseScheduleList.Add(doseSchedule);
                     lastVaccineId = dosDTo.VaccineId;
                 }
