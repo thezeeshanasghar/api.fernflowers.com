@@ -164,7 +164,7 @@ public IActionResult Get()
                     return NotFound();
                 }
 
-                dbDoc.Date = ds.Date.ToDateTime().Date;
+                dbDoc.Date = ds.Date;
                 _db.Entry(dbDoc).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
