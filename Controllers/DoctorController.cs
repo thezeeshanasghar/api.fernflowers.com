@@ -19,10 +19,6 @@ namespace api.fernflowers.com.Controllers
         private readonly VaccineDBContext _db;
 
 
-
-
-
-
         public DoctorController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
@@ -58,9 +54,6 @@ namespace api.fernflowers.com.Controllers
 
             }
         }
-
-
-        
 
 
 
@@ -203,26 +196,61 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
-        {
-            try
-            {
-                if (id != doctorToUpdate.Id)
-                    return BadRequest();
-                var dbDoctor = await _db.Doctors.FindAsync(id);
-                if (dbDoctor == null)
-                    return NotFound();
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
+        // {
+        //     try
+        //     {
+        //         if (id != doctorToUpdate.Id)
+        //             return BadRequest();
+        //         var dbDoctor = await _db.Doctors.FindAsync(id);
+        //         if (dbDoctor == null)
+        //             return NotFound();
 
-                _db.Doctors.Update(doctorToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //         _db.Doctors.Update(doctorToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+//         [HttpPost]
+// public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+// {
+//     if (doctor != null)
+//     {
+//         _db.Doctors.Add(doctor);
+//         await _db.SaveChangesAsync();
+
+//         if (doctor.Clinics != null && doctor.Clinics.Count > 0)
+//         {
+//             var clinic = doctor.Clinics[0];
+//             clinic.DoctorId = doctor.Id;
+//             _db.Clinics.Add(clinic);
+//             await _db.SaveChangesAsync();
+
+//             if (clinic.ClinicTimings != null && clinic.ClinicTimings.Count > 0)
+//             {
+//                 foreach (var clinicTiming in clinic.ClinicTimings)
+//                 {
+//                     clinicTiming.ClinicId = clinic.Id;
+//                     _db.ClinicTimings.Add(clinicTiming);
+//                 }
+//                 await _db.SaveChangesAsync();
+//             }
+//         }
+
+//         return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor.Id);
+//     }
+//     else
+//     {
+//         return BadRequest("Doctor data is required");
+//     }
+// }
+
 
         [Route("{id}")]
         [HttpDelete]
@@ -286,7 +314,7 @@ namespace api.fernflowers.com.Controllers
         
         [HttpPatch()]
         [Route("notapproved/{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
         {
             try{
                 var dbDoc = await _db.Doctors.FindAsync(id);
@@ -305,7 +333,6 @@ namespace api.fernflowers.com.Controllers
         }
 
 
-
         [HttpGet]
         [Route("IsApproved/{IsApproved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool IsApproved)
@@ -320,8 +347,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
 
 
         [HttpPatch()]
@@ -373,7 +398,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpPatch()]
         [Route("doctors/{id}")]
-        public async Task<IActionResult> UpdateDoctorto([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> UpdateDoctorto([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
