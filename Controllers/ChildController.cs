@@ -31,7 +31,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -46,42 +46,88 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        // [HttpGet("search-by-doctor-name")]
+        // public ActionResult<IEnumerable<Child>> SearchByDoctorName(
+        // string? doctorName = null,string? Name = null,string? City = null,
+        // string? Gender = null,int? fromDay = null,int? toDay = null,
+        // int? fromMonth = null,int? toMonth = null,int? fromYear = null,
+        // int? toYear = null
+        // )
+        // {
+        //     List<Child> patients = _db.Childs
+        //         .Join(
+        //             _db.Doctors,
+        //             p => p.DoctorId,
+        //             d => d.Id,
+        //             (p, d) => new { Child = p, Doctor = d }
+        //         )
+        //         .Where(
+        //             pd =>
+        //                 (doctorName == null || pd.Doctor.Name.Contains(doctorName))
+        //                 && (string.IsNullOrEmpty(Name) || pd.Child.Name == Name)
+        //                 && (City == null || pd.Child.City == City)
+        //                 && (Gender == null || pd.Child.Gender == api.fernflowers.com.Data.Entities.Gender.Boy)
+        //                 && (fromDay == null || pd.Child.DOB.Day >= fromDay)
+        //                 && (toDay == null || pd.Child.DOB.Day <= toDay)
+        //                 && (fromMonth == null || pd.Child.DOB.Month >= fromMonth)
+        //                 && (toMonth == null || pd.Child.DOB.Month <= toMonth)
+        //                 && (fromYear == null || pd.Child.DOB.Year >= fromYear)
+        //                 && (toYear == null || pd.Child.DOB.Year <= toYear)
+        //         )
+        //         .ToList<Child>();
+
+        //     if (patients.Count == 0)
+        //     {
+        //         return StatusCode(500, "Not Found .Add more details");
+        //     }
+
+        //     return Ok();
+        // }
+
+
+        
         [HttpGet("search-by-doctor-name")]
         public ActionResult<IEnumerable<Child>> SearchByDoctorName(
-            string? doctorName = null,string? Name = null,string? City = null,
-            string? Gender = null,int? fromDay = null,int? toDay = null,
-            int? fromMonth = null,int? toMonth = null,int? fromYear = null,
+            string? doctorName = null,
+            string? name = null,
+            string? city = null,
+            int? gender = null,
+            int? fromDay = null,
+            int? toDay = null,
+            int? fromMonth = null,
+            int? toMonth = null,
+            int? fromYear = null,
             int? toYear = null
-)
+        )
         {
-            // List<Child> patients = _db.Childs
-            //     .Join(
-            //         _db.Doctors,
-            //         p => p.DoctorId,
-            //         d => d.Id,
-            //         (p, d) => new { Child = p, Doctor = d }
-            //     )
-            //     .Where(
-            //         pd =>
-            //             (doctorName == null || pd.Doctor.Name.Contains(doctorName))
-            //             && (string.IsNullOrEmpty(Name) || pd.Child.Name == Name)
-            //             && (City == null || pd.Child.City == City)
-            //             && (Gender == null || pd.Child.Gender == api.fernflowers.com.Data.Entities.Gender.Boy)
-            //             && (fromDay == null || pd.Child.DOB.Day >= fromDay)
-            //             && (toDay == null || pd.Child.DOB.Day <= toDay)
-            //             && (fromMonth == null || pd.Child.DOB.Month >= fromMonth)
-            //             && (toMonth == null || pd.Child.DOB.Month <= toMonth)
-            //             && (fromYear == null || pd.Child.DOB.Year >= fromYear)
-            //             && (toYear == null || pd.Child.DOB.Year <= toYear)
-            //     )
-            //     .ToList<Child>();
+            var query = _db.Childs
+                .Join(
+                    _db.Doctors,
+                    child => child.DoctorId,
+                    doctor => doctor.Id,
+                    (child, doctor) => new { Child = child, Doctor = doctor }
+                )
+                .Where(
+                    pd =>
+                        (string.IsNullOrEmpty(name) || pd.Child.Name == name)
+                        && (string.IsNullOrEmpty(doctorName) || pd.Doctor.Name.Contains(doctorName))
+                        && (string.IsNullOrEmpty(city) || pd.Child.City == city)
+                        && (gender == null || (int)pd.Child.Gender == gender)
+                        && (fromDay == null || pd.Child.DOB.Day >= fromDay)
+                        && (toDay == null || pd.Child.DOB.Day <= toDay)
+                        && (fromMonth == null || pd.Child.DOB.Month >= fromMonth)
+                        && (toMonth == null || pd.Child.DOB.Month <= toMonth)
+                        && (fromYear == null || pd.Child.DOB.Year >= fromYear)
+                        && (toYear == null || pd.Child.DOB.Year <= toYear)
+                )
+                .ToList();
 
-            // if (patients.Count == 0)
-            // {
-            //     return StatusCode(500, "Not Found .Add more details");
-            // }
+            if (query.Count == 0)
+            {
+                return StatusCode(404, "No matching records found. Please add more details.");
+            }
 
-            return Ok();
+            return Ok(query.Select(pd => pd.Child));
         }
 
         [HttpPost]
@@ -99,54 +145,54 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync(
-            [FromRoute] int id,
-            [FromBody] Child childToUpdate
-        )
-        {
-            try
-            {
-                if (id != childToUpdate.Id)
-                    return BadRequest();
-                var dbchild = await _db.Childs.FindAsync(id);
-                if (dbchild == null)
-                    return NotFound();
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync(
+        //     [FromRoute] int id,
+        //     [FromBody] Child childToUpdate
+        // )
+        // {
+        //     try
+        //     {
+        //         if (id != childToUpdate.Id)
+        //             return BadRequest();
+        //         var dbchild = await _db.Childs.FindAsync(id);
+        //         if (dbchild == null)
+        //             return NotFound();
 
-                _db.Childs.Update(childToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //         _db.Childs.Update(childToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
-        [Route("{id}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-        {
-            try
-            {
-                var childToDelete = await _db.Childs.FindAsync(id);
-                if (childToDelete == null)
-                {
-                    return NotFound();
-                }
-                _db.Childs.Remove(childToDelete);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        // [Route("{id}")]
+        // [HttpDelete]
+        // public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        // {
+        //     try
+        //     {
+        //         var childToDelete = await _db.Childs.FindAsync(id);
+        //         if (childToDelete == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         _db.Childs.Remove(childToDelete);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchAsync(
-            [FromRoute] int id,
+            [FromRoute] long id,
             [FromBody] JsonPatchDocument<Child> patchDocument
         )
         {
@@ -168,7 +214,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("count")]
-        public async Task<IActionResult> GetChildCount(int doctorId)
+        public async Task<IActionResult> GetChildCount(long doctorId)
         {
             int count = await _db.Childs.CountAsync(c => c.DoctorId == doctorId);
             return Ok(count);
@@ -216,8 +262,8 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet("/patients")]
-        public IActionResult GetChildrenByDoctorId(int doctorId)
+        [HttpGet("/patients_get_by_doctor_id")]
+        public IActionResult GetChildrenByDoctorId(long doctorId)
         {
             try
             {
