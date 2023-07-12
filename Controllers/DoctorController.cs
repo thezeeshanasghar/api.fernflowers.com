@@ -134,67 +134,67 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
-        {
-            if (doctor != null)
-            {
-                var doctorEntity = new Doctor
-                {
-                    Name = doctor.Name,
-                    Email = doctor.Email,
-                    IsApproved = doctor.IsApproved,
-                    IsEnabled = doctor.IsEnabled,
-                    MobileNumber = doctor.MobileNumber,
-                    Password = doctor.Password,
-                    PMDC = doctor.PMDC,
-                    ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3) 
+        // [HttpPost]
+        // public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
+        // {
+        //     if (doctor != null)
+        //     {
+        //         var doctorEntity = new Doctor
+        //         {
+        //             Name = doctor.Name,
+        //             Email = doctor.Email,
+        //             IsApproved = doctor.IsApproved,
+        //             IsEnabled = doctor.IsEnabled,
+        //             MobileNumber = doctor.MobileNumber,
+        //             Password = doctor.Password,
+        //             PMDC = doctor.PMDC,
+        //             ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3) 
                  
-                };
+        //         };
 
-                _db.Doctors.Add(doctorEntity);
-                await _db.SaveChangesAsync();
+        //         _db.Doctors.Add(doctorEntity);
+        //         await _db.SaveChangesAsync();
 
-                if (doctor.Clinics != null)
-                {
-                    var clinicEntity = new Clinic
-                    {
-                        Address = doctor.Clinics[0].Address,
-                        Name = doctor.Clinics[0].Name,
-                        Number = doctor.Clinics[0].Number
-                    };
-                    clinicEntity.DoctorId = doctorEntity.Id;
-                    _db.Clinics.Add(clinicEntity);
-                    await _db.SaveChangesAsync();
+        //         if (doctor.Clinics != null)
+        //         {
+        //             var clinicEntity = new Clinic
+        //             {
+        //                 Address = doctor.Clinics[0].Address,
+        //                 Name = doctor.Clinics[0].Name,
+        //                 Number = doctor.Clinics[0].Number
+        //             };
+        //             clinicEntity.DoctorId = doctorEntity.Id;
+        //             _db.Clinics.Add(clinicEntity);
+        //             await _db.SaveChangesAsync();
 
 
-                    if (doctor.Clinics[0].ClinicTimings != null)
-                    {
-                        foreach (var ct in doctor.Clinics[0].ClinicTimings)
-                        {
-                            var entityClinicTiming = new ClinicTiming
-                            {
-                                Day = ct.Day,
-                                Session = ct.Session,
-                                StartTime = ct.StartTime,
-                                EndTime = ct.EndTime,
-                                ClinicId = clinicEntity.Id
-                            };
-                            _db.ClinicTimings.Add(entityClinicTiming);
-                        }
-                        await _db.SaveChangesAsync();
-                    }
-                }
+        //             if (doctor.Clinics[0].ClinicTimings != null)
+        //             {
+        //                 foreach (var ct in doctor.Clinics[0].ClinicTimings)
+        //                 {
+        //                     var entityClinicTiming = new ClinicTiming
+        //                     {
+        //                         Day = ct.Day,
+        //                         Session = ct.Session,
+        //                         StartTime = ct.StartTime,
+        //                         EndTime = ct.EndTime,
+        //                         ClinicId = clinicEntity.Id
+        //                     };
+        //                     _db.ClinicTimings.Add(entityClinicTiming);
+        //                 }
+        //                 await _db.SaveChangesAsync();
+        //             }
+        //         }
 
              
 
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
-            }
-            else
-            {
-                return BadRequest("Doctor data is required");
-            }
-        }
+        //         return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+        //     }
+        //     else
+        //     {
+        //         return BadRequest("Doctor data is required");
+        //     }
+        // }
 
         // [HttpPut]
         // public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
@@ -216,42 +216,68 @@ namespace api.fernflowers.com.Controllers
         //         return StatusCode(500, ex.Message);
         //     }
         // }
+        [HttpPost]
+        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+        {
+            if (doctor != null)
+            {
+                var doctorEntity = new Doctor
+                {
+                    Name = doctor.Name,
+                    MobileNumber = doctor.MobileNumber,
+                    Password = doctor.Password,
+                    IsApproved = doctor.IsApproved,
+                    IsEnabled = doctor.IsEnabled,
+                    Email = doctor.Email,
+                    PMDC = doctor.PMDC,
+                    ValidUpto = doctor.ValidUpto
+                };
 
-//         [HttpPost]
-// public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
-// {
-//     if (doctor != null)
-//     {
-//         _db.Doctors.Add(doctor);
-//         await _db.SaveChangesAsync();
+                _db.Doctors.Add(doctorEntity);
+                await _db.SaveChangesAsync();
 
-//         if (doctor.Clinics != null && doctor.Clinics.Count > 0)
-//         {
-//             var clinic = doctor.Clinics[0];
-//             clinic.DoctorId = doctor.Id;
-//             _db.Clinics.Add(clinic);
-//             await _db.SaveChangesAsync();
+                if (doctor.Clinics != null && doctor.Clinics.Any())
+                {
+                    foreach (var clinic in doctor.Clinics)
+                    {
+                        var clinicEntity = new Clinic
+                        {
+                            Name = clinic.Name,
+                            Address = clinic.Address,
+                            Number = clinic.Number,
+                            DoctorId = doctorEntity.Id
+                        };
 
-//             if (clinic.ClinicTimings != null && clinic.ClinicTimings.Count > 0)
-//             {
-//                 foreach (var clinicTiming in clinic.ClinicTimings)
-//                 {
-//                     clinicTiming.ClinicId = clinic.Id;
-//                     _db.ClinicTimings.Add(clinicTiming);
-//                 }
-//                 await _db.SaveChangesAsync();
-//             }
-//         }
+                        _db.Clinics.Add(clinicEntity);
+                        await _db.SaveChangesAsync();
 
-//         return Created(new Uri(Request.GetEncodedUrl() + "/" + doctor.Id), doctor.Id);
-//     }
-//     else
-//     {
-//         return BadRequest("Doctor data is required");
-//     }
-// }
+                        if (clinic.ClinicTimings != null && clinic.ClinicTimings.Any())
+                        {
+                            foreach (var clinicTiming in clinic.ClinicTimings)
+                            {
+                                var clinicTimingEntity = new ClinicTiming
+                                {
+                                    Day = clinicTiming.Day,
+                                    Session = clinicTiming.Session,
+                                    StartTime = clinicTiming.StartTime,
+                                    EndTime = clinicTiming.EndTime,
+                                    ClinicId = clinicEntity.Id
+                                };
 
+                                _db.ClinicTimings.Add(clinicTimingEntity);
+                            }
+                            await _db.SaveChangesAsync();
+                        }
+                    }
+                }
 
+                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+            }
+            else
+            {
+                return BadRequest("Doctor data is required");
+            }
+        }
         [Route("{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
@@ -272,7 +298,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPatch()]
         [Route("UpdateDoctor/{id}")]
         public async Task<IActionResult> Update([FromRoute] long id, [FromBody] Doctor doc)
@@ -311,7 +336,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
         [HttpPatch()]
         [Route("notapproved/{id}")]
         public async Task<IActionResult> PatchAsync([FromRoute] long id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
@@ -331,8 +355,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-
-
         [HttpGet]
         [Route("IsApproved/{IsApproved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool IsApproved)
@@ -347,8 +369,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
         [HttpPatch()]
         [Route("password/{id}")]
         public async Task<IActionResult> password([FromRoute] long id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
@@ -439,13 +459,5 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
-
-
-
-        
-
     }
 }

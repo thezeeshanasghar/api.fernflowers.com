@@ -19,7 +19,6 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
             _mapper = mapper;
         }
-        
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -60,7 +59,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-  
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Vaccine vaccine)
         {
@@ -114,8 +112,6 @@ namespace api.fernflowers.com.Controllers
                 var dosesDTOs = _mapper.Map<List<DoseDTO>>(dbDoses);
                 return Ok(dosesDTOs);
             }
-        }
-
-        
+        } 
     }
 }

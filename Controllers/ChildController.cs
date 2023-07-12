@@ -45,46 +45,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        // [HttpGet("search-by-doctor-name")]
-        // public ActionResult<IEnumerable<Child>> SearchByDoctorName(
-        // string? doctorName = null,string? Name = null,string? City = null,
-        // string? Gender = null,int? fromDay = null,int? toDay = null,
-        // int? fromMonth = null,int? toMonth = null,int? fromYear = null,
-        // int? toYear = null
-        // )
-        // {
-        //     List<Child> patients = _db.Childs
-        //         .Join(
-        //             _db.Doctors,
-        //             p => p.DoctorId,
-        //             d => d.Id,
-        //             (p, d) => new { Child = p, Doctor = d }
-        //         )
-        //         .Where(
-        //             pd =>
-        //                 (doctorName == null || pd.Doctor.Name.Contains(doctorName))
-        //                 && (string.IsNullOrEmpty(Name) || pd.Child.Name == Name)
-        //                 && (City == null || pd.Child.City == City)
-        //                 && (Gender == null || pd.Child.Gender == api.fernflowers.com.Data.Entities.Gender.Boy)
-        //                 && (fromDay == null || pd.Child.DOB.Day >= fromDay)
-        //                 && (toDay == null || pd.Child.DOB.Day <= toDay)
-        //                 && (fromMonth == null || pd.Child.DOB.Month >= fromMonth)
-        //                 && (toMonth == null || pd.Child.DOB.Month <= toMonth)
-        //                 && (fromYear == null || pd.Child.DOB.Year >= fromYear)
-        //                 && (toYear == null || pd.Child.DOB.Year <= toYear)
-        //         )
-        //         .ToList<Child>();
-
-        //     if (patients.Count == 0)
-        //     {
-        //         return StatusCode(500, "Not Found .Add more details");
-        //     }
-
-        //     return Ok();
-        // }
-
-
         
         [HttpGet("search-by-doctor-name")]
         public ActionResult<IEnumerable<Child>> SearchByDoctorName(

@@ -118,7 +118,7 @@ namespace api.fernflowers.com.Controllers
 
 
     [HttpGet]
-    [Route("new")]
+    [Route("admin_post_doseSchedule")]
     public async Task<IActionResult> GetNew()
     {
         try

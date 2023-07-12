@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -25,8 +27,17 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var clinictimings = await _db.ClinicTimings.ToListAsync();
-                return Ok(clinictimings);
+                var clinicTimings = await _db.ClinicTimings.ToListAsync();
+
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Converters = { new StringEnumConverter() }
+                };
+
+                var convertedTimings = JsonConvert.SerializeObject(clinicTimings, Formatting.None, jsonSettings);
+
+                return Ok(convertedTimings);
             }
             catch (Exception ex)
             {
@@ -35,7 +46,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -49,7 +60,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] List<string> data)
         {
@@ -71,7 +81,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] ClinicTiming clinictimingToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] ClinicTiming clinictimingToUpdate)
         {
             try
             {
