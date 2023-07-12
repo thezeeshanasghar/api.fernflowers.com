@@ -48,7 +48,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Clinic clinicToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Clinic clinicToUpdate)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
         {
             try
             {
