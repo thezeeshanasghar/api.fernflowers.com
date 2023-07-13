@@ -21,10 +21,6 @@ namespace api.fernflowers.com.Controllers
             _mapper = mapper;
         }
 
-      
-
-
-
         [Route("Admin_single_updateDate")]
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] AdminSchedule ds)
