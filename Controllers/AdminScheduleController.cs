@@ -106,75 +106,62 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-
-
-
-
-
-
-
-    
-
-
-
-    [HttpGet]
-    [Route("admin_post_doseSchedule")]
-    public async Task<IActionResult> GetNew()
-    {
-        try
+        [HttpGet]
+        [Route("admin_post_doseSchedule")]
+        public async Task<IActionResult> GetNew()
         {
-            Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
-
-            if (!_db.AdminSchedules.Any())
+            try
             {
-                var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+                Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
 
-                var today = DateOnly.FromDateTime(DateTime.Now);
-                foreach (var dos in doses)
+                if (!_db.AdminSchedules.Any())
                 {
-                    var newDate = today.AddDays(dos.MinAge);
-                    var dto = _mapper.Map<DoseDTO>(dos);
-                    if (dict.ContainsKey(newDate))
-                        dict[newDate].Add(dto);
-                    else
-                        dict.Add(newDate, new List<DoseDTO>() { dto });
+                    var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
 
-                    // Save AdminSchedule, {date, dose_id} to update
-                    var adminSchedule = new AdminSchedule
+                    var today = DateOnly.FromDateTime(DateTime.Now);
+                    foreach (var dos in doses)
                     {
-                        Date = newDate,
-                        DoseId = dos.Id
-                    };
-                    _db.AdminSchedules.Add(adminSchedule);
+                        var newDate = today.AddDays(dos.MinAge);
+                        var dto = _mapper.Map<DoseDTO>(dos);
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+
+                        // Save AdminSchedule, {date, dose_id} to update
+                        var adminSchedule = new AdminSchedule
+                        {
+                            Date = newDate,
+                            DoseId = dos.Id
+                        };
+                        _db.AdminSchedules.Add(adminSchedule);
+                    }
+
+                    await _db.SaveChangesAsync();
                 }
-
-                await _db.SaveChangesAsync();
-            }
-            else
-            {
-                var adminSchedules = await _db.AdminSchedules.ToListAsync();
-
-                foreach (var adminSchedule in adminSchedules)
+                else
                 {
-                    var newDate = (adminSchedule.Date);
-                    var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
-                    var dto = _mapper.Map<DoseDTO>(dose);
+                    var adminSchedules = await _db.AdminSchedules.ToListAsync();
 
-                    if (dict.ContainsKey(newDate))
-                        dict[newDate].Add(dto);
-                    else
-                        dict.Add(newDate, new List<DoseDTO>() { dto });
+                    foreach (var adminSchedule in adminSchedules)
+                    {
+                        var newDate = (adminSchedule.Date);
+                        var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
+                        var dto = _mapper.Map<DoseDTO>(dose);
+
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+                    }
                 }
+
+                return Ok(dict);
             }
-
-            return Ok(dict);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
-
-
     }
 }
