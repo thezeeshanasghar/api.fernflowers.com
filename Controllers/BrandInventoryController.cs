@@ -61,7 +61,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -101,30 +101,30 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandInventory brandinventoryToUpdate)
-        {
-            try
-            {
-                if (id != brandinventoryToUpdate.Id)
-                    return BadRequest();
-                var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
-                if (dbbrandinventory == null)
-                    return NotFound();
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] BrandInventory brandinventoryToUpdate)
+        // {
+        //     try
+        //     {
+        //         if (id != brandinventoryToUpdate.Id)
+        //             return BadRequest();
+        //         var dbbrandinventory = await _db.BrandInventories.FindAsync(id);
+        //         if (dbbrandinventory == null)
+        //             return NotFound();
 
-                _db.BrandInventories.Update(brandinventoryToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //         _db.BrandInventories.Update(brandinventoryToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace api.fernflowers.com.Controllers
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<BrandInventory> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<BrandInventory> patchDocument)
         {
             try
             {
@@ -164,7 +164,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
     [HttpGet("doctor-vaccine-Count/{doctorId}")]
-    public IActionResult GetDoctorVaccinePrices(int doctorId)
+    public IActionResult GetDoctorVaccinePrices(long doctorId)
     {
         var brandInventories = _db.BrandInventories.Where(ba => ba.DoctorId == doctorId).ToList();
         var result = new List<object>();
