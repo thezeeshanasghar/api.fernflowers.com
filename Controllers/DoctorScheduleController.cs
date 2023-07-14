@@ -97,7 +97,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("Doctor_DoseSchedule")]
         public async Task<IActionResult> GetNew(int doctorId)
         {
