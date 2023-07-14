@@ -60,6 +60,16 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+         [HttpGet]
+        [Route("GET-ClinicTiming/{clinicId}")]
+        public async Task<List<ClinicTiming>> GetClinictimingsByClinicId(long clinicId)
+        {
+            var clinictimings = await _db.ClinicTimings
+                .Where(c => c.ClinicId == clinicId)
+                .ToListAsync();
+
+            return clinictimings;
+        }
  
 
         [Route("api/clintimings/AddorUpdate/{clinicId}")]
