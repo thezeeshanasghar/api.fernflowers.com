@@ -26,59 +26,6 @@ namespace api.fernflowers.com.Controllers
               _mapper = mapper;
         }
 
-        // [HttpGet("doctor_schedule/{doctorId}")]
-        // public ActionResult<IEnumerable<DoctorSchedule>> GetDoctorSchedule(int doctorId)
-        // {
-        //     try
-        //     {
-        //         var doctorSchedule = _db.DoctorSchedules
-        //             .Where(ds => ds.DoctorId == doctorId)
-        //             .OrderBy(ds => ds.Date)
-        //             .ToList();
-
-        //         return Ok(doctorSchedule);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-        // [Route("doctor_post_schedule")]
-        // [HttpPost]
-        // public async Task<IActionResult> Getnewandsave(int doctorId)
-        // {
-        //     try
-        //     {
-        //         if(_db.DoctorSchedules.Any(d=>d.DoctorId==doctorId))
-        //         {
-        //             return Ok("Schedule already exist");
-        //         }
-        //         var doctorsSchedule = _db.AdminSchedules.ToList();
-
-        //         List<DoctorSchedule> doseScheduleList = new List<DoctorSchedule>();
-
-        //         foreach (var ds in doctorsSchedule)
-        //         {
-        //             var doseScheduleEntry = new DoctorSchedule
-        //             {
-        //                 // Date = ds.Date,
-        //                 DoseId = ds.DoseId,
-        //                 DoctorId = doctorId
-        //             };
-
-        //             doseScheduleList.Add(doseScheduleEntry);
-        //         }
-                
-        //         _db.DoctorSchedules.AddRange(doseScheduleList);
-        //         await _db.SaveChangesAsync();
-
-        //         return Ok(doseScheduleList.OrderBy(x => x.Date));
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
         [Route("single_updateDate")]
         [HttpPatch]
         public async Task<IActionResult> Update(long doseId,long doctorId,[FromBody] DoctorSchedule ds)
@@ -121,28 +68,34 @@ namespace api.fernflowers.com.Controllers
         //     }
         // }
 
-        // [HttpPatch]
-        // [Route("/update_date_for_Vaccations")]
-        // public async Task<IActionResult> UpadateDoseDates(int doctorId, DateTime fromDate,DateTime toDate)
-        // {
-        //     try
-        //     {
-        //         var dosesToUpdate= _db.DoctorSchedules
-        //             .Where(ds=>ds.Date >= fromDate && ds.Date <=toDate && ds.DoctorId==doctorId).ToList();
+        [HttpPatch]
+        [Route("/update_date_for_Vacations")]
+        public async Task<IActionResult> UpdateDoseDates(long doctorId, [FromQuery] string fromDate, [FromQuery] string toDate)
+        {
+            try
+            {
+                var parsedFromDate = System.DateOnly.Parse(fromDate);
+                var parsedToDate = System.DateOnly.Parse(toDate);
 
-        //         foreach(var dose in dosesToUpdate)
-        //         {
-        //             var gap=(toDate - fromDate).TotalDays;
-        //             dose.Date=dose.Date.AddDays(gap);
-        //         }
-        //         await _db.SaveChangesAsync();
-        //         return Ok("Dose Dates Updated for vacations");
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         return StatusCode(500,ex.Message);
-        //     }
-        // }
+                var dosesToUpdate = _db.DoctorSchedules
+                    .Where(ds => ds.Date >= parsedFromDate && ds.Date <= parsedToDate && ds.DoctorId == doctorId)
+                    .ToList();
+
+                var updatedDate = parsedToDate.AddDays(1);
+
+                foreach (var dose in dosesToUpdate)
+                {
+                    dose.Date = updatedDate;
+                }
+
+                await _db.SaveChangesAsync();
+                return Ok("Dose Dates Updated for vacations");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("Doctor_DoseSchedule")]
