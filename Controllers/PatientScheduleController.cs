@@ -87,47 +87,30 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        // [HttpGet("patient_schedule/{childId}")]
-        // public ActionResult<IEnumerable<PatientSchedule>> GetPatientSchedule(int childId)
-        // {
-        //     try
-        //     {
-        //         var pSchedule = _db.PatientSchedules
-        //             .Where(ps => ps.ChildId == childId)
-        //             .OrderBy(ds => ds.Date)
-        //             .ToList();
+    
+        [Route("single_updateDate")]
+        [HttpPatch]
+        public async Task<IActionResult> Update(long DoseId,long DoctorId,long ChildId,[FromBody] PatientSchedule ps)
+        {
+            try
+            {
+                var dbps = await _db.PatientSchedules
+                    .FirstOrDefaultAsync(d => d.DoctorId == ps.DoctorId && d.DoseId==ps.DoseId && d.ChildId==ps.ChildId);
+                if (dbps == null)
+                {
+                    return NotFound();
+                }
 
-        //         return Ok(pSchedule);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [Route("single_updateDate")]
-        // [HttpPatch]
-        // public async Task<IActionResult> Update(int Id,[FromBody] PatientSchedule ps)
-        // {
-        //     try
-        //     {
-        //         var dbps = await _db.PatientSchedules
-        //             .FirstOrDefaultAsync(d => d.Id == Id);
-        //         if (dbps == null)
-        //         {
-        //             return NotFound();
-        //         }
-
-        //         dbps.Date = ps.Date;
-        //         _db.Entry(dbps).State = EntityState.Modified;
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+                dbps.Date = ps.Date;
+                _db.Entry(dbps).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         // [Route("patient_bulk_updateDone/{childId}/{date}")]
         // [HttpPatch]
@@ -150,30 +133,29 @@ namespace api.fernflowers.com.Controllers
         //     }
         // }
 
-        // [Route("single_updateDone")]
-        // [HttpPatch]
-        // public async Task<IActionResult> UpdateDone([FromBody] PatientSchedule ps)
-        // {
-        //     try
-        //     {
-        //         var dbps = await _db.PatientSchedules
-        //             .Where(x=>x.Id==ps.Id)
-        //             .FirstOrDefaultAsync();
-        //         if (dbps == null)
-        //         {
-        //             return NotFound();
-        //         }
+        [Route("single_updateDone")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateDone(long DoseId,long DoctorId,long ChildId,[FromBody] PatientSchedule ps)
+        {
+            try
+            {
+                var dbps = await _db.PatientSchedules
+                    .FirstOrDefaultAsync(d => d.DoctorId == ps.DoctorId && d.DoseId==ps.DoseId && d.ChildId==ps.ChildId);
+                if (dbps == null)
+                {
+                    return NotFound();
+                }
 
-        //         dbps.IsDone = ps.IsDone;
-        //         _db.Entry(dbps).State = EntityState.Modified;
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+                dbps.IsDone = ps.IsDone;
+                _db.Entry(dbps).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         // [Route("single_update_Skip")]
         // [HttpPatch]
@@ -248,53 +230,6 @@ namespace api.fernflowers.com.Controllers
         //         return StatusCode(500, ex.Message);
         //     }
         // }
-
-        // [HttpGet("today")]
-        // public ActionResult<IEnumerable<PatientSchedule>> GetPatientsWithTodayDate()
-        // {
-        //     try
-        //     {
-        //         DateTime today = DateTime.Today;
-        //         var patients = _db.PatientSchedules
-        //             .Where(p => p.Date.Date == today)
-        //             .GroupBy(p => p.childId)
-        //             .Select(g => g.First())
-        //             .ToList();
-
-        //         if (patients == null || patients.Count == 0)
-        //             return Ok("No patient is visiting");
-
-        //         return Ok(patients);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-        // [HttpGet("today_alert")]
-        // public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
-        // {
-        //     try
-        //     {
-        //         DateTime today = DateTime.Today;
-        //         var childIds = _db.PatientSchedules
-        //             .Where(p => p.Date == today)
-        //             .Select(p => p.ChildId)
-        //             .Distinct()
-        //             .ToList();
-
-        //         var children = _db.Childs.Where(c => childIds.Contains(c.Id)).ToList();
-
-        //         if (children == null || children.Count == 0)
-        //             return Ok("no one visiting today");
-
-        //         return Ok(children);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
         [HttpGet("today_alert")]
         public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
         {
@@ -319,6 +254,5 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }
