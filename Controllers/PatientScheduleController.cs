@@ -24,47 +24,6 @@ namespace api.fernflowers.com.Controllers
             _mapper = mapper;
         }
 
-        // [Route("doctor_post_schedule")]
-        // [HttpPost]
-        // public async Task<IActionResult> Getnewandsave(int doctorId, int childId)
-        // {
-        //     try
-        //     {
-        //         if (_db.PatientSchedules.Any(d => d.ChildId == childId))
-        //             return Ok("Schedule already exists");
-                
-
-        //         var doctorsSchedule = await _db.DoctorSchedules.ToListAsync();
-        //         List<PatientSchedule> patientScheduleList = new List<PatientSchedule>();
-        //         foreach (var ds in doctorsSchedule)
-        //         {
-        //             var doseScheduleEntry = new PatientSchedule
-        //             {
-        //                 DoseId = ds.DoseId,
-        //                 DoctorId = doctorId,
-        //                 ChildId = childId
-        //             };
-
-        //             var child = _db.Childs.FirstOrDefault(c => c.Id == childId);
-        //             doseScheduleEntry.Date =
-        //                 child != null
-        //                     ? child.DOB.AddDays(ds.Date.Day - 1) // Adjust the date based on the child's date of birth
-        //                     : DateTime.MinValue;
-
-        //             patientScheduleList.Add(doseScheduleEntry);
-        //         }
-
-        //         _db.PatientSchedules.AddRange(patientScheduleList);
-        //         await _db.SaveChangesAsync();
-
-        //         return Ok(patientScheduleList.OrderBy(x => x.Date));
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
         [HttpGet]
         [Route("Patient_DoseSchedule")]
         public async Task<IActionResult> GetNew(long ChildId,long DoctorId)
@@ -319,7 +278,7 @@ namespace api.fernflowers.com.Controllers
         //     {
         //         DateTime today = DateTime.Today;
         //         var childIds = _db.PatientSchedules
-        //             .Where(p => p.Date.Date == today)
+        //             .Where(p => p.Date == today)
         //             .Select(p => p.ChildId)
         //             .Distinct()
         //             .ToList();
@@ -336,5 +295,30 @@ namespace api.fernflowers.com.Controllers
         //         return StatusCode(500, ex.Message);
         //     }
         // }
+        [HttpGet("today_alert")]
+        public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
+        {
+            try
+            {
+                DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+                var childIds = _db.PatientSchedules
+                    .Where(p => p.Date == today)
+                    .Select(p => p.ChildId)
+                    .Distinct()
+                    .ToList();
+
+                var children = _db.Childs.Where(c => childIds.Contains(c.Id)).ToList();
+
+                if (children == null || children.Count == 0)
+                    return Ok("no one visiting today");
+
+                return Ok(children);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
