@@ -9,8 +9,8 @@ public class BrandAmount
     public long BrandId { get; set; }
     public long DoctorId { get; set; }
 
-    public virtual Brand Brand { get; set; }
-    public virtual Doctor Doctor { get; set; }
+    // public virtual Brand Brand { get; set; }
+    // public virtual Doctor Doctor { get; set; }
      // public BrandAmount()
     // {
     //     this.Brands = new HashSet<Brand>();

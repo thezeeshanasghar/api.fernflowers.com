@@ -28,23 +28,31 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var brandamount = await _db.BrandAmounts.Include(x => x.Brand).ToListAsync();
-                List<BrandAmountDTO> BrandAmountdto = new List<BrandAmountDTO> { };
-
-                foreach (var ba in brandamount)
+                var brandamount = await _db.BrandAmounts.ToListAsync();
+                List<BrandAmountDTO> BrandAmountdto = null;
+                if (brandamount != null)
                 {
-                    var tmp_brandamount = new BrandAmountDTO
+                    BrandAmountdto = new List<BrandAmountDTO> { };
+                    foreach (var ba in brandamount)
                     {
-                        Id = ba.Id,
-                        Amount = ba.Amount,
-                        BrandId = ba.BrandId,
-                        DoctorId = ba.DoctorId,
-                        Brand = _mapper.Map<BrandDTO>(ba.Brand)
-                    };
-                    BrandAmountdto.Add(tmp_brandamount);
+                        var tmp_brandamount = new BrandAmountDTO
+                        {
+                            Id = ba.Id,
+                            Amount = ba.Amount,
+                            BrandId = ba.BrandId,
+                            DoctorId = ba.DoctorId,
+                        };
+                        BrandAmountdto.Add(tmp_brandamount);
+                    }
+                    var brandIds = brandamount.Select(ba => ba.BrandId).ToList();
+                    var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+                    foreach (var ba in BrandAmountdto)
+                    {
+                        ba.BrandName = brands.FirstOrDefault(b => b.Id == ba.BrandId).Name;
+                    }
                 }
-                var brandIds = brandamount.Select(ba => ba.BrandId).ToList();
-                var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+
+
                 return Ok(BrandAmountdto);
             }
             catch (Exception ex)
@@ -74,14 +82,14 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var existingBrandAmount = _db.BrandAmounts.SingleOrDefault(b => b.BrandId == brandamount.BrandId && b.DoctorId == brandamount.DoctorId);
-
+                 var existingBrandAmount = _db.BrandAmounts.SingleOrDefault(b => b.BrandId == brandamount.BrandId && b.DoctorId == brandamount.DoctorId);
+        
                 if (existingBrandAmount != null)
                 {
                     // If the BrandId already exists for the DoctorId, add the amount to the existing row
                     existingBrandAmount.Amount += brandamount.Amount;
                     await _db.SaveChangesAsync();
-
+                    
                     return Ok(existingBrandAmount);
                 }
                 _db.BrandAmounts.Add(brandamount);
@@ -95,7 +103,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         // [HttpPut]
-        // public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] BrandAmount brandamountToUpdate)
+        // public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandAmount brandamountToUpdate)
         // {
         //     try
         //     {
@@ -156,7 +164,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
         [HttpGet("doctor-vaccine-price/{doctorId}")]
         public IActionResult GetDoctorVaccinePrices(long doctorId)
         {
@@ -166,8 +174,7 @@ namespace api.fernflowers.com.Controllers
             {
                 var brandName = _db.Brands.Where(b => b.Id == ba.BrandId).Select(b => b.Name).FirstOrDefault();
                 var vaccineName = _db.Vaccines.Where(v => v.Brands.Any(b => b.Id == ba.BrandId)).Select(v => v.Name).FirstOrDefault();
-                var obj = new
-                {
+                var obj = new {
                     VaccineName = vaccineName,
                     Brand = brandName,
                     Price = ba.Amount
@@ -176,18 +183,5 @@ namespace api.fernflowers.com.Controllers
             }
             return Ok(result);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
