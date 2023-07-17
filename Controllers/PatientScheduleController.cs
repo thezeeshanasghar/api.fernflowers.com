@@ -157,30 +157,29 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [Route("single_update_Skip")]
-        // [HttpPatch]
-        // public async Task<IActionResult> UpdateSkip([FromBody] PatientSchedule ps)
-        // {
-        //     try
-        //     {
-        //         var dbps = await _db.PatientSchedules
-        //             .Where(x=>x.Id==ps.Id)
-        //             .FirstOrDefaultAsync();
-        //         if (dbps == null)
-        //         {
-        //             return NotFound();
-        //         }
+        [Route("single_update_Skip")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateSkip(long DoseId,long DoctorId,long ChildId,[FromBody] PatientSchedule ps)
+        {
+            try
+            {
+               var dbps = await _db.PatientSchedules
+                    .FirstOrDefaultAsync(d => d.DoctorId == ps.DoctorId && d.DoseId==ps.DoseId && d.ChildId==ps.ChildId);
+                if (dbps == null)
+                {
+                    return NotFound();
+                }
 
-        //         dbps.IsSkip = ps.IsSkip;
-        //         _db.Entry(dbps).State = EntityState.Modified;
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+                dbps.IsSkip = ps.IsSkip;
+                _db.Entry(dbps).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         // [Route("patient_bulk_updateDate/{date}")]
         // [HttpPatch]
