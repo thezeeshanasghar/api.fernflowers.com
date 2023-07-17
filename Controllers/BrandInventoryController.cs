@@ -20,8 +20,6 @@ namespace api.fernflowers.com.Controllers
         {
             _db = vaccineDBContext;
         }
-
-      
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -45,10 +43,10 @@ namespace api.fernflowers.com.Controllers
                     }
                     var brandIds = brandinventory.Select(bi => bi.BrandId).ToList();
                     var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
-                    // foreach (var bi in BrandInventorydto)
-                    // {
-                    //     bi.BrandName = brands.FirstOrDefault(b => b.Id == bi.BrandId).Name;
-                    // }
+                    foreach (var bi in BrandInventorydto)
+                    {
+                        bi.BrandName = brands.FirstOrDefault(b => b.Id == bi.BrandId).Name;
+                    }
                 }
 
 
