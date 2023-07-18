@@ -226,11 +226,11 @@ namespace api.fernflowers.com.Controllers
                     Name = doctor.Name,
                     MobileNumber = doctor.MobileNumber,
                     Password = doctor.Password,
-                    IsApproved = doctor.IsApproved,
-                    IsEnabled = doctor.IsEnabled,
+                    IsApproved = false,
+                    IsEnabled = false,
                     Email = doctor.Email,
                     PMDC = doctor.PMDC,
-                    ValidUpto = doctor.ValidUpto
+                    ValidUpto =  DateTime.UtcNow.AddHours(5).AddMonths(3)
                 };
 
                 _db.Doctors.Add(doctorEntity);

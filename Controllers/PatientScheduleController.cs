@@ -294,7 +294,7 @@ namespace api.fernflowers.com.Controllers
         //     }
         // }
 
-         [Route("patient_bulk_update_IsSkip")]
+        [Route("patient_bulk_update_IsSkip")]
         [HttpPatch()]
         public async Task<IActionResult> UpdateIsSkip(long childId,string date, bool IsSkip)
         {
@@ -313,6 +313,39 @@ namespace api.fernflowers.com.Controllers
                 foreach (var patientSchedule in dbPS)
                 {
                     patientSchedule.IsSkip = IsSkip;
+                }
+
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+         [Route("patient_bulk_update_Date")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateBulkDate(long ChildId,long DoctorId,string oldDate, string newDate)
+        {
+            try
+            {
+                var parsedOldDate = System.DateOnly.Parse(oldDate);
+                var parsedNewDate = System.DateOnly.Parse(newDate);
+
+                var db = await _db.PatientSchedules
+                    .Where(d =>d.ChildId==ChildId && d.DoctorId==DoctorId && d.Date.Equals(parsedOldDate))
+                    .ToListAsync();
+
+                if (db == null || db.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                foreach (var Schedule in db)
+                {
+                    Schedule.Date = parsedNewDate;
+            
                 }
 
                 await _db.SaveChangesAsync();

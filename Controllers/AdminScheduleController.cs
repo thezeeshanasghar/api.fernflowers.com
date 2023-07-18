@@ -76,23 +76,56 @@ namespace api.fernflowers.com.Controllers
         // }
 
 
-        [Route("Admin_bulk_updateDate/{date}")]
+        // [Route("Admin_bulk_updateDate/{date}")]
+        // [HttpPatch]
+        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        // {
+        //     try
+        //     {
+        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date == DateOnly.FromDateTime(date)).ToList();
+        //         if (dbDoc == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         // dbDoc.ForEach(d => patchDocument.ApplyTo(d));
+        //         foreach (var doc in dbDoc)
+        //         {
+        //             patchDocument.ApplyTo(doc);
+        //             _db.Entry(dbDoc).State = EntityState.Modified;
+        //         }
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [Route("admin_bulk_update_Date")]
         [HttpPatch]
-        public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        public async Task<IActionResult> UpdateBulkDate(string oldDate, string newDate)
         {
             try
             {
-                var dbDoc = _db.AdminSchedules.Where(d => d.Date == DateOnly.FromDateTime(date)).ToList();
-                if (dbDoc == null)
+                var parsedOldDate = System.DateOnly.Parse(oldDate);
+                var parsedNewDate = System.DateOnly.Parse(newDate);
+
+                var db = await _db.AdminSchedules
+                    .Where(d => d.Date.Equals(parsedOldDate))
+                    .ToListAsync();
+
+                if (db == null || db.Count == 0)
                 {
                     return NotFound();
                 }
-                // dbDoc.ForEach(d => patchDocument.ApplyTo(d));
-                foreach (var doc in dbDoc)
+
+                foreach (var adminSchedule in db)
                 {
-                    patchDocument.ApplyTo(doc);
-                    _db.Entry(dbDoc).State = EntityState.Modified;
+                    adminSchedule.Date = parsedNewDate;
+            
                 }
+
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -101,6 +134,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
         [HttpGet]
         [Route("admin_post_doseSchedule")]

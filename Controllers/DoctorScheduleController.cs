@@ -48,25 +48,38 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-        // [Route("doctor_bulk_updateDate/{date}")]
-        // [HttpPatch]
-        //  public async Task<IActionResult> PatchAsync(DateTime date,int doctorId,[FromBody] JsonPatchDocument<DoctorSchedule> patchDocument)
-        // {
-        //     try{
-        //         var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date && d.DoctorId==doctorId).ToList(); 
-        //         if (dbDocS == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         dbDocS.ForEach(d => patchDocument.ApplyTo(d));
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-                
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500,ex.Message); 
-        //     }
-        // }
+        [Route("doctor_bulk_update_Date")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateBulkDate(long DoctorId,string oldDate, string newDate)
+        {
+            try
+            {
+                var parsedOldDate = System.DateOnly.Parse(oldDate);
+                var parsedNewDate = System.DateOnly.Parse(newDate);
+
+                var db = await _db.DoctorSchedules
+                    .Where(d =>d.DoctorId==DoctorId && d.Date.Equals(parsedOldDate))
+                    .ToListAsync();
+
+                if (db == null || db.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                foreach (var doctorSchedule in db)
+                {
+                    doctorSchedule.Date = parsedNewDate;
+            
+                }
+
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPatch]
         [Route("/update_date_for_Vacations")]
