@@ -180,47 +180,47 @@ namespace api.fernflowers.com.Controllers
             return Ok(count);
         }
 
-        [HttpGet("download")]
-        public IActionResult DownloadCsv()
-        {
-            try
-            {
-                // Retrieve all child data from the database
-                List<Child> children = _db.Childs.ToList();
+        // [HttpGet("download")]
+        // public IActionResult DownloadCsv()
+        // {
+        //     try
+        //     {
+        //         // Retrieve all child data from the database
+        //         List<Child> children = _db.Childs.ToList();
 
-                if (children.Count == 0)
-                {
-                    return NotFound("No child data found.");
-                }
+        //         if (children.Count == 0)
+        //         {
+        //             return NotFound("No child data found.");
+        //         }
 
-                // Generate the CSV content
-                StringBuilder csvContent = new StringBuilder();
-                csvContent.AppendLine(
-                    "Id,Name,FatherName,Guardian,DOB,Gender,Email,Type,City,CNIC,IsEPIDone,IsVerified,IsInactive,ClinicId,DoctorId"
-                );
-                foreach (Child child in children)
-                {
-                    csvContent.AppendLine(
-                        $"{child.Id},{child.Name},{child.FatherName},{child.DOB},{child.Gender},{child.Email},{child.City},{child.CNIC},{child.IsEPIDone},{child.IsVerified},{child.IsInactive},{child.ClinicId},{child.DoctorId}"
-                    );
-                }
+        //         // Generate the CSV content
+        //         StringBuilder csvContent = new StringBuilder();
+        //         csvContent.AppendLine(
+        //             "Id,Name,FatherName,Guardian,DOB,Gender,Email,Type,City,CNIC,IsEPIDone,IsVerified,IsInactive,ClinicId,DoctorId"
+        //         );
+        //         foreach (Child child in children)
+        //         {
+        //             csvContent.AppendLine(
+        //                 $"{child.Id},{child.Name},{child.FatherName},{child.DOB},{child.Gender},{child.Email},{child.City},{child.CNIC},{child.IsEPIDone},{child.IsVerified},{child.IsInactive},{child.ClinicId},{child.DoctorId}"
+        //             );
+        //         }
 
-                // Set the response headers for CSV file download
-                byte[] csvBytes = Encoding.UTF8.GetBytes(csvContent.ToString());
-                MemoryStream memoryStream = new MemoryStream(csvBytes);
-                string fileName = "children.csv";
-                string contentType = "text/csv";
+        //         // Set the response headers for CSV file download
+        //         byte[] csvBytes = Encoding.UTF8.GetBytes(csvContent.ToString());
+        //         MemoryStream memoryStream = new MemoryStream(csvBytes);
+        //         string fileName = "children.csv";
+        //         string contentType = "text/csv";
 
-                // Return the CSV file as a download
-                return File(memoryStream, contentType, fileName);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it as needed
-                Console.WriteLine(ex);
-                return StatusCode(500, "An error occurred while generating the CSV file.");
-            }
-        }
+        //         // Return the CSV file as a download
+        //         return File(memoryStream, contentType, fileName);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // Log the exception or handle it as needed
+        //         Console.WriteLine(ex);
+        //         return StatusCode(500, "An error occurred while generating the CSV file.");
+        //     }
+        // }
 
         [HttpGet("/patients_get_by_doctor_id")]
         public IActionResult GetChildrenByDoctorId(long doctorId)
