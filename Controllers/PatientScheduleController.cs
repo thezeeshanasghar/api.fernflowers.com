@@ -23,90 +23,52 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
             _mapper = mapper;
         }
-
-        // [HttpGet]
-        // [Route("Patient_DoseSchedule")]
-        // public async Task<IActionResult> GetNew(long ChildId,long DoctorId)
-        // {
-        //     try
-        //     {
-        //         Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
-
-        //         // Check if the PatientSchedules table already exists.
-        //         if (!_db.PatientSchedules.Any(d=>d.ChildId==ChildId && d.DoctorId==DoctorId))
-        //         {
-        //             // If not, get the data from the doctorSchedules table and save it in the patientSchedules table.
-        //             var doctorSchedules =  _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).ToList();
-
-        //             foreach (var Schedule in doctorSchedules)
-        //             {
-        //                 var newDate = (Schedule.Date);
-        //                 var dose = await _db.Doses.FindAsync(Schedule.DoseId);
-        //                 var dto = _mapper.Map<DoseDTO>(dose);
-
-        //                 if (dict.ContainsKey(newDate))
-        //                     dict[newDate].Add(dto);
-        //                 else
-        //                     dict.Add(newDate, new List<DoseDTO>() { dto });
-
-        //                 // Save the DoctorSchedule record.
-        //                 var patientSchedule = new PatientSchedule
-        //                 {
-        //                     Date = newDate,
-        //                     DoseId = Schedule.DoseId,
-        //                     DoctorId = DoctorId,
-        //                     ChildId=ChildId
-        //                 };
-        //                 _db.PatientSchedules.Add(patientSchedule);
-        //             }
-
-        //             await _db.SaveChangesAsync();
-        //         }
-        //         else
-        //         {
-        //             // If the DoctorSchedules table already exists, get the data from it.
-        //             var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId==ChildId).ToListAsync();
-
-        //             foreach (var patientSchedule in patientSchedules)
-        //             {
-        //                 var newDate = (patientSchedule.Date);
-        //                 var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
-        //                 var dto = _mapper.Map<DoseDTO>(dose);
-
-        //                 if (dict.ContainsKey(newDate))
-        //                     dict[newDate].Add(dto);
-        //                 else
-        //                     dict.Add(newDate, new List<DoseDTO>() { dto });
-        //             }
-        //         }
-                
-
-        //         return Ok(dict);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
+        
         [HttpGet]
         [Route("Patient_DoseSchedule")]
         public async Task<IActionResult> GetNew(long ChildId, long DoctorId)
         {
             try
             {
+                var child = await _db.Childs.FindAsync(ChildId);
+
+                if (child == null)
+                {
+                    // Child with the given ID not found
+                    return NotFound();
+                }
                 Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
 
-                // Check if the PatientSchedules table already exists.
                 if (!_db.PatientSchedules.Any(d => d.ChildId == ChildId && d.DoctorId == DoctorId))
-                {
-                    // If not, get the data from the doctorSchedules table and save it in the patientSchedules table.
-                    var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).ToList();
-
-                    foreach (var Schedule in doctorSchedules)
                     {
-                        var newDate = Schedule.Date;
-                        var dose = await _db.Doses.FindAsync(Schedule.DoseId);
+                    var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
+
+                    DateOnly childDOB =DateOnly.FromDateTime(child.DOB);// Example date of birth for the child
+
+                    DateOnly oldDate = default; // Variable to store the previous date
+                    DateOnly updateDate = default; // Variable to store the updated date
+
+                    foreach (var schedule in doctorSchedules)
+                    {
+                        var pdate = schedule.Date; // Store the current schedule's date in pdate
+
+                        if (oldDate == default)
+                        {
+                            oldDate = pdate;
+                            updateDate = childDOB; // Replace the first date with the child's date of birth
+                        }
+                        else
+                        {
+                            if (pdate != oldDate)
+                            {
+                                var gap = (int)(pdate.DayNumber-oldDate.DayNumber); // Calculate the gap between oldDate and pdate
+                                updateDate = updateDate.AddDays(gap); // Add the gap to the updateDate
+                            }
+                        }
+
+                        var newDate = updateDate;
+
+                        var dose = await _db.Doses.FindAsync(schedule.DoseId);
                         var dto = new PatientDoseScheduleDTO
                         {
                             ScheduleId = 0, // Set to 0 as it will be generated when saved
@@ -124,7 +86,7 @@ namespace api.fernflowers.com.Controllers
                         var patientSchedule = new PatientSchedule
                         {
                             Date = newDate,
-                            DoseId = Schedule.DoseId,
+                            DoseId = schedule.DoseId,
                             DoctorId = DoctorId,
                             ChildId = ChildId,
                             IsDone = false
@@ -133,32 +95,35 @@ namespace api.fernflowers.com.Controllers
                         await _db.SaveChangesAsync();
 
                         dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
+
+                        oldDate = pdate; // Update the oldDate for the next iteration
                     }
+
                 }
                 else
-                {
-                    // If the DoctorSchedules table already exists, get the data from it.
-                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
-
-                    foreach (var patientSchedule in patientSchedules)
                     {
-                        var newDate = patientSchedule.Date;
-                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
-                        var dto = new PatientDoseScheduleDTO
+                        // If the DoctorSchedules table already exists, get the data from it.
+                        var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
+
+                        foreach (var patientSchedule in patientSchedules)
                         {
-                            ScheduleId = patientSchedule.Id,
-                            DoseName = dose.Name,
-                            IsSkip = patientSchedule.IsSkip,
-                            IsDone = patientSchedule.IsDone
-                        };
+                            var newDate = patientSchedule.Date;
+                            var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
+                            var dto = new PatientDoseScheduleDTO
+                            {
+                                ScheduleId = patientSchedule.Id,
+                                DoseName = dose.Name,
+                                IsSkip = patientSchedule.IsSkip,
+                                IsDone = patientSchedule.IsDone
+                            };
 
-                        if (dict.ContainsKey(newDate))
-                            dict[newDate].Add(dto);
-                        else
-                            dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                            if (dict.ContainsKey(newDate))
+                                dict[newDate].Add(dto);
+                            else
+                                dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                        }
                     }
-                }
-
+                
                 return Ok(dict);
             }
             catch (Exception ex)
@@ -166,6 +131,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
         [Route("single_updateDate")]
         [HttpPatch]
@@ -269,31 +235,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [Route("patient_bulk_updateDate/{date}")]
-        // [HttpPatch]
-        // public async Task<IActionResult> PatchAsync(
-        //     int childId,
-        //     DateTime date,
-        //     [FromBody] JsonPatchDocument<PatientSchedule> patchDocument
-        // )
-        // {
-        //     try
-        //     {
-        //         var dbPS = _db.PatientSchedules.Where(d => d.childId == childId && d.Date.Date == date.Date).ToList();
-        //         if (dbPS == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         dbPS.ForEach(d => patchDocument.ApplyTo(d));
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
         [Route("patient_bulk_update_IsSkip")]
         [HttpPatch()]
         public async Task<IActionResult> UpdateIsSkip(long childId,string date, bool IsSkip)
@@ -324,7 +265,7 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-         [Route("patient_bulk_update_Date")]
+        [Route("patient_bulk_update_Date")]
         [HttpPatch]
         public async Task<IActionResult> UpdateBulkDate(long ChildId,long DoctorId,string oldDate, string newDate)
         {
