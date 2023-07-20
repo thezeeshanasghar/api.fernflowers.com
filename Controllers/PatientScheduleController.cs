@@ -174,6 +174,7 @@ namespace api.fernflowers.com.Controllers
 
                 dbps.IsDone = ps.IsDone;
                 dbps.BrandId = ps.BrandId; 
+                dbps.Date= ps.Date;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
@@ -238,25 +239,63 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        // [Route("patient_bulk_updateDone")]
+        // [HttpPatch()]
+        // public async Task<IActionResult> UpdateIsDone(long childId,string date, bool isDone)
+        // {
+        //     try
+        //     {
+        //         var parsedFromDate = System.DateOnly.Parse(date);
+        //         var dbPS = await _db.PatientSchedules
+        //             .Where(d => d.ChildId == childId && d.Date.Equals(parsedFromDate))
+        //             .ToListAsync();
+
+        //         if (dbPS == null || dbPS.Count == 0)
+        //         {
+        //             return NotFound();
+        //         }
+
+        //         foreach (var patientSchedule in dbPS)
+        //         {
+        //             patientSchedule.IsDone = isDone;
+        //         }
+
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
         [Route("patient_bulk_updateDone")]
         [HttpPatch()]
-        public async Task<IActionResult> UpdateIsDone(long childId,string date, bool isDone)
+        public async Task<IActionResult> UpdateBrandIdAndDate([FromBody] List<PatientScheduleUpdateModel> updateData)
         {
             try
             {
-                var parsedFromDate = System.DateOnly.Parse(date);
-                var dbPS = await _db.PatientSchedules
-                    .Where(d => d.ChildId == childId && d.Date.Equals(parsedFromDate))
-                    .ToListAsync();
-
-                if (dbPS == null || dbPS.Count == 0)
+                foreach (var updateItem in updateData)
                 {
-                    return NotFound();
-                }
+                    var parsedCurrentDate = System.DateOnly.Parse(updateItem.CurrentDate);
+                    var parsedNewDate = System.DateOnly.Parse(updateItem.NewDate);
 
-                foreach (var patientSchedule in dbPS)
-                {
-                    patientSchedule.IsDone = isDone;
+                    var dbPS = await _db.PatientSchedules
+                        .Where(d => d.ChildId == updateItem.ChildId && d.Date.Equals(parsedCurrentDate))
+                        .ToListAsync();
+
+                    if (dbPS == null || dbPS.Count == 0)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update BrandId for each record
+                    for (int i = 0; i < dbPS.Count; i++)
+                    {
+                        dbPS[i].IsDone = updateItem.IsDone;
+                        dbPS[i].Date = parsedNewDate;
+                        dbPS[i].BrandId = updateData[i].BrandId; // Use the corresponding BrandId from updateData array
+                    }
                 }
 
                 await _db.SaveChangesAsync();
@@ -267,6 +306,16 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+public class PatientScheduleUpdateModel
+{
+    public long ChildId { get; set; }
+    public string CurrentDate { get; set; }
+    public bool IsDone { get; set; }
+    public string NewDate { get; set; }
+    public long BrandId { get; set; }
+}
+
 
         [Route("patient_bulk_update_IsSkip")]
         [HttpPatch()]
