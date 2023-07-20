@@ -189,14 +189,48 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [Route("get_brands_for_dose/{doseId}")]
-        [HttpGet]
-        public async Task<IActionResult> GetBrandsForDose(long doseId)
+        // [Route("get_brands_for_dose/{doseId}")]
+        // [HttpGet]
+        // public async Task<IActionResult> GetBrandsForDose(long Id)
+        // {
+        //     try
+        //     {
+        //         // Find the dose by its Id
+        //         var dose = await _db.Doses.FindAsync(Id);
+
+        //         if (dose == null)
+        //         {
+        //             return NotFound("Dose not found");
+        //         }
+
+        //         // Get all brands that are associated with the given doseId
+        //         var brandsForDose = await _db.Brands
+        //             .Where(brand => brand.VaccineId == dose.VaccineId)
+        //             .ToListAsync();
+
+        //         return Ok(brandsForDose);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [HttpGet("GetBrandForPatientSchedule")]
+        public async Task<IActionResult> GetBrandForPatientSchedule(long Id)
         {
             try
             {
-                // Find the dose by its Id
-                var dose = await _db.Doses.FindAsync(doseId);
+                // Find the patient schedule by its ID
+                var patientSchedule = await _db.PatientSchedules.FindAsync(Id);
+
+                if (patientSchedule == null)
+                {
+                    return NotFound("Patient schedule not found");
+                }
+
+                // Find the dose by its ID
+                var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
 
                 if (dose == null)
                 {
@@ -215,6 +249,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
 
 
@@ -312,14 +347,14 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-public class PatientScheduleUpdateModel
-{
-    public long ChildId { get; set; }
-    public string CurrentDate { get; set; }
-    public bool IsDone { get; set; }
-    public string NewDate { get; set; }
-    public long BrandId { get; set; }
-}
+        public class PatientScheduleUpdateModel
+        {
+            public long ChildId { get; set; }
+            public string CurrentDate { get; set; }
+            public bool IsDone { get; set; }
+            public string NewDate { get; set; }
+            public long BrandId { get; set; }
+        }
 
 
         [Route("patient_bulk_update_IsSkip")]
