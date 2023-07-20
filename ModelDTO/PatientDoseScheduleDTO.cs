@@ -6,4 +6,5 @@ public class PatientDoseScheduleDTO
     // public DateOnly Date { get; set; }
     public bool IsSkip { get; set; }
     public bool IsDone { get; set; }
+    public string BrandName {get;set;}
 }

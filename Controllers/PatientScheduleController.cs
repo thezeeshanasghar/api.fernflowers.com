@@ -71,12 +71,14 @@ namespace api.fernflowers.com.Controllers
                         var newDate = updateDate;
 
                         var dose = await _db.Doses.FindAsync(schedule.DoseId);
+                        // var brand= await _db.Brands.FindAsync(BrandId);
                         var dto = new PatientDoseScheduleDTO
                         {
                             ScheduleId = 0, // Set to 0 as it will be generated when saved
                             DoseName = dose.Name,
                             IsSkip = false,
-                            IsDone = false
+                            IsDone = false,
+                            // BrandName=brand.Name
                         };
 
                         if (dict.ContainsKey(newDate))
@@ -91,7 +93,8 @@ namespace api.fernflowers.com.Controllers
                             DoseId = schedule.DoseId,
                             DoctorId = DoctorId,
                             ChildId = ChildId,
-                            IsDone = false
+                            IsDone = false,
+                            BrandId=1
                         };
                         _db.PatientSchedules.Add(patientSchedule);
                         await _db.SaveChangesAsync();
@@ -111,12 +114,14 @@ namespace api.fernflowers.com.Controllers
                         {
                             var newDate = patientSchedule.Date;
                             var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
+                            var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
                             var dto = new PatientDoseScheduleDTO
                             {
                                 ScheduleId = patientSchedule.Id,
                                 DoseName = dose.Name,
                                 IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone
+                                IsDone = patientSchedule.IsDone,
+                                BrandName=brand.Name
                             };
 
                             if (dict.ContainsKey(newDate))
@@ -427,12 +432,11 @@ public class PatientScheduleUpdateModel
                             ClinicNumber=clinic.Number,
                         
                         };
-
             var result = query.FirstOrDefault();
             var query2 = from schedule in _db.PatientSchedules
                     join dose in _db.Doses on schedule.DoseId equals dose.Id
                     join vaccine in _db.Vaccines on dose.VaccineId equals vaccine.Id
-                    join brand in _db.Brands on vaccine.Id equals brand.VaccineId
+                    join brand in _db.Brands on schedule.BrandId equals brand.Id
 
                     where schedule.ChildId == ChildId
                     select new
