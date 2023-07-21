@@ -461,7 +461,8 @@ namespace api.fernflowers.com.Controllers
                             ChildFatherName=child.FatherName,
                             DoctorId = doctor.Id,
                             DoctorName = doctor.Name,
-                            // DoctorType = doctor.DoctorType,
+                            DoctorEmail = doctor.Email,
+                            DoctorMobileNumber = doctor.MobileNumber,
                             ClinicName = clinic.Name,
                             ClinicAddress=clinic.Address,
                             ClinicNumber=clinic.Number,
@@ -496,7 +497,8 @@ namespace api.fernflowers.com.Controllers
 
         
             string doctorName =result.DoctorName;
-            // string doctorType = result.DoctorType;
+            string DoctorEmail = result.DoctorEmail;
+            string DoctorMobileNumber = result.DoctorMobileNumber;
             string ClinicName = result.ClinicName;
             string ClinicAddress = result.ClinicAddress;
             string ClinicNumber = result.ClinicNumber;
@@ -522,10 +524,15 @@ namespace api.fernflowers.com.Controllers
                 table.AddCell(DoctorNamecell);
 
 
-                // PdfPCell doctorTypeCell = new PdfPCell(new Phrase(doctorType, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
-                // doctorTypeCell.Border = Rectangle.NO_BORDER;
-                // doctorTypeCell.HorizontalAlignment = Element.ALIGN_LEFT;
-                // table.AddCell(doctorTypeCell);
+                PdfPCell doctorEmailCell = new PdfPCell(new Phrase(DoctorEmail, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                doctorEmailCell.Border = Rectangle.NO_BORDER;
+                doctorEmailCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(doctorEmailCell);
+
+                PdfPCell doctorMobileNumberCell = new PdfPCell(new Phrase(DoctorMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                doctorMobileNumberCell.Border = Rectangle.NO_BORDER;
+                doctorMobileNumberCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                table.AddCell(doctorMobileNumberCell);
 
                 PdfPCell lineBreakCell = new PdfPCell(new Phrase("\n"));
                 lineBreakCell.Border = Rectangle.NO_BORDER;
