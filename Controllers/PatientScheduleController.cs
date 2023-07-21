@@ -487,7 +487,7 @@ namespace api.fernflowers.com.Controllers
                         
                     };
 
-            var result2 = query2.ToList();
+            var result2 = query2.OrderBy(item => item.Date).ToList();
 
             if (result == null)
             {
@@ -622,8 +622,8 @@ namespace api.fernflowers.com.Controllers
                 table_Center.AddCell(new PdfPCell(new Phrase("Sr")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
                 table_Center.AddCell(new PdfPCell(new Phrase("Vaccine")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
                 table_Center.AddCell(new PdfPCell(new Phrase("Status")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
-                table_Center.AddCell(new PdfPCell(new Phrase("Brand")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
                 table_Center.AddCell(new PdfPCell(new Phrase("Date")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
+                table_Center.AddCell(new PdfPCell(new Phrase("Brand")) { BackgroundColor = BaseColor.LIGHT_GRAY, HorizontalAlignment = Element.ALIGN_CENTER });
 
 
                 int counter = 1;
@@ -649,7 +649,7 @@ namespace api.fernflowers.com.Controllers
 
                     statusCell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table_Center.AddCell(statusCell);
-                    
+                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.Date.ToString("d"), FontFactory.GetFont(FontFactory.HELVETICA, 8)))  { HorizontalAlignment = Element.ALIGN_CENTER, MinimumHeight = 7f, PaddingBottom = 2f });
 
                     PdfPCell BrandCell;
                     if (schedule.IsDone == true)
@@ -666,7 +666,7 @@ namespace api.fernflowers.com.Controllers
                     BrandCell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table_Center.AddCell(BrandCell);
                     
-                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.Date.ToString("d"), FontFactory.GetFont(FontFactory.HELVETICA, 8)))  { HorizontalAlignment = Element.ALIGN_CENTER, MinimumHeight = 7f, PaddingBottom = 2f });
+                    
             
 
                     counter++;
