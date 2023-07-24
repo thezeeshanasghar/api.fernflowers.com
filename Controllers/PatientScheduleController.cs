@@ -211,7 +211,7 @@ namespace api.fernflowers.com.Controllers
                                 DoctorId = DoctorId,
                                 ChildId = ChildId,
                                 IsDone = false,
-                                BrandId = 1
+                                BrandId = null
                             };
                             _db.PatientSchedules.Add(patientSchedule);
                             await _db.SaveChangesAsync();
@@ -245,7 +245,7 @@ namespace api.fernflowers.com.Controllers
                                 DoctorId = DoctorId,
                                 ChildId = ChildId,
                                 IsDone = false,
-                                BrandId = 1
+                                BrandId = null
                             };
                             _db.PatientSchedules.Add(patientSchedule);
                             await _db.SaveChangesAsync();
