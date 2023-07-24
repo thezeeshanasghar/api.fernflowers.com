@@ -459,6 +459,8 @@ namespace api.fernflowers.com.Controllers
                             ChildId = child.Id,
                             ChildName = child.Name,
                             ChildFatherName=child.FatherName,
+                            ChildMobileNumber=child.MobileNumber,
+                            Gender=child.Gender,
                             DoctorId = doctor.Id,
                             DoctorName = doctor.Name,
                             DoctorEmail = doctor.Email,
@@ -504,6 +506,7 @@ namespace api.fernflowers.com.Controllers
             string ClinicNumber = result.ClinicNumber;
             string ChildName = result.ChildName;
             string ChildFatherName = result.ChildFatherName;
+            string ChildMobileNumber=result.ChildMobileNumber;
 
             // Create the PDF document
             using (MemoryStream memoryStream = new MemoryStream())
@@ -595,11 +598,23 @@ namespace api.fernflowers.com.Controllers
                 childNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childNameCell.Border = Rectangle.NO_BORDER;
                 childTable.AddCell(childNameCell);
+                
 
-                PdfPCell ChildFatherNameCell = new PdfPCell(new Phrase(ChildFatherName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
+                string childWithFatherName = genderText + ChildFatherName;
+                PdfPCell ChildFatherNameCell = new PdfPCell(new Phrase(childWithFatherName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                 ChildFatherNameCell.Border = Rectangle.NO_BORDER;
                 ChildFatherNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childTable.AddCell(ChildFatherNameCell);
+
+                
+              
+               
+
+                PdfPCell ChildMobileNumberCell = new PdfPCell(new Phrase(ChildMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                ChildMobileNumberCell.Border = Rectangle.NO_BORDER;
+                ChildMobileNumberCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                childTable.AddCell(ChildMobileNumberCell);
 
                 PdfPCell childCell = new PdfPCell(childTable);
                 childCell.Border = Rectangle.NO_BORDER;

@@ -15,6 +15,7 @@ namespace api.fernflowers.com.ModelDTO
         public Gender Gender { get; set; }
         public string City { get; set; }
         public string CNIC { get; set; }
+        public string MobileNumber { get; set; }
         public bool IsEPIDone { get; set; }
         public bool IsVerified { get; set; }
         public bool IsInactive { get; set; }
