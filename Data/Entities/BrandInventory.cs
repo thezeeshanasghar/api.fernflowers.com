@@ -6,6 +6,6 @@ public class BrandInventory
 {
     public long Id { get; set; }
     public int Count { get; set; }
-    public long BrandId { get; set; }
-    public long DoctorId { get; set; }
+    public long? BrandId { get; set; }
+    public long? DoctorId { get; set; }
 }
