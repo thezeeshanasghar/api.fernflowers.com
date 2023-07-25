@@ -280,7 +280,7 @@ namespace api.fernflowers.com.Controllers
         }
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
