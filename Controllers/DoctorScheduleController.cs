@@ -112,7 +112,7 @@ namespace api.fernflowers.com.Controllers
 
         [HttpGet]
         [Route("Doctor_DoseSchedule")]
-        public async Task<IActionResult> GetNew(int doctorId)
+        public async Task<IActionResult> GetNew(long doctorId)
         {
             try
             {
