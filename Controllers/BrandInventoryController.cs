@@ -41,15 +41,29 @@ namespace api.fernflowers.com.Controllers
                         };
                         BrandInventorydto.Add(tmp_brandinventory);
                     }
-                    var brandIds = brandinventory.Select(bi => bi.BrandId).ToList();
-                    var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+
+                     var validBrandIds = brandinventory
+                        .Where(ba => _db.Brands.Any(b => b.Id == ba.BrandId))
+                        .Select(ba => ba.BrandId)
+                        .ToList();
+                  
+                    var brands = _db.Brands.Where(b => validBrandIds.Contains(b.Id)).ToList();
                     foreach (var bi in BrandInventorydto)
                     {
-                        bi.BrandName = brands.FirstOrDefault(b => b.Id == bi.BrandId).Name;
+                        var brand = brands.FirstOrDefault(b => b.Id == bi.BrandId);
+                        if (brand != null)
+                        {
+                            bi.BrandName = brand.Name;
+                            bi.BrandId=bi.BrandId;
+                        }
+                        else
+                        {
+                            // Handle the case where the BrandId is no longer valid (deleted)
+                            bi.BrandName = "Brand Deleted"; // Or any other appropriate message
+                            bi.BrandId=null;
+                        }
                     }
                 }
-
-
                 return Ok(BrandInventorydto);
             }
             catch (Exception ex)
