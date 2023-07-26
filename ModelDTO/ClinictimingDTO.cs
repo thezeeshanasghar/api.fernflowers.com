@@ -6,10 +6,10 @@ namespace api.fernflowers.com.ModelDTO;
 public class ClinicTimingDTO
 {
     public long Id { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public DayOfWeek Day { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public Session Session { get; set; }
+    // [JsonConverter(typeof(JsonStringEnumConverter))]
+    public string Day { get; set; }
+    // [JsonConverter(typeof(JsonStringEnumConverter))]
+    public string Session { get; set; }
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
     public long ClinicId { get; set; }

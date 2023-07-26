@@ -20,6 +20,16 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet]
+        [Route("clinicByDoctor")]
+        public async Task<ActionResult<IEnumerable<Clinic>>> GetClinicsByDoctorId(long doctorId)
+        {
+            var clinics = await _db.Clinics
+                .Where(c => c.DoctorId == doctorId)
+                .ToListAsync();
+
+            return clinics;
+        }
+        [HttpGet]
         [Route("/ClinicName")]
         public async Task<ActionResult<IEnumerable<string>>> Getname()
         {
@@ -48,7 +58,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -78,30 +88,30 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Clinic clinicToUpdate)
-        {
-            try
-            {
-                if (id != clinicToUpdate.Id)
-                    return BadRequest();
-                var dbClinic = await _db.Clinics.FindAsync(id);
-                if (dbClinic == null)
-                    return NotFound();
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Clinic clinicToUpdate)
+        // {
+        //     try
+        //     {
+        //         if (id != clinicToUpdate.Id)
+        //             return BadRequest();
+        //         var dbClinic = await _db.Clinics.FindAsync(id);
+        //         if (dbClinic == null)
+        //             return NotFound();
 
-                _db.Clinics.Update(clinicToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //         _db.Clinics.Update(clinicToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -121,7 +131,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
         {
             try
             {
@@ -133,6 +143,42 @@ namespace api.fernflowers.com.Controllers
                 patchDocument.ApplyTo(dbClinic);
                 await _db.SaveChangesAsync();
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch()]
+        [Route("clinic/{id}")]
+        public async Task<IActionResult> UpdateClinicto([FromRoute] long id, [FromBody] Clinic cli)
+        {
+            try
+            {
+                var dbClinic = await _db.Clinics.FindAsync(cli.Id);
+                if (dbClinic == null)
+                {
+                    return NotFound();
+                }
+             
+                 if (cli.Name != null)
+                {
+                    dbClinic.Name = cli.Name;
+                }
+                 if (cli.Address != null)
+                {
+                    dbClinic.Address = cli.Address;
+                }
+                if (cli.Number != null)
+                {
+                    dbClinic.Number = cli.Number;
+                }
+                
+                await _db.SaveChangesAsync();
+
+                return NoContent();
+
             }
             catch (Exception ex)
             {

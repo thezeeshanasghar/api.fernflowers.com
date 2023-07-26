@@ -7,6 +7,8 @@ using api.fernflowers.com.ModelDTO;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Globalization;
+using AutoMapper;
+
 
 namespace api.fernflowers.com.Controllers
 {
@@ -15,73 +17,22 @@ namespace api.fernflowers.com.Controllers
     public class DoctorScheduleController : ControllerBase
     {
         private readonly VaccineDBContext _db;
+        private readonly IMapper _mapper;
 
-        public DoctorScheduleController(VaccineDBContext vaccineDBContext)
+
+        public DoctorScheduleController(VaccineDBContext vaccineDBContext, IMapper mapper)
         {
             _db = vaccineDBContext;
-        }
-
-        [HttpGet("doctor_schedule/{doctorId}")]
-        public ActionResult<IEnumerable<DoctorSchedule>> GetDoctorSchedule(int doctorId)
-        {
-            try
-            {
-                var doctorSchedule = _db.DoctorSchedules
-                    .Where(ds => ds.DoctorId == doctorId)
-                    .OrderBy(ds => ds.Date)
-                    .ToList();
-
-                return Ok(doctorSchedule);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        [Route("doctor_post_schedule")]
-        [HttpPost]
-        public async Task<IActionResult> Getnewandsave(int doctorId)
-        {
-            try
-            {
-                if(_db.DoctorSchedules.Any(d=>d.DoctorId==doctorId))
-                {
-                    return Ok("Schedule already exist");
-                }
-                var doctorsSchedule = _db.AdminSchedules.ToList();
-
-                List<DoctorSchedule> doseScheduleList = new List<DoctorSchedule>();
-
-                foreach (var ds in doctorsSchedule)
-                {
-                    var doseScheduleEntry = new DoctorSchedule
-                    {
-                        Date = ds.Date,
-                        DoseId = ds.DoseId,
-                        DoctorId = doctorId
-                    };
-
-                    doseScheduleList.Add(doseScheduleEntry);
-                }
-                
-                _db.DoctorSchedules.AddRange(doseScheduleList);
-                await _db.SaveChangesAsync();
-
-                return Ok(doseScheduleList.OrderBy(x => x.Date));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+              _mapper = mapper;
         }
 
         [Route("single_updateDate")]
-
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] DoctorSchedule ds)
+        public async Task<IActionResult> Update(long doseId,long doctorId,[FromBody] DoctorSchedule ds)
         {
             try{
-                var dbDoc = await _db.DoctorSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
+                
+                var dbDoc = await _db.DoctorSchedules.FirstOrDefaultAsync(d => d.DoctorId == ds.DoctorId && d.DoseId==ds.DoseId); 
                 if (dbDoc == null)
                 {
                     return NotFound();
@@ -97,52 +48,129 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-        [Route("doctor_bulk_updateDate/{date}")]
+        [Route("doctor_bulk_update_Date")]
         [HttpPatch]
-         public async Task<IActionResult> PatchAsync(DateTime date,[FromBody] JsonPatchDocument<DoctorSchedule> patchDocument)
-        {
-            try{
-                var dbDocS = _db.DoctorSchedules.Where(d=>d.Date.Date==date.Date).ToList(); 
-                if (dbDocS == null)
-                {
-                    return NotFound();
-                }
-                dbDocS.ForEach(d => patchDocument.ApplyTo(d));
-                await _db.SaveChangesAsync();
-                return NoContent();
-                
-            }
-            catch(Exception ex){
-                return StatusCode(500,ex.Message); 
-            }
-        }
-    
-
-        [HttpPatch]
-        [Route("/update_date_for_Vaccations")]
-        public async Task<IActionResult> UpadateDoseDates(int doctorId, DateTime fromDate,DateTime toDate)
+        public async Task<IActionResult> UpdateBulkDate(long DoctorId,string oldDate, string newDate)
         {
             try
             {
-                var dosesToUpdate= _db.DoctorSchedules
-                    .Where(ds=>ds.Date >= fromDate && ds.Date <=toDate && ds.DoctorId==doctorId).ToList();
+                var parsedOldDate = System.DateOnly.Parse(oldDate);
+                var parsedNewDate = System.DateOnly.Parse(newDate);
 
-                foreach(var dose in dosesToUpdate)
+                var db = await _db.DoctorSchedules
+                    .Where(d =>d.DoctorId==DoctorId && d.Date.Equals(parsedOldDate))
+                    .ToListAsync();
+
+                if (db == null || db.Count == 0)
                 {
-                    var gap=(toDate - fromDate).TotalDays;
-                    dose.Date=dose.Date.AddDays(gap);
+                    return NotFound();
                 }
+
+                foreach (var doctorSchedule in db)
+                {
+                    doctorSchedule.Date = parsedNewDate;
+            
+                }
+
                 await _db.SaveChangesAsync();
-                return Ok("Dose Dates Updated for vacations");
+                return NoContent();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500,ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
-  
+        [HttpPatch]
+        [Route("/update_date_for_Vacations")]
+        public async Task<IActionResult> UpdateDoseDates(long doctorId, [FromQuery] string fromDate, [FromQuery] string toDate)
+        {
+            try
+            {
+                var parsedFromDate = System.DateOnly.Parse(fromDate);
+                var parsedToDate = System.DateOnly.Parse(toDate);
 
+                var dosesToUpdate = _db.DoctorSchedules
+                    .Where(ds => ds.Date >= parsedFromDate && ds.Date <= parsedToDate && ds.DoctorId == doctorId)
+                    .ToList();
 
+                var updatedDate = parsedToDate.AddDays(1);
+
+                foreach (var dose in dosesToUpdate)
+                {
+                    dose.Date = updatedDate;
+                }
+
+                await _db.SaveChangesAsync();
+                return Ok("Dose Dates Updated for vacations");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("Doctor_DoseSchedule")]
+        public async Task<IActionResult> GetNew(long doctorId)
+        {
+            try
+            {
+                Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+                // Check if the DoctorSchedules table already exists.
+                if (!_db.DoctorSchedules.Any(d=>d.DoctorId==doctorId))
+                {
+                    // If not, get the data from the AdminSchedules table and save it in the DoctorSchedules table.
+                    var adminSchedules = await _db.AdminSchedules.ToListAsync();
+
+                    foreach (var adminSchedule in adminSchedules)
+                    {
+                        var newDate = (adminSchedule.Date);
+                        var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
+                        var dto = _mapper.Map<DoseDTO>(dose);
+
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+
+                        // Save the DoctorSchedule record.
+                        var doctorSchedule = new DoctorSchedule
+                        {
+                            Date = newDate,
+                            DoseId = adminSchedule.DoseId,
+                            DoctorId = doctorId
+                        };
+                        _db.DoctorSchedules.Add(doctorSchedule);
+                    }
+
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    // If the DoctorSchedules table already exists, get the data from it.
+                    var doctorSchedules = await _db.DoctorSchedules.Where(d => d.DoctorId == doctorId).ToListAsync();
+
+                    foreach (var doctorSchedule in doctorSchedules)
+                    {
+                        var newDate = (doctorSchedule.Date);
+                        var dose = await _db.Doses.FindAsync(doctorSchedule.DoseId);
+                        var dto = _mapper.Map<DoseDTO>(dose);
+
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+                    }
+                }
+
+                return Ok(dict);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

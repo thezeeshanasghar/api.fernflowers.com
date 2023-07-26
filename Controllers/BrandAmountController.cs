@@ -23,28 +23,90 @@ namespace api.fernflowers.com.Controllers
         }
 
 
+        // [HttpGet]
+        // public async Task<IActionResult> GetAll()
+        // {
+        //     try
+        //     {
+        //         var brandamount = await _db.BrandAmounts.ToListAsync();
+        //         List<BrandAmountDTO> BrandAmountdto = null;
+        //         if (brandamount != null)
+        //         {
+        //             BrandAmountdto = new List<BrandAmountDTO> { };
+        //             foreach (var ba in brandamount)
+        //             {
+        //                 var tmp_brandamount = new BrandAmountDTO
+        //                 {
+        //                     Id = ba.Id,
+        //                     Amount = ba.Amount,
+        //                     BrandId = ba.BrandId,
+        //                     DoctorId = ba.DoctorId,
+        //                 };
+        //                 BrandAmountdto.Add(tmp_brandamount);
+        //             }
+        //             var brandIds = brandamount.Select(ba => ba.BrandId).ToList();
+        //             var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+        //             foreach (var ba in BrandAmountdto)
+        //             {
+        //                 ba.BrandName = brands.FirstOrDefault(b => b.Id == ba.BrandId).Name;
+        //             }
+        //         }
+
+
+        //         return Ok(BrandAmountdto);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var brandamount = await _db.BrandAmounts.Include(x => x.Brand).ToListAsync();
-                List<BrandAmountDTO> BrandAmountdto = new List<BrandAmountDTO> { };
-
-                foreach (var ba in brandamount)
+                var brandamount = await _db.BrandAmounts.ToListAsync();
+                List<BrandAmountDTO> BrandAmountdto = null;
+                if (brandamount != null)
                 {
-                    var tmp_brandamount = new BrandAmountDTO
+                    BrandAmountdto = new List<BrandAmountDTO> { };
+                    foreach (var ba in brandamount)
                     {
-                        Id = ba.Id,
-                        Amount = ba.Amount,
-                        BrandId = ba.BrandId,
-                        DoctorId = ba.DoctorId,
-                        Brand = _mapper.Map<BrandDTO>(ba.Brand)
-                    };
-                    BrandAmountdto.Add(tmp_brandamount);
+                        var tmp_brandamount = new BrandAmountDTO
+                        {
+                            Id = ba.Id,
+                            Amount = ba.Amount,
+                            BrandId = ba.BrandId,
+                            DoctorId = ba.DoctorId,
+                        };
+                        BrandAmountdto.Add(tmp_brandamount);
+                    }
+                    
+                    // Get a list of BrandIds that are still valid (not deleted)
+                    var validBrandIds = brandamount
+                        .Where(ba => _db.Brands.Any(b => b.Id == ba.BrandId))
+                        .Select(ba => ba.BrandId)
+                        .ToList();
+
+                    // Update the BrandName for BrandAmounts that have valid BrandIds
+                    var brands = _db.Brands.Where(b => validBrandIds.Contains(b.Id)).ToList();
+                    foreach (var ba in BrandAmountdto)
+                    {
+                        var brand = brands.FirstOrDefault(b => b.Id == ba.BrandId);
+                        if (brand != null)
+                        {
+                            ba.BrandName = brand.Name;
+                            ba.BrandId=ba.BrandId;
+                        }
+                        else
+                        {
+                            // Handle the case where the BrandId is no longer valid (deleted)
+                            ba.BrandName = "Brand Deleted"; // Or any other appropriate message
+                            ba.BrandId=null;
+                        }
+                    }
                 }
-                var brandIds = brandamount.Select(ba => ba.BrandId).ToList();
-                var brands = _db.Brands.Where(b => brandIds.Contains(b.Id)).ToList();
+
                 return Ok(BrandAmountdto);
             }
             catch (Exception ex)
@@ -54,7 +116,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -74,14 +136,14 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
-                var existingBrandAmount = _db.BrandAmounts.SingleOrDefault(b => b.BrandId == brandamount.BrandId && b.DoctorId == brandamount.DoctorId);
-
+                 var existingBrandAmount = _db.BrandAmounts.SingleOrDefault(b => b.BrandId == brandamount.BrandId && b.DoctorId == brandamount.DoctorId);
+        
                 if (existingBrandAmount != null)
                 {
                     // If the BrandId already exists for the DoctorId, add the amount to the existing row
                     existingBrandAmount.Amount += brandamount.Amount;
                     await _db.SaveChangesAsync();
-
+                    
                     return Ok(existingBrandAmount);
                 }
                 _db.BrandAmounts.Add(brandamount);
@@ -94,30 +156,30 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandAmount brandamountToUpdate)
-        {
-            try
-            {
-                if (id != brandamountToUpdate.Id)
-                    return BadRequest();
-                var dbbrandamount = await _db.BrandAmounts.FindAsync(id);
-                if (dbbrandamount == null)
-                    return NotFound();
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] BrandAmount brandamountToUpdate)
+        // {
+        //     try
+        //     {
+        //         if (id != brandamountToUpdate.Id)
+        //             return BadRequest();
+        //         var dbbrandamount = await _db.BrandAmounts.FindAsync(id);
+        //         if (dbbrandamount == null)
+        //             return NotFound();
 
-                _db.BrandAmounts.Update(brandamountToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //         _db.BrandAmounts.Update(brandamountToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -138,7 +200,7 @@ namespace api.fernflowers.com.Controllers
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id, [FromBody] JsonPatchDocument<BrandAmount> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<BrandAmount> patchDocument)
         {
             try
             {
@@ -156,9 +218,9 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
         [HttpGet("doctor-vaccine-price/{doctorId}")]
-        public IActionResult GetDoctorVaccinePrices(int doctorId)
+        public IActionResult GetDoctorVaccinePrices(long doctorId)
         {
             var brandAmounts = _db.BrandAmounts.Where(ba => ba.DoctorId == doctorId).ToList();
             var result = new List<object>();
@@ -166,8 +228,7 @@ namespace api.fernflowers.com.Controllers
             {
                 var brandName = _db.Brands.Where(b => b.Id == ba.BrandId).Select(b => b.Name).FirstOrDefault();
                 var vaccineName = _db.Vaccines.Where(v => v.Brands.Any(b => b.Id == ba.BrandId)).Select(v => v.Name).FirstOrDefault();
-                var obj = new
-                {
+                var obj = new {
                     VaccineName = vaccineName,
                     Brand = brandName,
                     Price = ba.Amount
@@ -176,18 +237,5 @@ namespace api.fernflowers.com.Controllers
             }
             return Ok(result);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

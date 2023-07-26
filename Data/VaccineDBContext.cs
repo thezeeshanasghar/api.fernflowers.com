@@ -56,8 +56,8 @@ public class VaccineDBContext : DbContext
                     modelBuilder.Entity< ClinicTiming >().HasData(
                         new ClinicTiming{
                             Id=1,
-                            Day=DayOfWeek.Monday,
-                            Session=Session.Morning,
+                            Day="Monday",
+                            Session="Morning",
                             StartTime=new TimeSpan(2,0,0),
                             EndTime=new TimeSpan(3,0,0),
                             ClinicId=1

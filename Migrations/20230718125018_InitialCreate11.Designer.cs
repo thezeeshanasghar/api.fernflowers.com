@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230718125018_InitialCreate11")]
+    partial class InitialCreate11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -499,8 +502,8 @@ namespace api.fernflowers.com.Migrations
                     b.Property<long>("ClinicId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("DOB")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("DOB")
+                        .HasColumnType("date");
 
                     b.Property<long>("DoctorId")
                         .HasColumnType("bigint");
@@ -524,10 +527,6 @@ namespace api.fernflowers.com.Migrations
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("MobileNumber")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -667,7 +666,7 @@ namespace api.fernflowers.com.Migrations
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 10, 24, 19, 17, 45, 296, DateTimeKind.Utc).AddTicks(5938)
+                            ValidUpto = new DateTime(2023, 10, 18, 17, 50, 17, 770, DateTimeKind.Utc).AddTicks(847)
                         });
                 });
 
@@ -1107,9 +1106,6 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("BrandId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("ChildId")
                         .HasColumnType("bigint");
 
@@ -1119,7 +1115,7 @@ namespace api.fernflowers.com.Migrations
                     b.Property<long>("DoctorId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("DoseId")
+                    b.Property<long>("DoseId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("IsDone")

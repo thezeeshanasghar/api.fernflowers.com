@@ -19,10 +19,6 @@ namespace api.fernflowers.com.Controllers
         private readonly VaccineDBContext _db;
 
 
-
-
-
-
         public DoctorController(VaccineDBContext vaccineDBContext)
         {
             _db = vaccineDBContext;
@@ -43,7 +39,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingle([FromRoute] int id)
+        public async Task<IActionResult> GetSingle([FromRoute] long id)
         {
             try
             {
@@ -60,54 +56,50 @@ namespace api.fernflowers.com.Controllers
         }
 
 
+
         [Route("login")]
         [HttpGet()]
-
         public async Task<IActionResult> Login(string MobileNumber, string Password)
         {
             try
             {
                 var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.IsApproved == true);
-                var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
-
-                var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
-                
-                DoctorDTO doctorDTO = null;
 
                 if (doctor != null)
                 {
-
-                    doctorDTO = new DoctorDTO
-                    {
-                        Id = doctor.Id,
-                        Name = doctor.Name,
-                        Email = doctor.Email,
-                        IsApproved = doctor.IsApproved,
-                        IsEnabled = doctor.IsEnabled,
-                        
-                        MobileNumber = doctor.MobileNumber,
-                        Password = doctor.Password,
-                        PMDC = doctor.PMDC,
-                        ValidUpto=doctor.ValidUpto.Date.ToString("yyyy-MM-dd")
-                    };
+                    var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
 
                     if (clinic != null)
                     {
-                        doctorDTO.Clinics.Add( new ClinicDTO
+                        var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
+
+                        DoctorDTO doctorDTO = new DoctorDTO
+                        {
+                            Id = doctor.Id,
+                            Name = doctor.Name,
+                            Email = doctor.Email,
+                            IsApproved = doctor.IsApproved,
+                            IsEnabled = doctor.IsEnabled,
+                            MobileNumber = doctor.MobileNumber,
+                            Password = doctor.Password,
+                            PMDC = doctor.PMDC,
+                            ValidUpto = doctor.ValidUpto.Date.ToString("yyyy-MM-dd"),
+                            Clinics = new List<ClinicDTO>()
+                        };
+
+                        ClinicDTO clinicDTO = new ClinicDTO
                         {
                             Id = clinic.Id,
                             Address = clinic.Address,
                             Name = clinic.Name,
                             Number = clinic.Number,
-                            DoctorId = clinic.DoctorId
-                        });
-                    }
-                    if (clinictiming != null)
-                    {
-                        doctorDTO.Clinics[0].ClinicTimings = new List<ClinicTimingDTO> { };
+                            DoctorId = clinic.DoctorId,
+                            ClinicTimings = new List<ClinicTimingDTO>()
+                        };
+
                         foreach (var ct in clinictiming)
                         {
-                            var tmp_clinictiming = new ClinicTimingDTO
+                            ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
                             {
                                 Id = ct.Id,
                                 Day = ct.Day,
@@ -116,14 +108,25 @@ namespace api.fernflowers.com.Controllers
                                 EndTime = ct.EndTime,
                                 ClinicId = ct.ClinicId
                             };
-                            doctorDTO.Clinics[0].ClinicTimings.Add(tmp_clinictiming);
+
+                            clinicDTO.ClinicTimings.Add(clinicTimingDTO);
                         }
+
+                        doctorDTO.Clinics.Add(clinicDTO);
+
+                        return Ok(doctorDTO);
                     }
-
-                    
+                    else
+                    {
+                        // Handle the case where clinic is null
+                        return NotFound("No clinic associated with the doctor.");
+                    }
                 }
-                return Ok(doctorDTO);
-
+                else
+                {
+                    // Handle the case where doctor is null
+                    return NotFound("Invalid MobileNumber or Password.");
+                }
             }
             catch (Exception ex)
             {
@@ -131,59 +134,142 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
+        //{
+        //    if (doctor != null)
+        //    {
+        //        var doctorEntity = new Doctor
+        //        {
+        //            Name = doctor.Name,
+        //            Email = doctor.Email,
+        //            IsApproved = doctor.IsApproved,
+        //            IsEnabled = doctor.IsEnabled,
+        //            MobileNumber = doctor.MobileNumber,
+        //            Password = doctor.Password,
+        //            PMDC = doctor.PMDC,
+        //            ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3)
+
+        //        };
+
+        //        _db.Doctors.Add(doctorEntity);
+        //        await _db.SaveChangesAsync();
+
+        //        if (doctor.Clinics != null)
+        //        {
+        //            var clinicEntity = new Clinic
+        //            {
+        //                Address = doctor.Clinics[0].Address,
+        //                Name = doctor.Clinics[0].Name,
+        //                Number = doctor.Clinics[0].Number
+        //            };
+        //            clinicEntity.DoctorId = doctorEntity.Id;
+        //            _db.Clinics.Add(clinicEntity);
+        //            await _db.SaveChangesAsync();
+
+
+        //            if (doctor.Clinics[0].ClinicTimings != null)
+        //            {
+        //                foreach (var ct in doctor.Clinics[0].ClinicTimings)
+        //                {
+        //                    var entityClinicTiming = new ClinicTiming
+        //                    {
+        //                        Day = ct.Day,
+        //                        Session = ct.Session,
+        //                        StartTime = ct.StartTime,
+        //                        EndTime = ct.EndTime,
+        //                        ClinicId = clinicEntity.Id
+        //                    };
+        //                    _db.ClinicTimings.Add(entityClinicTiming);
+        //                }
+        //                await _db.SaveChangesAsync();
+        //            }
+        //        }
+
+
+
+        //        return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Doctor data is required");
+        //    }
+        //}
+
+        // [HttpPut]
+        // public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
+        // {
+        //     try
+        //     {
+        //         if (id != doctorToUpdate.Id)
+        //             return BadRequest();
+        //         var dbDoctor = await _db.Doctors.FindAsync(id);
+        //         if (dbDoctor == null)
+        //             return NotFound();
+
+        //         _db.Doctors.Update(doctorToUpdate);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] DoctorDTO doctor)
+        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
         {
             if (doctor != null)
             {
                 var doctorEntity = new Doctor
                 {
                     Name = doctor.Name,
-                    Email = doctor.Email,
-                    IsApproved = doctor.IsApproved,
-                    IsEnabled = doctor.IsEnabled,
                     MobileNumber = doctor.MobileNumber,
                     Password = doctor.Password,
+                    IsApproved = false,
+                    IsEnabled = false,
+                    Email = doctor.Email,
                     PMDC = doctor.PMDC,
-                    ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3) 
-                 
+                    ValidUpto =  DateTime.UtcNow.AddHours(5).AddMonths(3)
                 };
 
                 _db.Doctors.Add(doctorEntity);
                 await _db.SaveChangesAsync();
 
-                if (doctor.Clinics != null)
+                if (doctor.Clinics != null && doctor.Clinics.Any())
                 {
-                    var clinicEntity = new Clinic
+                    foreach (var clinic in doctor.Clinics)
                     {
-                        Address = doctor.Clinics[0].Address,
-                        Name = doctor.Clinics[0].Name,
-                        Number = doctor.Clinics[0].Number
-                    };
-                    clinicEntity.DoctorId = doctorEntity.Id;
-                    _db.Clinics.Add(clinicEntity);
-                    await _db.SaveChangesAsync();
-
-
-                    if (doctor.Clinics[0].ClinicTimings != null)
-                    {
-                        foreach (var ct in doctor.Clinics[0].ClinicTimings)
+                        var clinicEntity = new Clinic
                         {
-                            var entityClinicTiming = new ClinicTiming
-                            {
-                                Day = ct.Day,
-                                Session = ct.Session,
-                                StartTime = ct.StartTime,
-                                EndTime = ct.EndTime,
-                                ClinicId = clinicEntity.Id
-                            };
-                            _db.ClinicTimings.Add(entityClinicTiming);
-                        }
+                            Name = clinic.Name,
+                            Address = clinic.Address,
+                            Number = clinic.Number,
+                            DoctorId = doctorEntity.Id
+                        };
+
+                        _db.Clinics.Add(clinicEntity);
                         await _db.SaveChangesAsync();
+
+                        if (clinic.ClinicTimings != null && clinic.ClinicTimings.Any())
+                        {
+                            foreach (var clinicTiming in clinic.ClinicTimings)
+                            {
+                                var clinicTimingEntity = new ClinicTiming
+                                {
+                                    Day = clinicTiming.Day,
+                                    Session = clinicTiming.Session,
+                                    StartTime = clinicTiming.StartTime,
+                                    EndTime = clinicTiming.EndTime,
+                                    ClinicId = clinicEntity.Id
+                                };
+
+                                _db.ClinicTimings.Add(clinicTimingEntity);
+                            }
+                            await _db.SaveChangesAsync();
+                        }
                     }
                 }
-
-             
 
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
             }
@@ -192,31 +278,9 @@ namespace api.fernflowers.com.Controllers
                 return BadRequest("Doctor data is required");
             }
         }
-
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Doctor doctorToUpdate)
-        {
-            try
-            {
-                if (id != doctorToUpdate.Id)
-                    return BadRequest();
-                var dbDoctor = await _db.Doctors.FindAsync(id);
-                if (dbDoctor == null)
-                    return NotFound();
-
-                _db.Doctors.Update(doctorToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
         {
             try
             {
@@ -234,10 +298,9 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPatch()]
         [Route("UpdateDoctor/{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> Update([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
@@ -273,10 +336,9 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
         [HttpPatch()]
         [Route("notapproved/{id}")]
-        public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> PatchAsync([FromRoute] long id,[FromBody] JsonPatchDocument<Doctor> patchDocument)
         {
             try{
                 var dbDoc = await _db.Doctors.FindAsync(id);
@@ -293,9 +355,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500,ex.Message); 
             }
         }
-
-
-
         [HttpGet]
         [Route("IsApproved/{IsApproved:bool}")]
         public async Task<IActionResult> GetApprovedDoctors(bool IsApproved)
@@ -310,13 +369,9 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
-
         [HttpPatch()]
         [Route("password/{id}")]
-        public async Task<IActionResult> password([FromRoute] int id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
+        public async Task<IActionResult> password([FromRoute] long id, [FromBody] JsonPatchDocument<Doctor> patchDocument)
         {
             try
             {
@@ -337,7 +392,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpPatch()]
         [Route("UpdateValidUpto/{id}")]
-        public async Task<IActionResult> UpdateValidUpto([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> UpdateValidUpto([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
@@ -363,7 +418,7 @@ namespace api.fernflowers.com.Controllers
         }
         [HttpPatch()]
         [Route("doctors/{id}")]
-        public async Task<IActionResult> UpdateDoctorto([FromRoute] int id, [FromBody] Doctor doc)
+        public async Task<IActionResult> UpdateDoctorto([FromRoute] long id, [FromBody] Doctor doc)
         {
             try
             {
@@ -404,13 +459,5 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
-
-
-
-        
-
     }
 }

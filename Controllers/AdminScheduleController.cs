@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-
+using System.Globalization;
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -21,68 +21,13 @@ namespace api.fernflowers.com.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        [Route("admin_post_doseSchedule")]
-        public async Task<IActionResult> Get()
-        {
-            try
-            {
-                if (_db.AdminSchedules.Any())
-                {
-                    return Ok("Schedule already exist");
-                }
-                
-                List<DoseDTO> doseDTOList = new List<DoseDTO>();
-                List<AdminSchedule> doseScheduleList = new List<AdminSchedule>();
-                var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
-                DateTime? doseDate = null;
-                long lastVaccineId = -1;
-                foreach (var dos in doses)
-                {
-                    var dosDTo = new DoseDTO
-                    {
-                        Id = dos.Id,
-                        Name = dos.Name,
-                        VaccineId = dos.VaccineId
-                    };
-                    var doseSchedule = new AdminSchedule
-                    {
-                        DoseId = dos.Id
-                    };
-                    if (doseDate == null || (dosDTo.VaccineId != lastVaccineId))
-                    {
-                        doseDate = DateTime.Now;
-                    }
-                    else
-                    {
-                        // var dateOfLastDoseOfSameVaccine = doseDTOList.LastOrDefault(d=> d.VaccineId == dosDTo.VaccineId)?.DoseDate;
-                        // if(dateOfLastDoseOfSameVaccine!=null){
-                        //    doseDate = dateOfLastDoseOfSameVaccine.Value.AddDays(dos.MinGap);
-                        // }
-                    }
-                    // dosDTo.DoseDate = doseDate;
-                    doseDTOList.Add(dosDTo);
-                    doseSchedule.Date = doseDate.Value;
-                    doseScheduleList.Add(doseSchedule);
-                    lastVaccineId = dosDTo.VaccineId;
-                }
-                _db.AdminSchedules.AddRange(doseScheduleList);
-                _db.SaveChanges();
-                return Ok(doseDTOList);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [Route("Admin_single_updateDate")]
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] AdminSchedule ds)
         {
             try
             {
-                var dbDoc = await _db.AdminSchedules.Where(x => x.DoseId == ds.DoseId).FirstOrDefaultAsync();
+                var dbDoc = await _db.AdminSchedules.Where(x=>x.DoseId==ds.DoseId).FirstOrDefaultAsync();
                 if (dbDoc == null)
                 {
                     return NotFound();
@@ -100,21 +45,89 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [Route("Admin_bulk_updateDate/{date}")]
+        // [Route("Admin_bulk_updateDate/{date}")]
+        // [HttpPatch]
+        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        // {
+        //     try
+        //     {
+        //         // var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
+        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
+        //         if (dbDoc == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         foreach (var doc in dbDoc)
+        //         {
+        //             var patchedDoc = new AdminSchedule();
+        //             patchDocument.ApplyTo(patchedDoc);
+
+        //             // Update the Date property with the patched date
+        //             doc.Date = patchedDoc.Date;
+        //         }
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+
+        // [Route("Admin_bulk_updateDate/{date}")]
+        // [HttpPatch]
+        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        // {
+        //     try
+        //     {
+        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date == DateOnly.FromDateTime(date)).ToList();
+        //         if (dbDoc == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         // dbDoc.ForEach(d => patchDocument.ApplyTo(d));
+        //         foreach (var doc in dbDoc)
+        //         {
+        //             patchDocument.ApplyTo(doc);
+        //             _db.Entry(dbDoc).State = EntityState.Modified;
+        //         }
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [Route("admin_bulk_update_Date")]
         [HttpPatch]
-        public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
+        public async Task<IActionResult> UpdateBulkDate(string oldDate, string newDate)
         {
             try
             {
-                var dbDoc = _db.AdminSchedules.Where(d => d.Date.Date == date.Date).ToList();
-                if (dbDoc == null)
+                var parsedOldDate = System.DateOnly.Parse(oldDate);
+                var parsedNewDate = System.DateOnly.Parse(newDate);
+
+                var db = await _db.AdminSchedules
+                    .Where(d => d.Date.Equals(parsedOldDate))
+                    .ToListAsync();
+
+                if (db == null || db.Count == 0)
                 {
                     return NotFound();
                 }
-                dbDoc.ForEach(d => patchDocument.ApplyTo(d));
+
+                foreach (var adminSchedule in db)
+                {
+                    adminSchedule.Date = parsedNewDate;
+            
+                }
+
                 await _db.SaveChangesAsync();
                 return NoContent();
-
             }
             catch (Exception ex)
             {
@@ -122,25 +135,57 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+
         [HttpGet]
-        [Route("new")]
+        [Route("admin_post_doseSchedule")]
         public async Task<IActionResult> GetNew()
         {
             try
             {
-                var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
                 Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
-                
-                var today = DateOnly.FromDateTime(DateTime.Now);
-                foreach (var dos in doses)
+
+                if (!_db.AdminSchedules.Any())
                 {
-                    var newDate = today.AddDays(dos.MinAge);
-                    var dto = _mapper.Map<DoseDTO>(dos);
-                    if (dict.ContainsKey(newDate))
-                        dict[newDate].Add(dto);
-                    else
-                        dict.Add(newDate, new List<DoseDTO>() { dto });
+                    var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+
+                    var today = DateOnly.FromDateTime(DateTime.Now);
+                    foreach (var dos in doses)
+                    {
+                        var newDate = today.AddDays(dos.MinAge);
+                        var dto = _mapper.Map<DoseDTO>(dos);
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+
+                        // Save AdminSchedule, {date, dose_id} to update
+                        var adminSchedule = new AdminSchedule
+                        {
+                            Date = newDate,
+                            DoseId = dos.Id
+                        };
+                        _db.AdminSchedules.Add(adminSchedule);
+                    }
+
+                    await _db.SaveChangesAsync();
                 }
+                else
+                {
+                    var adminSchedules = await _db.AdminSchedules.ToListAsync();
+
+                    foreach (var adminSchedule in adminSchedules)
+                    {
+                        var newDate = (adminSchedule.Date);
+                        var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
+                        var dto = _mapper.Map<DoseDTO>(dose);
+
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+                    }
+                }
+
                 return Ok(dict);
             }
             catch (Exception ex)
@@ -148,6 +193,5 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }

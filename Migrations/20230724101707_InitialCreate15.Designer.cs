@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230724101707_InitialCreate15")]
+    partial class InitialCreate15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -667,7 +670,7 @@ namespace api.fernflowers.com.Migrations
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 10, 24, 19, 17, 45, 296, DateTimeKind.Utc).AddTicks(5938)
+                            ValidUpto = new DateTime(2023, 10, 24, 15, 17, 7, 705, DateTimeKind.Utc).AddTicks(3088)
                         });
                 });
 
@@ -1107,7 +1110,7 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("BrandId")
+                    b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ChildId")
