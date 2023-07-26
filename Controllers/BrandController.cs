@@ -19,21 +19,6 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
         }
 
-        // [HttpGet]
-        // [Route("/BrandName")]
-        // public async Task<ActionResult<IEnumerable<string>>> Getname()
-        // {
-        //     try
-        //     {
-        //         var brandamount = await _db.Brands.ToListAsync();
-        //         return Ok(brandamount);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
         [HttpGet("brand_name/{vaccineId}")]
         public IActionResult GetBrandName(long vaccineId)
         {
@@ -41,20 +26,6 @@ namespace api.fernflowers.com.Controllers
                 if (brand == null)
                     return NotFound();
                 return Ok(brand);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                var brand = await _db.Brands.ToListAsync();
-                return Ok(brand);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
         [HttpGet]
@@ -89,27 +60,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Brand brandToUpdate)
-        {
-            try
-            {
-                if (id != brandToUpdate.Id)
-                    return BadRequest();
-                var dbBrand = await _db.Brands.FindAsync(id);
-                if (dbBrand == null)
-                    return NotFound();
-
-                _db.Brands.Update(brandToUpdate);
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [Route("{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] long id)
@@ -131,23 +81,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [HttpPatch("{id}")]
-        // public async Task<IActionResult> PatchAsync([FromRoute] int id,[FromBody] JsonPatchDocument<Brand> patchDocument)
-        // {
-        //     try{
-        //         var dbBrand = await _db.Brands.FindAsync(id);
-        //         if (dbBrand == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         patchDocument.ApplyTo(dbBrand);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500, ex.Message); 
-        //     }
-        // }
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Brand brand)
         {
