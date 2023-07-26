@@ -36,20 +36,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet]
-        [Route("alldoses")]
-        public async Task<IActionResult> GetAllc()
-        {
-            try
-            {
-                var doses = await _db.Doses.ToListAsync();
-                return Ok(doses);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+  
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Dose dose)
         {
@@ -64,28 +51,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        // [HttpPut]
-        // public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Dose doseToUpdate)
-        // {
-        //     try
-        //     {
-        //         if (id != doseToUpdate.Id)
-        //             return BadRequest();
-        //         var dbDose = await _db.Doses.FindAsync(id);
-        //         if (dbDose == null)
-        //             return NotFound();
-
-
-        //         _db.Doses.Update(doseToUpdate);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
 
         [Route("{id}")]
         [HttpDelete]
@@ -108,24 +73,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        //  [HttpPatch("{id}")]
-        // public async Task<IActionResult> PatchAsync([FromRoute] int id[FromBody] JsonPatchDocument<Dose> patchDocument)
-        // {
-        //     try{
-        //         var dbDose = await _db.Doses.FindAsync(id);
-        //         if (dbDose == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         patchDocument.ApplyTo(dbDose);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-
-        //     }
-        //     catch(Exception ex){
-        //         return StatusCode(500, ex.Message); 
-        //     }
-        // }
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] Dose ds)
         {
