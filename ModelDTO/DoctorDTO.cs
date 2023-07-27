@@ -1,3 +1,7 @@
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace api.fernflowers.com.ModelDTO
 {
     public class DoctorDTO
