@@ -165,7 +165,9 @@ namespace api.fernflowers.com.Controllers
                     }
                 }
 
-                return Ok(dict);
+                 var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                return Ok(sortedDict);
             }
             catch (Exception ex)
             {

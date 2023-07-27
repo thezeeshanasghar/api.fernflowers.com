@@ -45,63 +45,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [Route("Admin_bulk_updateDate/{date}")]
-        // [HttpPatch]
-        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
-        // {
-        //     try
-        //     {
-        //         // var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
-        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date ==DateOnly.FromDateTime(date.Date)).ToList();
-        //         if (dbDoc == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         foreach (var doc in dbDoc)
-        //         {
-        //             var patchedDoc = new AdminSchedule();
-        //             patchDocument.ApplyTo(patchedDoc);
-
-        //             // Update the Date property with the patched date
-        //             doc.Date = patchedDoc.Date;
-        //         }
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-
-        // [Route("Admin_bulk_updateDate/{date}")]
-        // [HttpPatch]
-        // public async Task<IActionResult> PatchAsync(DateTime date, [FromBody] JsonPatchDocument<AdminSchedule> patchDocument)
-        // {
-        //     try
-        //     {
-        //         var dbDoc = _db.AdminSchedules.Where(d => d.Date == DateOnly.FromDateTime(date)).ToList();
-        //         if (dbDoc == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         // dbDoc.ForEach(d => patchDocument.ApplyTo(d));
-        //         foreach (var doc in dbDoc)
-        //         {
-        //             patchDocument.ApplyTo(doc);
-        //             _db.Entry(dbDoc).State = EntityState.Modified;
-        //         }
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
         [Route("admin_bulk_update_Date")]
         [HttpPatch]
         public async Task<IActionResult> UpdateBulkDate(string oldDate, string newDate)
@@ -186,7 +129,9 @@ namespace api.fernflowers.com.Controllers
                     }
                 }
 
-                return Ok(dict);
+                var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                return Ok(sortedDict);
             }
             catch (Exception ex)
             {
