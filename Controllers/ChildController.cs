@@ -84,7 +84,7 @@ namespace api.fernflowers.com.Controllers
 
             if (query.Count == 0)
             {
-                return StatusCode(404, "No matching records found. Please add more details.");
+                return StatusCode(404, "No records found.");
             }
 
             return Ok(query.Select(pd => pd.Child));
@@ -222,7 +222,22 @@ namespace api.fernflowers.com.Controllers
         //     }
         // }
 
-        [HttpGet("/patients_get_by_doctor_id")]
+        [HttpGet]
+        [Route("allpatients")]
+        public async Task<IActionResult> GetAllc()
+        {
+            try
+            {
+                var patients = await _db.Childs.ToListAsync();
+                return Ok(patients);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("patients_get_by_doctor_id")]
         public IActionResult GetChildrenByDoctorId(long doctorId)
         {
             try

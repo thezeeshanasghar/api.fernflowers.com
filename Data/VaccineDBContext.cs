@@ -27,19 +27,15 @@ public class VaccineDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
                     base.OnModelCreating(modelBuilder);
-                    
                     modelBuilder.Entity< Doctor >().HasData(
                         new Doctor{
                             Id=1,
                             Name="Ali",
                             MobileNumber="03352920239",
                             Password="123",
-                            IsApproved=true,
-                            IsEnabled=true,
                             Email="ali.iiui1234@gmail.com",
                             PMDC="a1234",
-                            ValidUpto = DateTime.UtcNow.AddHours(5).AddMonths(3)
-
+                            ValidUpto =new DateOnly(2023, 7, 26)
                         }
                     );
 
@@ -53,6 +49,7 @@ public class VaccineDBContext : DbContext
 
                         }
                     ); 
+                    
                     modelBuilder.Entity< ClinicTiming >().HasData(
                         new ClinicTiming{
                             Id=1,
