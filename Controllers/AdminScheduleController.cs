@@ -99,7 +99,6 @@ namespace api.fernflowers.com.Controllers
                             dict[newDate].Add(dto);
                         else
                             dict.Add(newDate, new List<DoseDTO>() { dto });
-
                         // Save AdminSchedule, {date, dose_id} to update
                         var adminSchedule = _mapper.Map<AdminSchedule>(new AdminScheduleDTO
                         {
