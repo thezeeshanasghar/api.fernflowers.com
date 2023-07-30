@@ -23,7 +23,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("Admin_single_updateDate")]
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] AdminSchedule ds)
+        public async Task<IActionResult> Update([FromBody] AdminScheduleDTO ds)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     return NotFound();
                 }
-
+                
                 dbDoc.Date = ds.Date;
                 _db.Entry(dbDoc).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
@@ -78,7 +78,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("admin_post_doseSchedule")]
         public async Task<IActionResult> GetNew()
@@ -102,11 +101,11 @@ namespace api.fernflowers.com.Controllers
                             dict.Add(newDate, new List<DoseDTO>() { dto });
 
                         // Save AdminSchedule, {date, dose_id} to update
-                        var adminSchedule = new AdminSchedule
+                        var adminSchedule = _mapper.Map<AdminSchedule>(new AdminScheduleDTO
                         {
                             Date = newDate,
                             DoseId = dos.Id
-                        };
+                        });
                         _db.AdminSchedules.Add(adminSchedule);
                     }
 
