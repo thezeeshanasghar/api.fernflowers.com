@@ -28,7 +28,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("single_updateDate")]
         [HttpPatch]
-        public async Task<IActionResult> Update(long doseId,long doctorId,[FromBody] DoctorSchedule ds)
+        public async Task<IActionResult> Update(long doseId,long doctorId,[FromBody] DoctorScheduleDTO ds)
         {
             try{
                 
@@ -136,12 +136,12 @@ namespace api.fernflowers.com.Controllers
                             dict.Add(newDate, new List<DoseDTO>() { dto });
 
                         // Save the DoctorSchedule record.
-                        var doctorSchedule = new DoctorSchedule
+                        var doctorSchedule = _mapper.Map<DoctorSchedule>(new DoctorScheduleDTO
                         {
                             Date = newDate,
                             DoseId = adminSchedule.DoseId,
                             DoctorId = doctorId
-                        };
+                        });
                         _db.DoctorSchedules.Add(doctorSchedule);
                     }
 
