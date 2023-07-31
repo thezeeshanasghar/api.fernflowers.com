@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230731004225_Initial")]
-    partial class Initial
+    [Migration("20230731011613_IC1")]
+    partial class IC1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,8 @@ namespace api.fernflowers.com.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoseId");
 
                     b.ToTable("AdminSchedules");
                 });
@@ -1331,6 +1333,17 @@ namespace api.fernflowers.com.Migrations
                             IsSpecial = false,
                             Name = "Dengue Fever"
                         });
+                });
+
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminSchedule", b =>
+                {
+                    b.HasOne("api.fernflowers.com.Data.Entities.Dose", "Dose")
+                        .WithMany()
+                        .HasForeignKey("DoseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dose");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
