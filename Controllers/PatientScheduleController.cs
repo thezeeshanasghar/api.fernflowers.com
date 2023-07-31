@@ -46,7 +46,7 @@ namespace api.fernflowers.com.Controllers
                 {
                     var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
 
-                    DateOnly childDOB = DateOnly.FromDateTime(child.DOB); // Example date of birth for the child
+                    DateOnly childDOB = child.DOB; // Example date of birth for the child
 
                     DateOnly oldDate = default; // Variable to store the previous date
                     DateOnly updateDate = default; // Variable to store the updated date
