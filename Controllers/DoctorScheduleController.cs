@@ -126,47 +126,28 @@ namespace api.fernflowers.com.Controllers
 
                     foreach (var adminSchedule in adminSchedules)
                     {
-                        var newDate = (adminSchedule.Date);
-                        var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
-                        var dto = _mapper.Map<DoseDTO>(dose);
-
-                        if (dict.ContainsKey(newDate))
-                            dict[newDate].Add(dto);
-                        else
-                            dict.Add(newDate, new List<DoseDTO>() { dto });
-
-                        // Save the DoctorSchedule record.
                         var doctorSchedule = _mapper.Map<DoctorSchedule>(new DoctorScheduleDTO
                         {
-                            Date = newDate,
+                            Date = adminSchedule.Date,
                             DoseId = adminSchedule.DoseId,
                             DoctorId = doctorId
                         });
                         _db.DoctorSchedules.Add(doctorSchedule);
                     }
-
                     await _db.SaveChangesAsync();
                 }
-                else
+                var doctorSchedules = await _db.DoctorSchedules.Include(schedule => schedule.Dose).Where(d => d.DoctorId == doctorId).ToListAsync();
+                foreach (var doctorSchedule in doctorSchedules)
                 {
-                    // If the DoctorSchedules table already exists, get the data from it.
-                    var doctorSchedules = await _db.DoctorSchedules.Where(d => d.DoctorId == doctorId).ToListAsync();
+                    var doseDTO = _mapper.Map<DoseDTO>(doctorSchedule.Dose);
 
-                    foreach (var doctorSchedule in doctorSchedules)
-                    {
-                        var newDate = (doctorSchedule.Date);
-                        var dose = await _db.Doses.FindAsync(doctorSchedule.DoseId);
-                        var dto = _mapper.Map<DoseDTO>(dose);
-
-                        if (dict.ContainsKey(newDate))
-                            dict[newDate].Add(dto);
-                        else
-                            dict.Add(newDate, new List<DoseDTO>() { dto });
-                    }
+                    if (dict.ContainsKey(doctorSchedule.Date))
+                        dict[doctorSchedule.Date].Add(doseDTO);
+                    else
+                        dict.Add(doctorSchedule.Date, new List<DoseDTO>() { doseDTO });
                 }
-
-                 var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
+                
+                var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 return Ok(sortedDict);
             }
             catch (Exception ex)
