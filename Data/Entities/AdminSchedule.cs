@@ -11,4 +11,5 @@ public class AdminSchedule
     
     public System.DateOnly Date { get; set; }
     public long DoseId { get; set; }
+    public virtual Dose Dose {get;set;}
 }
