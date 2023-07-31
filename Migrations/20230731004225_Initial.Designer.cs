@@ -11,8 +11,8 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230708053815_InitialCreate3")]
-    partial class InitialCreate3
+    [Migration("20230731004225_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,8 +28,8 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<long>("DoseId")
                         .HasColumnType("bigint");
@@ -454,17 +454,13 @@ namespace api.fernflowers.com.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<long>("BrandId")
+                    b.Property<long?>("BrandId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("DoctorId")
+                    b.Property<long?>("DoctorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("DoctorId");
 
                     b.ToTable("BrandAmounts");
                 });
@@ -475,13 +471,13 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("BrandId")
+                    b.Property<long?>("BrandId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<long>("DoctorId")
+                    b.Property<long?>("DoctorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -531,6 +527,10 @@ namespace api.fernflowers.com.Migrations
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -588,14 +588,16 @@ namespace api.fernflowers.com.Migrations
                     b.Property<long>("ClinicId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time(6)");
 
-                    b.Property<int>("Session")
-                        .HasColumnType("int");
+                    b.Property<string>("Session")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time(6)");
@@ -611,9 +613,9 @@ namespace api.fernflowers.com.Migrations
                         {
                             Id = 1L,
                             ClinicId = 1L,
-                            Day = 0,
+                            Day = "Monday",
                             EndTime = new TimeSpan(0, 3, 0, 0, 0),
-                            Session = 0,
+                            Session = "Morning",
                             StartTime = new TimeSpan(0, 2, 0, 0, 0)
                         });
                 });
@@ -627,12 +629,6 @@ namespace api.fernflowers.com.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MobileNumber")
                         .IsRequired()
@@ -650,8 +646,8 @@ namespace api.fernflowers.com.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("ValidUpto")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("ValidUpto")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -662,13 +658,11 @@ namespace api.fernflowers.com.Migrations
                         {
                             Id = 1L,
                             Email = "ali.iiui1234@gmail.com",
-                            IsApproved = true,
-                            IsEnabled = true,
                             MobileNumber = "03352920239",
                             Name = "Ali",
                             PMDC = "a1234",
                             Password = "123",
-                            ValidUpto = new DateTime(2023, 10, 8, 10, 38, 15, 181, DateTimeKind.Utc).AddTicks(8674)
+                            ValidUpto = new DateOnly(2023, 7, 26)
                         });
                 });
 
@@ -678,8 +672,8 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<long>("DoctorId")
                         .HasColumnType("bigint");
@@ -1108,16 +1102,19 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("BrandId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ChildId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<long>("DoctorId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("DoseId")
+                    b.Property<long?>("DoseId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("IsDone")
@@ -1343,25 +1340,6 @@ namespace api.fernflowers.com.Migrations
                         .HasForeignKey("VaccineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.fernflowers.com.Data.Entities.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
-
-                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Clinic", b =>
