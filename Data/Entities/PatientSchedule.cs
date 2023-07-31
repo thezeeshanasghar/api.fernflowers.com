@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-// using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 namespace api.fernflowers.com.Data.Entities;
@@ -15,4 +14,5 @@ public class PatientSchedule
     public bool IsSkip { get; set; }
     public bool IsDone { get; set; }
     public long? BrandId { get; set; }
+    public virtual Dose Dose {get;set;}
 }

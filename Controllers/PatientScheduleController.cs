@@ -36,7 +36,6 @@ namespace api.fernflowers.com.Controllers
 
                 if (child == null)
                 {
-                    // Child with the given ID not found
                     return NotFound();
                 }
 
@@ -142,9 +141,6 @@ namespace api.fernflowers.com.Controllers
                         }
                     }
                 }
-                else
-                {
-                    // If the DoctorSchedules table already exists, get the data from it.
                     var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
 
                     foreach (var patientSchedule in patientSchedules)
@@ -188,7 +184,7 @@ namespace api.fernflowers.com.Controllers
                                 dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
                         }
                     }
-                }
+                
 
                var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
