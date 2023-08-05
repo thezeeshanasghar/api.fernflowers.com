@@ -284,7 +284,7 @@ namespace api.fernflowers.com.Controllers
 
         [Route("single_update_Skip")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateSkip(long Id,[FromBody] PatientSchedule ps)
+        public async Task<IActionResult> UpdateSkip(long Id,[FromBody] PatientScheduleDTO ps)
         {
             try
             {
