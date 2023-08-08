@@ -13,6 +13,7 @@ namespace api.fernflowers.com.ModelDTO
         [JsonProperty("DOB")]
         [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
         public System.DateOnly DOB { get; set; }
+        public string Password { get; set; }
         public Gender Gender { get; set; }
         public string City { get; set; }
         public string CNIC { get; set; }
