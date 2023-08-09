@@ -183,20 +183,49 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet("patients_get_by_doctor_id")]
-        public IActionResult GetChildrenByDoctorId(long doctorId)
+        // [HttpGet("patients_get_by_doctor_id")]
+        // public IActionResult GetChildrenByDoctorId(long doctorId)
+        // {
+        //     try
+        //     {
+        //         var children = _db.Childs.Where(c => c.DoctorId == doctorId).ToList();
+
+        //         if (children.Count == 0)
+        //         {
+        //             return NotFound();
+        //         }
+        //         var patientDTOs = _mapper.Map<List<ChildDTO>>(children);
+
+        //         return Ok(patientDTOs);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [HttpGet("children_get_by_doctor_id")]
+        public IActionResult GetChildrenByDoctorId(long doctorId, int page = 1, int perPage = 20)
         {
             try
             {
-                var children = _db.Childs.Where(c => c.DoctorId == doctorId).ToList();
+                var childrenQuery = _db.Childs.Where(c => c.DoctorId == doctorId);
 
-                if (children.Count == 0)
+                int totalCount = childrenQuery.Count();
+
+                if (totalCount == 0)
                 {
                     return NotFound();
                 }
-                var patientDTOs = _mapper.Map<List<ChildDTO>>(children);
 
-                return Ok(patientDTOs);
+                int startIndex = (page - 1) * perPage;
+                var children = childrenQuery.Skip(startIndex).Take(perPage).ToList();
+                
+                var childrenDTOs = _mapper.Map<List<ChildDTO>>(children);
+
+              
+
+                return Ok(childrenDTOs);
             }
             catch (Exception ex)
             {
