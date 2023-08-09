@@ -78,43 +78,129 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("admin_post_doseSchedule")]
-        public async Task<IActionResult> GetNew()
-        {
-            try
-            {
-                if (!_db.AdminSchedules.Any())
-                {
-                    var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
-                    var today = DateOnly.FromDateTime(DateTime.Now);
-                    foreach (var dose in doses)
-                    {
-                        var newDate = today.AddDays(dose.MinAge);
-                        _db.AdminSchedules.Add(new AdminSchedule{Date= newDate, DoseId = dose.Id});
-                    }
-                    await _db.SaveChangesAsync();
-                }
-                
-                Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
-               var adminSchedules = await _db.AdminSchedules.Include(schedule => schedule.Dose).ToListAsync();
-                foreach (var adminSchedule in adminSchedules)
-                {
-                    var doseDTO = _mapper.Map<DoseDTO>(adminSchedule.Dose);
+        // [HttpGet]
+        // [Route("admin_post_doseSchedule")]
+        // public async Task<IActionResult> GetUpdatedSchedule()
+        // {
+        //     try
+        //     {
+        //         if (!_db.AdminSchedules.Any())
+        //         {
+        //             var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+        //             var today = DateOnly.FromDateTime(DateTime.Now);
 
-                    if (dict.ContainsKey(adminSchedule.Date))
-                        dict[adminSchedule.Date].Add(doseDTO);
-                    else
-                        dict.Add(adminSchedule.Date, new List<DoseDTO>() { doseDTO });
-                }
-                
-                var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                return Ok(sortedDict);
-            }
-            catch (Exception ex)
+        //             foreach (var dose in doses)
+        //             {
+        //                 var newDate = today.AddDays(dose.MinAge);
+        //                 _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+        //             }
+
+        //             await _db.SaveChangesAsync();
+        //         }
+
+        //         // Generate schedule entries for new doses (outside the loop)
+        //         var existingDoseIds = await _db.AdminSchedules.Select(schedule => schedule.DoseId).ToListAsync();
+        //         var newDoses = await _db.Doses.Where(dose => !existingDoseIds.Contains(dose.Id)).ToListAsync();
+
+        //         var todayForNewDoses = DateOnly.FromDateTime(DateTime.Now);
+
+        //         foreach (var dose in newDoses)
+        //         {
+        //             var newDate = todayForNewDoses.AddDays(dose.MinAge);
+        //             _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+        //         }
+
+        //         await _db.SaveChangesAsync();
+
+        //         // Create dictionary to store the schedule
+        //         Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+        //         // Retrieve admin schedules from the database
+        //         var adminSchedules = await _db.AdminSchedules.Include(schedule => schedule.Dose).ToListAsync();
+
+        //         // Map admin schedules to DTOs and organize them in the dictionary
+        //         foreach (var adminSchedule in adminSchedules)
+        //         {
+        //             var doseDTO = _mapper.Map<DoseDTO>(adminSchedule.Dose);
+
+        //             if (dict.ContainsKey(adminSchedule.Date))
+        //                 dict[adminSchedule.Date].Add(doseDTO);
+        //             else
+        //                 dict.Add(adminSchedule.Date, new List<DoseDTO> { doseDTO });
+        //         }
+
+        //         // Sort the dictionary by date
+        //         var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        //         return Ok(sortedDict);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [HttpGet]
+[Route("admin_post_doseSchedule")]
+public async Task<IActionResult> GetUpdatedSchedule()
+{
+    try
+    {
+        var startingDate = new DateOnly(2023, 1, 1); // Set your desired starting date
+
+        if (!_db.AdminSchedules.Any())
+        {
+            var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+
+            foreach (var dose in doses)
             {
-                return StatusCode(500, ex.Message);
+                var newDate = startingDate.AddDays(dose.MinAge);
+                _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
             }
+
+            await _db.SaveChangesAsync();
         }
+
+        // Generate schedule entries for new doses (outside the loop)
+        var existingDoseIds = await _db.AdminSchedules.Select(schedule => schedule.DoseId).ToListAsync();
+        var newDoses = await _db.Doses.Where(dose => !existingDoseIds.Contains(dose.Id)).ToListAsync();
+
+        foreach (var dose in newDoses)
+        {
+            var newDate = startingDate.AddDays(dose.MinAge);
+            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+        }
+
+        await _db.SaveChangesAsync();
+
+        // Create dictionary to store the schedule
+        Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+        // Retrieve admin schedules from the database
+        var adminSchedules = await _db.AdminSchedules.Include(schedule => schedule.Dose).ToListAsync();
+
+        // Map admin schedules to DTOs and organize them in the dictionary
+        foreach (var adminSchedule in adminSchedules)
+        {
+            var doseDTO = _mapper.Map<DoseDTO>(adminSchedule.Dose);
+
+            if (dict.ContainsKey(adminSchedule.Date))
+                dict[adminSchedule.Date].Add(doseDTO);
+            else
+                dict.Add(adminSchedule.Date, new List<DoseDTO> { doseDTO });
+        }
+
+        // Sort the dictionary by date
+        var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        return Ok(sortedDict);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+
     }
 }

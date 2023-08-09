@@ -11,7 +11,7 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    [Migration("20230808121019_InitialCreate")]
+    [Migration("20230809145845_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
