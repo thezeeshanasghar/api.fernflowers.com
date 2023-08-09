@@ -203,5 +203,19 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet]
+        [Route("pagination/children")]
+        public IActionResult GetChildren(int page = 1, int perPage = 20)
+        {
+            int startIndex = (page - 1) * perPage;
+            int endIndex = startIndex + perPage;
+
+            var childrenFromDb = _db.Childs.Skip(startIndex).Take(perPage).ToList();
+
+            // Map children data from Entity to DTO
+            var patientDTOs = _mapper.Map<List<ChildDTO>>(childrenFromDb);
+
+            return Ok(patientDTOs);
+        }
     }
 }

@@ -60,6 +60,8 @@ namespace api.fernflowers.com.Migrations
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DOB = table.Column<DateOnly>(type: "date", nullable: false),
+                    Password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     City = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
