@@ -29,7 +29,7 @@ jobs:
       with:
         server: 192.185.11.184
         username: apiNew
-        password: ${{ secrets.FTP_PASSWORD }}
+        password: MCS@12345
         local-dir: ./publish/
           
         
