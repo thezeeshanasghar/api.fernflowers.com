@@ -23,9 +23,11 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish  
-      run: 
-        dotnet publish --configuration Release --output ./publish
-        rm ./publish/web.config ./publish/appsettings.json
+      run: dotnet publish --configuration Release --output ./publish
+    - name: Delete_web_settings
+      run: |
+        rm ./publish/web.config
+        rm ./publish/appsettings.json
     - name: 📂 Sync files to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
