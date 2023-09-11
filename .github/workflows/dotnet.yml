@@ -28,7 +28,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: 192.185.11.184
-        username: myapi
+        username: apiNew
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
           
