@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: actions/setup-dotnet@v6
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.408
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -24,14 +24,15 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish  
       run: dotnet publish --configuration Release --output ./publish
-    # - name: Delete_web_settings
-    #   run: |
-    #     rm ./publish/web.config
-    #     rm ./publish/appsettings.json
-    # - name: Copy web.config and appsettings.json
-    #   run: |
-    #     cp web.config ./publish/
-    #     cp appsettings.json ./publish/
+    - name: Delete_web_settings
+      run: |
+        rm ./publish/web.config
+        rm ./publish/appsettings.json
+
+    - name: Copy web.config and appsettings.json
+      run: |
+        cp Data/web.config ./publish/
+        cp appsettings.json ./publish/
     - name: 📂 Sync files to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
