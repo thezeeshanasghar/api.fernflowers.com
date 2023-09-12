@@ -28,7 +28,6 @@ jobs:
     #   run: |
     #     rm ./publish/web.config
     #     rm ./publish/appsettings.json
-
     # - name: Copy web.config and appsettings.json
     #   run: |
     #     cp web.config ./publish/
