@@ -31,13 +31,13 @@ jobs:
 
     - name: Copy web.config and appsettings.json
       run: |
-        cp web.config ./publish/
+        cp Data/web.config ./publish/
         cp appsettings.json ./publish/
     - name: 📂 Sync files to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: 192.185.11.184
-        username: apiNew
+        username: test
         password: MCS@12345
         local-dir: ./publish/
           
