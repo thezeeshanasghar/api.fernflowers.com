@@ -16,23 +16,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.408
-    - name: Clean
-      run: dotnet clean
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build
+l
     - name: Publish  
-      run: dotnet publish ./publish
-    # - name: Delete_web_settings
-    #   run: |
-    #     rm ./publish/web.config
-    #     rm ./publish/appsettings.json
-
-    # - name: Copy web.config and appsettings.json
-    #   run: |
-    #     cp Data/web.config ./publish/
-    #     cp appsettings.json ./publish/
+      run: dotnet publish --configuration Release --output ./publish
     - name: 📂 Sync files to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -40,6 +26,9 @@ jobs:
         username: test
         password: MCS@12345
         local-dir: ./publish/
+      exclude: | # Define patterns for files/folders to exclude
+      webconfig
+      appsettings.json
           
         
          
