@@ -26,8 +26,8 @@ jobs:
         password: MCS@12345
         local-dir: ./publish/
       exclude: | # Define patterns for files/folders to exclude
-      webconfig
-      appsettings.json
+        webconfig
+        appsettings.json
           
         
          
