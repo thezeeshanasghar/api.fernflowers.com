@@ -84,6 +84,8 @@ namespace api.fernflowers.com.Controllers
                             Name = clinic.Name,
                             Address = clinic.Address,
                             Number = clinic.Number,
+                            City = clinic.City,
+                            Fees = clinic.Fees,
                             DoctorId = doctorEntity.Id
                         };
 
@@ -330,6 +332,8 @@ namespace api.fernflowers.com.Controllers
                             Address = clinic.Address,
                             Name = clinic.Name,
                             Number = clinic.Number,
+                            City = clinic.City,
+                            Fees = clinic.Fees,
                             DoctorId = clinic.DoctorId,
                             ClinicTimings = new List<ClinicTimingDTO>()
                         };
