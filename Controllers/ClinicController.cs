@@ -88,27 +88,6 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [HttpPut]
-        // public async Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] Clinic clinicToUpdate)
-        // {
-        //     try
-        //     {
-        //         if (id != clinicToUpdate.Id)
-        //             return BadRequest();
-        //         var dbClinic = await _db.Clinics.FindAsync(id);
-        //         if (dbClinic == null)
-        //             return NotFound();
-
-        //         _db.Clinics.Update(clinicToUpdate);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
         [Route("{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromRoute] long id)
