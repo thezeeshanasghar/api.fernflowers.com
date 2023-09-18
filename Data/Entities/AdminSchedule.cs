@@ -8,7 +8,6 @@ namespace api.fernflowers.com.Data.Entities;
 public class AdminSchedule
 {
     public long Id { get; set; }
-    
     public System.DateOnly Date { get; set; }
     public long DoseId { get; set; }
     public virtual Dose Dose {get;set;}
