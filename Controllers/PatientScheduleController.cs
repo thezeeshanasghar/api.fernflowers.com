@@ -481,6 +481,7 @@ namespace api.fernflowers.com.Controllers
                             ClinicName = clinic.Name,
                             ClinicAddress=clinic.Address,
                             ClinicNumber=clinic.Number,
+                            ClinicCity=clinic.City,
                         
                         };
             var result = query.FirstOrDefault();
@@ -518,6 +519,7 @@ namespace api.fernflowers.com.Controllers
             string ClinicName = result.ClinicName;
             string ClinicAddress = result.ClinicAddress;
             string ClinicNumber = result.ClinicNumber;
+            string ClinicCity = result.ClinicCity;
             string ChildName = result.ChildName;
             string ChildFatherName = result.ChildFatherName;
             string ChildMobileNumber=result.ChildMobileNumber;
@@ -592,6 +594,11 @@ namespace api.fernflowers.com.Controllers
                 ClinicNumberCell.Border = Rectangle.NO_BORDER;
                 ClinicNumberCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicNumberCell);
+
+                PdfPCell ClinicCityCell = new PdfPCell(new Phrase("City: " +ClinicCity, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                ClinicCityCell.Border = Rectangle.NO_BORDER;
+                ClinicCityCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                clinicTable.AddCell(ClinicCityCell);
 
                 PdfPCell clinicCell = new PdfPCell(clinicTable);
                 clinicCell.Border = Rectangle.NO_BORDER;

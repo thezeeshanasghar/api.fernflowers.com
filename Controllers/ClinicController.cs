@@ -174,6 +174,14 @@ namespace api.fernflowers.com.Controllers
                 {
                     dbClinic.Number = cli.Number;
                 }
+                if (cli.City != null)
+                {
+                    dbClinic.City = cli.City;
+                }
+                if (cli.Fees != null)
+                {
+                    dbClinic.Fees = cli.Fees;
+                }
                 
                 await _db.SaveChangesAsync();
 
