@@ -126,6 +126,16 @@ namespace api.fernflowers.com.Controllers
 
                     foreach (var adminSchedule in adminSchedules)
                     {
+                        var newDate = (adminSchedule.Date);
+                        var dose = await _db.Doses.FindAsync(adminSchedule.DoseId);
+                        var dto = _mapper.Map<DoseDTO>(dose);
+
+                        if (dict.ContainsKey(newDate))
+                            dict[newDate].Add(dto);
+                        else
+                            dict.Add(newDate, new List<DoseDTO>() { dto });
+
+                        // Save the DoctorSchedule record.
                         var doctorSchedule = _mapper.Map<DoctorSchedule>(new DoctorScheduleDTO
                         {
                             Date = adminSchedule.Date,

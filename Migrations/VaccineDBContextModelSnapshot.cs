@@ -361,6 +361,17 @@ namespace api.fernflowers.com.Migrations
                     b.Navigation("Dose");
                 });
 
+            modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminSchedule", b =>
+                {
+                    b.HasOne("api.fernflowers.com.Data.Entities.Dose", "Dose")
+                        .WithMany()
+                        .HasForeignKey("DoseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dose");
+                });
+
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.Brand", b =>
                 {
                     b.HasOne("api.fernflowers.com.Data.Entities.Vaccine", null)
