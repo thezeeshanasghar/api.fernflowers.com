@@ -590,6 +590,7 @@ namespace api.fernflowers.com.Controllers
                 ClinicAddressCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicAddressCell);
 
+
                 PdfPCell ClinicNumberCell = new PdfPCell(new Phrase("Phone: " +ClinicNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                 ClinicNumberCell.Border = Rectangle.NO_BORDER;
                 ClinicNumberCell.HorizontalAlignment = Element.ALIGN_LEFT;
