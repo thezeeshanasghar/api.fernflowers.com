@@ -18,6 +18,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 
+
+
 builder.Services.AddDbContext<VaccineDBContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion)
@@ -42,4 +44,13 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 app.UseCors("corsapp");
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<VaccineDBContext>();
+    dbContext.Database.EnsureCreated(); // Optional: Ensure the database is created before applying the changes
+    dbContext.Database.Migrate(); // Optional: Apply pending migrations before applying the changes
+}
+
 app.Run();

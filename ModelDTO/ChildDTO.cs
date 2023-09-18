@@ -1,6 +1,6 @@
 using api.fernflowers.com.Data.Entities;
-using System.Text.Json.Serialization;
-
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace api.fernflowers.com.ModelDTO
 {
@@ -10,8 +10,10 @@ namespace api.fernflowers.com.ModelDTO
         public string Name { get; set; }
         public string FatherName { get; set; }
         public string Email { get; set; }
-        public DateTime DOB { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonProperty("DOB")]
+        [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
+        public System.DateOnly DOB { get; set; }
+        public string Password { get; set; }
         public Gender Gender { get; set; }
         public string City { get; set; }
         public string CNIC { get; set; }

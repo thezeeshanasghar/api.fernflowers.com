@@ -1,5 +1,5 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# # This workflow will build a .NET project
+# # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 # name: .NET
 
@@ -24,12 +24,20 @@
 #       run: dotnet test --no-build --verbosity normal
 #     - name: Publish  
 #       run: dotnet publish --configuration Release --output ./publish
+#     # - name: Delete_web_settings
+#     #   run: |
+#     #     rm ./publish/web.config
+#     #     rm ./publish/appsettings.json
+#     # - name: Copy web.config and appsettings.json
+#     #   run: |
+#     #     cp web.config ./publish/
+#     #     cp appsettings.json ./publish/
 #     - name: 📂 Sync files to FTP server
 #       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
 #       with:
 #         server: 192.185.11.184
-#         username: myapi
-#         password: ${{ secrets.FTP_PASSWORD }}
+#         username: test
+#         password: MCS@12345
 #         local-dir: ./publish/
           
         

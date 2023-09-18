@@ -78,13 +78,55 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+
         [HttpGet]
-        [Route("admin_post_doseSchedule")]
-        public async Task<IActionResult> GetNew()
+[Route("admin_post_doseSchedule")]
+public async Task<IActionResult> GetUpdatedSchedule()
+{
+    try
+    {
+        var startingDate = new DateOnly(2023, 1, 1); // Set your desired starting date
+
+        if (!_db.AdminSchedules.Any())
         {
-            try
+            var doses = await _db.Doses.OrderBy(x => x.MinAge).ToListAsync();
+
+            foreach (var dose in doses)
             {
-                
+                var newDate = startingDate.AddDays(dose.MinAge);
+                _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        // Generate schedule entries for new doses (outside the loop)
+        var existingDoseIds = await _db.AdminSchedules.Select(schedule => schedule.DoseId).ToListAsync();
+        var newDoses = await _db.Doses.Where(dose => !existingDoseIds.Contains(dose.Id)).ToListAsync();
+
+        foreach (var dose in newDoses)
+        {
+            var newDate = startingDate.AddDays(dose.MinAge);
+            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+        }
+
+        await _db.SaveChangesAsync();
+
+        // Create dictionary to store the schedule
+        Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+        // Retrieve admin schedules from the database
+        var adminSchedules = await _db.AdminSchedules.Include(schedule => schedule.Dose).ToListAsync();
+
+        // Map admin schedules to DTOs and organize them in the dictionary
+        foreach (var adminSchedule in adminSchedules)
+        {
+            var doseDTO = _mapper.Map<DoseDTO>(adminSchedule.Dose);
+
+            if (dict.ContainsKey(adminSchedule.Date))
+                dict[adminSchedule.Date].Add(doseDTO);
+            else
+                dict.Add(adminSchedule.Date, new List<DoseDTO> { doseDTO });
 
                 if (!_db.AdminSchedules.Any())
                 {
@@ -117,6 +159,7 @@ namespace api.fernflowers.com.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
+         }
+
     }
 }

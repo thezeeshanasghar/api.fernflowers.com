@@ -11,7 +11,8 @@ public class Child
     public string Email { get; set; }
     // [JsonProperty("date")]
     // [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
-    public DateTime DOB { get; set; }
+    public System.DateOnly DOB { get; set; }
+    public string Password { get; set; }
     public Gender Gender { get; set; }
     public string City { get; set; }
     public string CNIC { get; set; }

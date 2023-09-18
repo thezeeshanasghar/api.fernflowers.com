@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.fernflowers.com.Data;
 
@@ -10,9 +11,11 @@ using api.fernflowers.com.Data;
 namespace api.fernflowers.com.Migrations
 {
     [DbContext(typeof(VaccineDBContext))]
-    partial class VaccineDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230809145845_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -348,17 +351,6 @@ namespace api.fernflowers.com.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vaccines");
-                });
-
-            modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminSchedule", b =>
-                {
-                    b.HasOne("api.fernflowers.com.Data.Entities.Dose", "Dose")
-                        .WithMany()
-                        .HasForeignKey("DoseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dose");
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.AdminSchedule", b =>

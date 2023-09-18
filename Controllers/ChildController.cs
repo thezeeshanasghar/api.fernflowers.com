@@ -16,7 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CsvHelper;
-
+using AutoMapper;
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -24,10 +24,12 @@ namespace api.fernflowers.com.Controllers
     public class ChildController : ControllerBase
     {
         private readonly VaccineDBContext _db;
+        private readonly IMapper _mapper;
 
-        public ChildController(VaccineDBContext vaccineDBContext)
+        public ChildController(VaccineDBContext vaccineDBContext,IMapper mapper)
         {
             _db = vaccineDBContext;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
@@ -38,7 +40,9 @@ namespace api.fernflowers.com.Controllers
                 var child = await _db.Childs.FindAsync(id);
                 if (child == null)
                     return NotFound();
-                return Ok(child);
+
+                var childDTO = _mapper.Map<ChildDTO>(child);
+                return Ok(childDTO);
             }
             catch (Exception ex)
             {
@@ -47,7 +51,7 @@ namespace api.fernflowers.com.Controllers
         }
         
         [HttpGet("search-by-doctor-name")]
-        public ActionResult<IEnumerable<Child>> SearchByDoctorName(
+        public ActionResult<IEnumerable<ChildDTO>> SearchByDoctorName(
             string? doctorName = null,
             string? name = null,
             string? city = null,
@@ -86,18 +90,21 @@ namespace api.fernflowers.com.Controllers
             {
                 return StatusCode(404, "No records found.");
             }
-
-            return Ok(query.Select(pd => pd.Child));
+            var childDTOs = _mapper.Map<List<ChildDTO>>(query.Select(pd => pd.Child));
+            return Ok(childDTOs);
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] Child child)
+        public async Task<IActionResult> PostNew([FromBody] ChildDTO childDTO)
         {
             try
             {
-                _db.Childs.Add(child);
+                 var childEntity = _mapper.Map<Child>(childDTO);
+
+                 _db.Childs.Add(childEntity);
+               
                 await _db.SaveChangesAsync();
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + child.Id), child);
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -105,50 +112,27 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        // [HttpPut]
-        // public async Task<IActionResult> PutAsync(
-        //     [FromRoute] int id,
-        //     [FromBody] Child childToUpdate
-        // )
-        // {
-        //     try
-        //     {
-        //         if (id != childToUpdate.Id)
-        //             return BadRequest();
-        //         var dbchild = await _db.Childs.FindAsync(id);
-        //         if (dbchild == null)
-        //             return NotFound();
 
-        //         _db.Childs.Update(childToUpdate);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [Route("{id}")]
-        // [HttpDelete]
-        // public async Task<IActionResult> DeleteAsync([FromRoute] int id)
-        // {
-        //     try
-        //     {
-        //         var childToDelete = await _db.Childs.FindAsync(id);
-        //         if (childToDelete == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         _db.Childs.Remove(childToDelete);
-        //         await _db.SaveChangesAsync();
-        //         return NoContent();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [Route("{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAsync([FromRoute] long id)
+        {
+            try
+            {
+                var childToDelete = await _db.Childs.FindAsync(id);
+                if (childToDelete == null)
+                {
+                    return NotFound();
+                }
+                _db.Childs.Remove(childToDelete);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchAsync(
@@ -180,47 +164,7 @@ namespace api.fernflowers.com.Controllers
             return Ok(count);
         }
 
-        // [HttpGet("download")]
-        // public IActionResult DownloadCsv()
-        // {
-        //     try
-        //     {
-        //         // Retrieve all child data from the database
-        //         List<Child> children = _db.Childs.ToList();
-
-        //         if (children.Count == 0)
-        //         {
-        //             return NotFound("No child data found.");
-        //         }
-
-        //         // Generate the CSV content
-        //         StringBuilder csvContent = new StringBuilder();
-        //         csvContent.AppendLine(
-        //             "Id,Name,FatherName,Guardian,DOB,Gender,Email,Type,City,CNIC,IsEPIDone,IsVerified,IsInactive,ClinicId,DoctorId"
-        //         );
-        //         foreach (Child child in children)
-        //         {
-        //             csvContent.AppendLine(
-        //                 $"{child.Id},{child.Name},{child.FatherName},{child.DOB},{child.Gender},{child.Email},{child.City},{child.CNIC},{child.IsEPIDone},{child.IsVerified},{child.IsInactive},{child.ClinicId},{child.DoctorId}"
-        //             );
-        //         }
-
-        //         // Set the response headers for CSV file download
-        //         byte[] csvBytes = Encoding.UTF8.GetBytes(csvContent.ToString());
-        //         MemoryStream memoryStream = new MemoryStream(csvBytes);
-        //         string fileName = "children.csv";
-        //         string contentType = "text/csv";
-
-        //         // Return the CSV file as a download
-        //         return File(memoryStream, contentType, fileName);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         // Log the exception or handle it as needed
-        //         Console.WriteLine(ex);
-        //         return StatusCode(500, "An error occurred while generating the CSV file.");
-        //     }
-        // }
+  
 
         [HttpGet]
         [Route("allpatients")]
@@ -229,7 +173,9 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 var patients = await _db.Childs.ToListAsync();
-                return Ok(patients);
+                var patientDTOs = _mapper.Map<List<ChildDTO>>(patients);
+
+                return Ok(patientDTOs);
             }
             catch (Exception ex)
             {
@@ -237,24 +183,68 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
-        [HttpGet("patients_get_by_doctor_id")]
-        public IActionResult GetChildrenByDoctorId(long doctorId)
+        // [HttpGet("patients_get_by_doctor_id")]
+        // public IActionResult GetChildrenByDoctorId(long doctorId)
+        // {
+        //     try
+        //     {
+        //         var children = _db.Childs.Where(c => c.DoctorId == doctorId).ToList();
+
+        //         if (children.Count == 0)
+        //         {
+        //             return NotFound();
+        //         }
+        //         var patientDTOs = _mapper.Map<List<ChildDTO>>(children);
+
+        //         return Ok(patientDTOs);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        [HttpGet("children_get_by_doctor_id")]
+        public IActionResult GetChildrenByDoctorId(long doctorId, int page = 1, int perPage = 20)
         {
             try
             {
-                var children = _db.Childs.Where(c => c.DoctorId == doctorId).ToList();
+                var childrenQuery = _db.Childs.Where(c => c.DoctorId == doctorId);
 
-                if (children.Count == 0)
+                int totalCount = childrenQuery.Count();
+
+                if (totalCount == 0)
                 {
                     return NotFound();
                 }
 
-                return Ok(children);
+                int startIndex = (page - 1) * perPage;
+                var children = childrenQuery.Skip(startIndex).Take(perPage).ToList();
+                
+                var childrenDTOs = _mapper.Map<List<ChildDTO>>(children);
+
+              
+
+                return Ok(childrenDTOs);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        [HttpGet]
+        [Route("pagination/children")]
+        public IActionResult GetChildren(int page = 1, int perPage = 20)
+        {
+            int startIndex = (page - 1) * perPage;
+            int endIndex = startIndex + perPage;
+
+            var childrenFromDb = _db.Childs.Skip(startIndex).Take(perPage).ToList();
+
+            // Map children data from Entity to DTO
+            var patientDTOs = _mapper.Map<List<ChildDTO>>(childrenFromDb);
+
+            return Ok(patientDTOs);
         }
     }
 }

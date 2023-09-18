@@ -10,4 +10,5 @@ public class DoctorSchedule
     public System.DateOnly Date { get; set; }
     public long DoseId { get; set; }
     public long DoctorId { get; set; }
+    public virtual Dose Dose {get;set;}
 }
