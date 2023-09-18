@@ -599,6 +599,7 @@ namespace api.fernflowers.com.Controllers
                 ClinicCityCell.Border = Rectangle.NO_BORDER;
                 ClinicCityCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicCityCell);
+                
 
                 PdfPCell clinicCell = new PdfPCell(clinicTable);
                 clinicCell.Border = Rectangle.NO_BORDER;
