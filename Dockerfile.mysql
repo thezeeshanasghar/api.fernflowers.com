@@ -1,0 +1,13 @@
+# Use the official MySQL image from Docker Hub
+FROM mysql:latest
+
+# Set the environment variables for MySQL
+ENV MYSQL_ROOT_PASSWORD=root1234
+ENV MYSQL_DATABASE=fernfers_1
+
+
+# Expose the MySQL port
+EXPOSE 3306
+
+# Start MySQL server
+CMD ["mysqld"]

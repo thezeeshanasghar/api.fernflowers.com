@@ -112,7 +112,7 @@ namespace api.fernflowers.com.Controllers
                     }
                 }
 
-                return Created(new Uri(Request.GetEncodedUrl() + "/" + doctorEntity.Id), doctorEntity.Id);
+                return Ok();
             }
             else
             {

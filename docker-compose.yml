@@ -1,0 +1,27 @@
+version: "3.4"
+
+volumes:
+ datafiles:
+
+services:
+ db:
+  image: mysql
+  command: --skip-grant-tables
+  volumes:
+    - datafiles:/var/lib/mysql
+    - "~/sql-scripts/setup.sql:/docker-entrypoint-initdb.d/1.sql"
+  restart: always
+  environment:
+    MYSQL_ROOT_PASSWORD: Root0++
+ mvc:
+  build:
+   context: .
+   dockerfile: Dockerfile
+  depends_on:
+   - db
+  ports:
+   - "8888:80"
+  restart: always
+  environment:
+    - DBHOST=db
+    - ASPNETCORE_ENVIRONMENT=Development

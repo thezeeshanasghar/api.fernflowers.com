@@ -11,7 +11,10 @@ builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => { builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader(); }));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "api.fernflowers.com", Version = "v1" });
+});
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
@@ -20,15 +23,49 @@ var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 
 
 
-builder.Services.AddDbContext<VaccineDBContext>(
-    dbContextOptions => dbContextOptions
-        .UseMySql(connectionString, serverVersion)
-        // The following three options help with debugging, but should
-        // be changed or removed for production.
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .EnableSensitiveDataLogging()
-        .EnableDetailedErrors()
-);
+// builder.Services.AddDbContext<VaccineDBContext>( 
+// options => options.UseMySql("Server=localhost;Database=ef;User=root;Password=123456;",
+
+//     mySqlOptions =>
+//     {
+//         mySqlOptions.(new Version(5, 7, 17))
+//         .EnableRetryOnFailure(
+//         maxRetryCount: 10,
+//         maxRetryDelay: TimeSpan.FromSeconds(30),
+//         errorNumbersToAdd: null); 
+//     }
+// ));
+
+
+builder.Services.AddDbContext<VaccineDBContext>(options =>
+{
+    options.UseMySql(connectionString, serverVersion, mySqlOptions =>
+    {
+        mySqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 10,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null
+        );
+    });
+});
+
+
+
+// builder.Services.AddDbContext<VaccineDBContext>(
+//     options => options
+    
+//         .UseMySql(connectionString, serverVersion)
+//         // The following three options help with debugging, but should
+//         // be changed or removed for production.
+//         .LogTo(Console.WriteLine, LogLevel.Information)
+//         .EnableSensitiveDataLogging()
+//         .EnableDetailedErrors()
+        
+//         // {
+//         // options.UseMySql(connectionString,serverVersion);
+//         // }
+//         );
+//         builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
@@ -36,8 +73,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "api.fernflowers.com v1");
+         c.RoutePrefix = string.Empty;
+    });
 }
 
 //app.UseHttpsRedirection();
@@ -49,8 +91,8 @@ using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
     var dbContext = serviceProvider.GetRequiredService<VaccineDBContext>();
-    dbContext.Database.EnsureCreated(); // Optional: Ensure the database is created before applying the changes
-    dbContext.Database.Migrate(); // Optional: Apply pending migrations before applying the changes
+    // dbContext.Database.EnsureCreated(); // Optional: Ensure the database is created before applying the changes
+    // dbContext.Database.Migrate(); // Optional: Apply pending migrations before applying the changes
 }
 
 app.Run();

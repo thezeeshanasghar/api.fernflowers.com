@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\api.fernflowers.com.props" />
+</Project>
