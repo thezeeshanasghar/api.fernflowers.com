@@ -3794,11 +3794,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Muhammad Ali\\source\\repos\\api.fernflowers.com\\api.fernflowers.com\\api.fernflowers.com.csproj",
+      "projectUniqueName": "C:\\xampp\\htdocs\\new vaccine\\api.fernflowers.com\\api.fernflowers.com.csproj",
       "projectName": "api.fernflowers.com",
-      "projectPath": "C:\\Users\\Muhammad Ali\\source\\repos\\api.fernflowers.com\\api.fernflowers.com\\api.fernflowers.com.csproj",
+      "projectPath": "C:\\xampp\\htdocs\\new vaccine\\api.fernflowers.com\\api.fernflowers.com.csproj",
       "packagesPath": "C:\\Users\\Muhammad Ali\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Muhammad Ali\\source\\repos\\api.fernflowers.com\\api.fernflowers.com\\obj\\",
+      "outputPath": "C:\\xampp\\htdocs\\new vaccine\\api.fernflowers.com\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Muhammad Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
