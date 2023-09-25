@@ -37,35 +37,35 @@ var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 // ));
 
 
-builder.Services.AddDbContext<VaccineDBContext>(options =>
-{
-    options.UseMySql(connectionString, serverVersion, mySqlOptions =>
-    {
-        mySqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 10,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null
-        );
-    });
-});
-
-
-
-// builder.Services.AddDbContext<VaccineDBContext>(
-//     options => options
-    
-//         .UseMySql(connectionString, serverVersion)
-//         // The following three options help with debugging, but should
-//         // be changed or removed for production.
-//         .LogTo(Console.WriteLine, LogLevel.Information)
-//         .EnableSensitiveDataLogging()
-//         .EnableDetailedErrors()
-        
-//         // {
-//         // options.UseMySql(connectionString,serverVersion);
-//         // }
+// builder.Services.AddDbContext<VaccineDBContext>(options =>
+// {
+//     options.UseMySql(connectionString, serverVersion, mySqlOptions =>
+//     {
+//         mySqlOptions.EnableRetryOnFailure(
+//             maxRetryCount: 10,
+//             maxRetryDelay: TimeSpan.FromSeconds(30),
+//             errorNumbersToAdd: null
 //         );
-//         builder.Services.AddControllersWithViews();
+//     });
+// });
+
+
+
+builder.Services.AddDbContext<VaccineDBContext>(
+    options => options
+    
+        .UseMySql(connectionString, serverVersion)
+        // The following three options help with debugging, but should
+        // be changed or removed for production.
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+        
+        // {
+        // options.UseMySql(connectionString,serverVersion);
+        // }
+        );
+        builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
