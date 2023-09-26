@@ -9,8 +9,8 @@ public class Child
     public string Name { get; set; }
     public string FatherName { get; set; }
     public string Email { get; set; }
-    // [JsonProperty("date")]
-    // [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
+    [JsonProperty("DOB")]
+    [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
     public System.DateOnly DOB { get; set; }
     public string Password { get; set; }
     public Gender Gender { get; set; }
