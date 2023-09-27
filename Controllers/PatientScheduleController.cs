@@ -473,7 +473,7 @@ namespace api.fernflowers.com.Controllers
                 var children = _db.Childs.Where(c => childIds.Contains(c.Id)).ToList();
 
                 if (children == null || children.Count == 0)
-                    return Ok("No patients visiting today for the given doctor.");
+                    return NoContent();
 
                 return Ok(children);
             }
