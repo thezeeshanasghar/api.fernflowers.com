@@ -9,5 +9,5 @@ public class PatientScheduleUpdateDTO
     public bool IsDone { get; set; }
     public string NewDate { get; set; }
     public long BrandId { get; set; }
-
+    public bool IsSkip { get; set; }
 }

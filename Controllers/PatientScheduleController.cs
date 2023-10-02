@@ -329,9 +329,13 @@ namespace api.fernflowers.com.Controllers
                     // Update BrandId for each record
                     foreach (var record in dbPS)
                     {
-                        record.IsDone = updateItem.IsDone;
-                        record.Date = parsedNewDate;
-                        record.BrandId = updateItem.BrandId; // Use the BrandId from the updateItem
+                        
+                        if (!updateItem.IsSkip) // Check if IsSkip is false
+                        {
+                            record.IsDone = updateItem.IsDone;
+                            record.Date = parsedNewDate;
+                            record.BrandId = updateItem.BrandId;
+                        } 
                     }
                 }
 
