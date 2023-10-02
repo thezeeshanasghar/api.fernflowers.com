@@ -39,3 +39,8 @@ msbuild.wrn
 api.fernflowers.com.sln
 appsettings.Development.json
 appsettings.Development.json
+Migrations/20230925092014_InitialCreate.cs
+Migrations/20230925092014_InitialCreate.Designer.cs
+Migrations/VaccineDBContextModelSnapshot.cs
+Migrations/20230925092014_InitialCreate.cs
+*.cs

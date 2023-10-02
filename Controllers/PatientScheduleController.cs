@@ -432,6 +432,32 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet("today_alert_BaseOnDoctor")]
+        public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDateAndDoctor(long doctorId)
+        {
+            try
+            {
+                DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+                
+                // Filter patients by date and doctor ID
+                var childIds = _db.PatientSchedules
+                    .Where(p => p.Date == today && p.DoctorId == doctorId)
+                    .Select(p => p.ChildId)
+                    .Distinct()
+                    .ToList();
+
+                var children = _db.Childs.Where(c => childIds.Contains(c.Id)).ToList();
+
+                if (children == null || children.Count == 0)
+                    return NoContent();
+
+                return Ok(children);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpGet("today_alert")]
         public ActionResult<IEnumerable<Child>> GetPatientsWithTodayDate()
         {
