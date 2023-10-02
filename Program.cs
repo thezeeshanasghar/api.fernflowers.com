@@ -51,17 +51,17 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-//app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.UseCors("corsapp");
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var serviceProvider = scope.ServiceProvider;
-//     var dbContext = serviceProvider.GetRequiredService<VaccineDBContext>();
-//     dbContext.Database.EnsureCreated(); // Optional: Ensure the database is created before applying the changes
-//     dbContext.Database.Migrate(); // Optional: Apply pending migrations before applying the changes
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<VaccineDBContext>();
+    dbContext.Database.EnsureCreated(); // Optional: Ensure the database is created before applying the changes
+    dbContext.Database.Migrate(); // Optional: Apply pending migrations before applying the changes
+}
 
 app.Run();
