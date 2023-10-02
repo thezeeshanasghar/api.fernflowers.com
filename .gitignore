@@ -10,7 +10,7 @@ nupkg/
 
 # Rider
 .idea
-
+obj
 # User-specific files
 *.suo
 *.user
@@ -27,6 +27,7 @@ x86/
 build/
 bld/
 [Bb]in/
+obj
 [Oo]bj/
 [Oo]ut/
 msbuild.log
