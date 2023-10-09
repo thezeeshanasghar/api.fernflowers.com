@@ -94,17 +94,46 @@ namespace api.fernflowers.com.Controllers
             return Ok(childDTOs);
         }
 
+        // [HttpPost]
+        // public async Task<IActionResult> PostNew([FromBody] ChildDTO childDTO)
+        // {
+        //     try
+        //     {
+        //          var childEntity = _mapper.Map<Child>(childDTO);
+
+        //          _db.Childs.Add(childEntity);
+               
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] ChildDTO childDTO)
         {
             try
             {
-                 var childEntity = _mapper.Map<Child>(childDTO);
+                // Map the ChildDTO to a Child entity
+                var childEntity = _mapper.Map<Child>(childDTO);
 
-                 _db.Childs.Add(childEntity);
-               
-                await _db.SaveChangesAsync();
-                return NoContent();
+                // Check if the associated Clinic is Online == true
+                var clinic = await _db.Clinics.FindAsync(childEntity.ClinicId);
+
+                if (clinic != null && clinic.IsOnline)
+                {
+                    // If the clinic is online, add the Child entity to the database
+                    _db.Childs.Add(childEntity);
+                    await _db.SaveChangesAsync();
+                    return NoContent();
+                }
+                else
+                {
+                    // If the clinic is not online, return a 400 Bad Request or another appropriate status code
+                    return BadRequest("The associated Clinic is not online.");
+                }
             }
             catch (Exception ex)
             {

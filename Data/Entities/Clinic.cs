@@ -12,6 +12,7 @@ public class Clinic
     public string City { get; set; }
     public string Fees { get; set; }
     public long DoctorId { get; set; }
+    public bool IsOnline { get; set; }
 
     public virtual ICollection<ClinicTiming> ClinicTimings { get; set; }
 

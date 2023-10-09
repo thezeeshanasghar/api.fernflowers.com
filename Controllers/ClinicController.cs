@@ -78,6 +78,7 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
+                clinic.IsOnline = false;
                 _db.Clinics.Add(clinic);
                 await _db.SaveChangesAsync();
                 return Created(new Uri(Request.GetEncodedUrl() + "/" + clinic.Id), clinic);
@@ -111,6 +112,28 @@ namespace api.fernflowers.com.Controllers
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
+        {
+            try
+            {
+                var dbClinic = await _db.Clinics.FindAsync(id);
+                if (dbClinic == null)
+                {
+                    return NotFound();
+                }
+                patchDocument.ApplyTo(dbClinic);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        
+        [HttpPatch("ClinicIsonline/{id}")]
+        
+        public async Task<IActionResult> PatchIsOnline([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
         {
             try
             {

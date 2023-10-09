@@ -10,6 +10,7 @@ using System.Globalization;
 using AutoMapper;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Cors;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -25,6 +26,8 @@ namespace api.fernflowers.com.Controllers
             _db = vaccineDBContext;
             _mapper = mapper;
         }
+
+
 
         [HttpGet]
         [Route("Patient_DoseSchedule")]
@@ -141,52 +144,53 @@ namespace api.fernflowers.com.Controllers
                         }
                     }
                 }
-                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
+                Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict2 = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
+                var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
 
-                    foreach (var patientSchedule in patientSchedules)
+                foreach (var patientSchedule in patientSchedules)
+                {
+                    var newDate = patientSchedule.Date;
+                    var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
+                    var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
+
+                    if (dose == null || brand == null)
                     {
-                        var newDate = patientSchedule.Date;
-                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
-                        var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
-
-                        if (dose == null || brand == null)
+                        // Dose or Brand not found, set the properties to null
+                        var dto = new PatientDoseScheduleDTO
                         {
-                            // Dose or Brand not found, set the properties to null
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose?.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
-                            };
+                            ScheduleId = patientSchedule.Id,
+                            DoseName = dose?.Name,
+                            IsSkip = patientSchedule.IsSkip,
+                            IsDone = patientSchedule.IsDone,
+                            BrandName = brand?.Name
+                        };
 
-                            if (dict.ContainsKey(newDate))
-                                dict[newDate].Add(dto);
-                            else
-                                dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
+                        if (dict2.ContainsKey(newDate))
+                            dict2[newDate].Add(dto);
                         else
-                        {
-                            // Dose and Brand found, continue with the existing code to create the dto
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
-                            };
-
-                            if (dict.ContainsKey(newDate))
-                                dict[newDate].Add(dto);
-                            else
-                                dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
+                            dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
                     }
-                
+                    else
+                    {
+                        // Dose and Brand found, continue with the existing code to create the dto
+                        var dto = new PatientDoseScheduleDTO
+                        {
+                            ScheduleId = patientSchedule.Id,
+                            DoseName = dose.Name,
+                            IsSkip = patientSchedule.IsSkip,
+                            IsDone = patientSchedule.IsDone,
+                            BrandName = brand.Name
+                        };
 
-               var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                        if (dict2.ContainsKey(newDate))
+                            dict2[newDate].Add(dto);
+                        else
+                            dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                    }
+                }
+
+
+                var sortedDict = dict2.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 return Ok(sortedDict);
             }
@@ -329,13 +333,14 @@ namespace api.fernflowers.com.Controllers
                     // Update BrandId for each record
                     foreach (var record in dbPS)
                     {
-                        
                         if (!updateItem.IsSkip) // Check if IsSkip is false
                         {
                             record.IsDone = updateItem.IsDone;
                             record.Date = parsedNewDate;
                             record.BrandId = updateItem.BrandId;
-                        } 
+                        }
+                        
+                         // Use the BrandId from the updateItem
                     }
                 }
 
@@ -488,6 +493,7 @@ namespace api.fernflowers.com.Controllers
         }
 
         [Route("pdf")]
+        [EnableCors("corsapp")]
         [HttpGet]
         public IActionResult GetJoinedData(long ChildId)
         {
@@ -501,7 +507,7 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
-                            ChildFatherName=child.FatherName,
+                            ChildGuardianName=child.GuardianName,
                             ChildMobileNumber=child.MobileNumber,
                             Gender=child.Gender,
                             DoctorId = doctor.Id,
@@ -551,7 +557,7 @@ namespace api.fernflowers.com.Controllers
             string ClinicNumber = result.ClinicNumber;
             string ClinicCity = result.ClinicCity;
             string ChildName = result.ChildName;
-            string ChildFatherName = result.ChildFatherName;
+            string ChildGuardianName = result.ChildGuardianName;
             string ChildMobileNumber=result.ChildMobileNumber;
 
             // Create the PDF document
@@ -654,11 +660,11 @@ namespace api.fernflowers.com.Controllers
                 
 
                 string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
-                string childWithFatherName = genderText + ChildFatherName;
-                PdfPCell ChildFatherNameCell = new PdfPCell(new Phrase(childWithFatherName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
-                ChildFatherNameCell.Border = Rectangle.NO_BORDER;
-                ChildFatherNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                childTable.AddCell(ChildFatherNameCell);
+                string childWithGuardianName = genderText + ChildGuardianName;
+                PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                ChildGuardianNameCell.Border = Rectangle.NO_BORDER;
+                ChildGuardianNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                childTable.AddCell(ChildGuardianNameCell);
 
 
                 PdfPCell ChildMobileNumberCell = new PdfPCell(new Phrase(ChildMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));

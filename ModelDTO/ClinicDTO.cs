@@ -9,6 +9,7 @@ namespace api.fernflowers.com.ModelDTO
         public string City { get; set; }
         public string Fees { get; set; }
         public long DoctorId { get; set; }
+        public bool IsOnline { get; set; }
         public List<ClinicTimingDTO> ClinicTimings { get; set; }
     }
 }

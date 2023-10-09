@@ -47,7 +47,8 @@ public class VaccineDBContext : DbContext
                             Address="b17",
                             City="Isb",
                             Fees="100",
-                            DoctorId=1
+                            DoctorId=1,
+                            IsOnline=true
 
                         }
                     ); 

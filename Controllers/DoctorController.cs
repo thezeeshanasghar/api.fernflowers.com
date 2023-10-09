@@ -86,7 +86,8 @@ namespace api.fernflowers.com.Controllers
                             Number = clinic.Number,
                             City = clinic.City,
                             Fees = clinic.Fees,
-                            DoctorId = doctorEntity.Id
+                            DoctorId = doctorEntity.Id,
+                            IsOnline=true
                         };
 
                         _db.Clinics.Add(clinicEntity);
@@ -335,6 +336,7 @@ namespace api.fernflowers.com.Controllers
                             City = clinic.City,
                             Fees = clinic.Fees,
                             DoctorId = clinic.DoctorId,
+                            IsOnline=clinic.IsOnline,
                             ClinicTimings = new List<ClinicTimingDTO>()
                         };
 
