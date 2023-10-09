@@ -8,6 +8,10 @@ public class PatientScheduleDTO
     [JsonProperty("date")]
     [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
     public System.DateOnly Date { get; set; }
+
+    [JsonProperty("GivenDate")]
+    [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
+    public System.DateOnly GivenDate { get; set; }
     public long DoseId { get; set; }
     public long DoctorId { get; set; }
     public long ChildId { get; set; }

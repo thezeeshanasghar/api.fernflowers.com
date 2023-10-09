@@ -99,7 +99,8 @@ namespace api.fernflowers.com.Controllers
                                 DoctorId = DoctorId,
                                 ChildId = ChildId,
                                 IsDone = false,
-                                BrandId = null
+                                BrandId = null,
+                                GivenDate=null,
                             };
                             _db.PatientSchedules.Add(patientSchedule);
                             await _db.SaveChangesAsync();
@@ -133,7 +134,8 @@ namespace api.fernflowers.com.Controllers
                                 DoctorId = DoctorId,
                                 ChildId = ChildId,
                                 IsDone = false,
-                                BrandId = null
+                                BrandId = null,
+                                GivenDate=null,
                             };
                             _db.PatientSchedules.Add(patientSchedule);
                             await _db.SaveChangesAsync();
@@ -319,7 +321,7 @@ namespace api.fernflowers.com.Controllers
                 foreach (var updateItem in updateData)
                 {
                     var parsedCurrentDate = System.DateOnly.Parse(updateItem.CurrentDate);
-                    var parsedNewDate = System.DateOnly.Parse(updateItem.NewDate);
+                    var parsedNewDate = System.DateOnly.Parse(updateItem.GivenDate);
 
                     var dbPS = await _db.PatientSchedules
                         .Where(d => d.Id == updateItem.Id && d.Date.Equals(parsedCurrentDate))
@@ -336,7 +338,7 @@ namespace api.fernflowers.com.Controllers
                         if (!updateItem.IsSkip) // Check if IsSkip is false
                         {
                             record.IsDone = updateItem.IsDone;
-                            record.Date = parsedNewDate;
+                            record.GivenDate = parsedNewDate;
                             record.BrandId = updateItem.BrandId;
                         }
                         
