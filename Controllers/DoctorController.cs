@@ -298,6 +298,84 @@ namespace api.fernflowers.com.Controllers
             }
         }
 
+        // [Route("login")]
+        // [HttpGet()]
+        // public async Task<IActionResult> Login(string MobileNumber, string Password)
+        // {
+        //     try
+        //     {
+        //         var today = System.DateOnly.FromDateTime(DateTime.Today);
+        //         var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password &&  a.ValidUpto >= today);
+
+        //         if (doctor != null)
+        //         {
+        //             var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
+
+        //             if (clinic != null)
+        //             {
+        //                 var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
+
+        //                 DoctorDTO doctorDTO = new DoctorDTO
+        //                 {
+        //                     Id = doctor.Id,
+        //                     Name = doctor.Name,
+        //                     Email = doctor.Email,
+        //                     MobileNumber = doctor.MobileNumber,
+        //                     Password = doctor.Password,
+        //                     PMDC = doctor.PMDC,
+        //                     ValidUpto = doctor.ValidUpto,
+        //                     Clinics = new List<ClinicDTO>()
+        //                 };
+
+        //                 ClinicDTO clinicDTO = new ClinicDTO
+        //                 {
+        //                     Id = clinic.Id,
+        //                     Address = clinic.Address,
+        //                     Name = clinic.Name,
+        //                     Number = clinic.Number,
+        //                     City = clinic.City,
+        //                     Fees = clinic.Fees,
+        //                     DoctorId = clinic.DoctorId,
+        //                     IsOnline=clinic.IsOnline,
+        //                     ClinicTimings = new List<ClinicTimingDTO>()
+        //                 };
+
+        //                 foreach (var ct in clinictiming)
+        //                 {
+        //                     ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
+        //                     {
+        //                         Id = ct.Id,
+        //                         Day = ct.Day,
+        //                         Session = ct.Session,
+        //                         StartTime = ct.StartTime,
+        //                         EndTime = ct.EndTime,
+        //                         ClinicId = ct.ClinicId
+        //                     };
+
+        //                     clinicDTO.ClinicTimings.Add(clinicTimingDTO);
+        //                 }
+
+        //                 doctorDTO.Clinics.Add(clinicDTO);
+
+        //                 return Ok(doctorDTO);
+        //             }
+        //             else
+        //             {
+        //                 // Handle the case where clinic is null
+        //                 return NotFound("No clinic associated with the doctor.");
+        //             }
+        //         }
+        //         else
+        //         {
+        //             // Handle the case where doctor is null
+        //             return NotFound("Invalid MobileNumber or Password.");
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
         [Route("login")]
         [HttpGet()]
         public async Task<IActionResult> Login(string MobileNumber, string Password)
@@ -305,16 +383,14 @@ namespace api.fernflowers.com.Controllers
             try
             {
                 var today = System.DateOnly.FromDateTime(DateTime.Today);
-                var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password &&  a.ValidUpto >= today);
+                var doctor = _db.Doctors.FirstOrDefault(a => a.MobileNumber == MobileNumber && a.Password == Password && a.ValidUpto >= today);
 
                 if (doctor != null)
                 {
-                    var clinic = _db.Clinics.FirstOrDefault(c => c.DoctorId == doctor.Id);
+                    var clinics = _db.Clinics.Where(c => c.DoctorId == doctor.Id).ToList();
 
-                    if (clinic != null)
+                    if (clinics != null && clinics.Count > 0)
                     {
-                        var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
-
                         DoctorDTO doctorDTO = new DoctorDTO
                         {
                             Id = doctor.Id,
@@ -327,47 +403,50 @@ namespace api.fernflowers.com.Controllers
                             Clinics = new List<ClinicDTO>()
                         };
 
-                        ClinicDTO clinicDTO = new ClinicDTO
+                        foreach (var clinic in clinics)
                         {
-                            Id = clinic.Id,
-                            Address = clinic.Address,
-                            Name = clinic.Name,
-                            Number = clinic.Number,
-                            City = clinic.City,
-                            Fees = clinic.Fees,
-                            DoctorId = clinic.DoctorId,
-                            IsOnline=clinic.IsOnline,
-                            ClinicTimings = new List<ClinicTimingDTO>()
-                        };
+                            var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
 
-                        foreach (var ct in clinictiming)
-                        {
-                            ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
+                            ClinicDTO clinicDTO = new ClinicDTO
                             {
-                                Id = ct.Id,
-                                Day = ct.Day,
-                                Session = ct.Session,
-                                StartTime = ct.StartTime,
-                                EndTime = ct.EndTime,
-                                ClinicId = ct.ClinicId
+                                Id = clinic.Id,
+                                Address = clinic.Address,
+                                Name = clinic.Name,
+                                Number = clinic.Number,
+                                City = clinic.City,
+                                Fees = clinic.Fees,
+                                DoctorId = clinic.DoctorId,
+                                IsOnline = clinic.IsOnline,
+                                ClinicTimings = new List<ClinicTimingDTO>()
                             };
 
-                            clinicDTO.ClinicTimings.Add(clinicTimingDTO);
-                        }
+                            foreach (var ct in clinictiming)
+                            {
+                                ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
+                                {
+                                    Id = ct.Id,
+                                    Day = ct.Day,
+                                    Session = ct.Session,
+                                    StartTime = ct.StartTime,
+                                    EndTime = ct.EndTime,
+                                    ClinicId = ct.ClinicId
+                                };
 
-                        doctorDTO.Clinics.Add(clinicDTO);
+                                clinicDTO.ClinicTimings.Add(clinicTimingDTO);
+                            }
+
+                            doctorDTO.Clinics.Add(clinicDTO);
+                        }
 
                         return Ok(doctorDTO);
                     }
                     else
                     {
-                        // Handle the case where clinic is null
-                        return NotFound("No clinic associated with the doctor.");
+                        return NotFound("No clinics associated with the doctor.");
                     }
                 }
                 else
                 {
-                    // Handle the case where doctor is null
                     return NotFound("Invalid MobileNumber or Password.");
                 }
             }
@@ -376,5 +455,6 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
     }
 }

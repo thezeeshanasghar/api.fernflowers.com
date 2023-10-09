@@ -131,18 +131,57 @@ namespace api.fernflowers.com.Controllers
         }
 
         
-        [HttpPatch("ClinicIsonline/{id}")]
+        // [HttpPatch("ClinicIsonline/{id}")]
         
-        public async Task<IActionResult> PatchIsOnline([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
+        // public async Task<IActionResult> PatchIsOnline([FromRoute] long id, [FromBody] JsonPatchDocument<Clinic> patchDocument)
+        // {
+        //     try
+        //     {
+        //         var dbClinic = await _db.Clinics.FindAsync(id);
+        //         if (dbClinic == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         patchDocument.ApplyTo(dbClinic);
+        //         await _db.SaveChangesAsync();
+        //         return NoContent();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+        [HttpPatch("ClinicIsonline/{doctorId}/{clinicId}")]
+        public async Task<IActionResult> PatchIsOnline([FromRoute] long doctorId, [FromRoute] long clinicId, [FromBody] JsonPatchDocument<Clinic> patchDocument)
         {
             try
             {
-                var dbClinic = await _db.Clinics.FindAsync(id);
+                var dbClinic = await _db.Clinics.FindAsync(clinicId);
                 if (dbClinic == null)
                 {
                     return NotFound();
                 }
+
+                // Verify that the clinic being updated belongs to the specified doctor
+                if (dbClinic.DoctorId != doctorId)
+                {
+                    return BadRequest("The specified clinic does not belong to the specified doctor.");
+                }
+
+                // Apply the patch to the clinic
                 patchDocument.ApplyTo(dbClinic);
+
+                // If the clinic is set to IsOnline == true, set all other clinics of the same doctor to IsOnline == false
+                if (dbClinic.IsOnline)
+                {
+                    var otherClinicsOfSameDoctor = await _db.Clinics.Where(c => c.DoctorId == doctorId && c.Id != clinicId).ToListAsync();
+
+                    foreach (var otherClinic in otherClinicsOfSameDoctor)
+                    {
+                        otherClinic.IsOnline = false;
+                    }
+                }
+
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
@@ -151,6 +190,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
         [HttpPatch()]
         [Route("clinic/{id}")]
