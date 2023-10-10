@@ -242,7 +242,7 @@ namespace api.fernflowers.com.Controllers
 
                 dbps.IsDone = ps.IsDone;
                 dbps.BrandId = ps.BrandId; 
-                dbps.Date= ps.Date;
+                dbps.GivenDate= ps.GivenDate;
                 _db.Entry(dbps).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
