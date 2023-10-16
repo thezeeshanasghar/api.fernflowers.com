@@ -58,11 +58,23 @@ namespace api.fernflowers.com.Controllers
         {
             try
             {
+                // var doseToDelete = await _db.Doses
+                // .Include(d => d.AdminSchedules).Include(d=>d.DoctorSchedules) // Include the related Admin records
+                // .FirstOrDefaultAsync(d => d.Id == id);
                 var doseToDelete = await _db.Doses.FindAsync(id);
                 if (doseToDelete == null)
                 {
                     return NotFound();
                 }
+                bool isReferenced = await _db.PatientSchedules.AnyAsync(ps => ps.DoseId == id)
+                         || await _db.AdminSchedules.AnyAsync(ads => ads.DoseId == id)
+                         || await _db.DoctorSchedules.AnyAsync(ds => ds.DoseId == id);
+
+                if (isReferenced)
+                {
+                    return Ok("Dose cannot be deleted .");
+                }
+
                 _db.Doses.Remove(doseToDelete);
                 await _db.SaveChangesAsync();
                 return NoContent();
