@@ -509,6 +509,7 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
+                            ChildGuardian= child.Guardian,
                             ChildGuardianName=child.GuardianName,
                             ChildMobileNumber=child.MobileNumber,
                             Gender=child.Gender,
@@ -559,6 +560,7 @@ namespace api.fernflowers.com.Controllers
             string ClinicNumber = result.ClinicNumber;
             string ClinicCity = result.ClinicCity;
             string ChildName = result.ChildName;
+            string ChildGuardian = result.ChildGuardian;
             string ChildGuardianName = result.ChildGuardianName;
             string ChildMobileNumber=result.ChildMobileNumber;
 
@@ -659,10 +661,22 @@ namespace api.fernflowers.com.Controllers
                 childNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childNameCell.Border = Rectangle.NO_BORDER;
                 childTable.AddCell(childNameCell);
-                
 
-                string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
-                string childWithGuardianName = genderText + ChildGuardianName;
+
+                //string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
+                //string childWithGuardianName = genderText + " " + (ChildGuardian == "Husband" ? "w/o":"") + " " + ChildGuardianName;
+                string genderText = result.Gender == Gender.Boy ? "s/o" : "d/o";
+
+                string childWithGuardianName;
+
+                if (ChildGuardian == "Father" || ChildGuardian == "Mother")
+                {
+                    childWithGuardianName = genderText + " " + ChildGuardianName;
+                }
+                else
+                {
+                    childWithGuardianName = "w/o" + " " + ChildGuardianName;
+                }
                 PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                 ChildGuardianNameCell.Border = Rectangle.NO_BORDER;
                 ChildGuardianNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
