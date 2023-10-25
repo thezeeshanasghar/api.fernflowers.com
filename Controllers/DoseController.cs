@@ -97,6 +97,7 @@ namespace api.fernflowers.com.Controllers
                 }
                 dbDose.Name = ds.Name;
                 dbDose.MinAge = ds.MinAge;
+                dbDose.MinAgeText=ds.MinAgeText;
                 _db.Entry(dbDose).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
