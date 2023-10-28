@@ -56,6 +56,392 @@ namespace api.fernflowers.com.Migrations
                     b.HasIndex("VaccineId");
 
                     b.ToTable("Brands");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "BCG",
+                            VaccineId = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "OPV",
+                            VaccineId = 2L
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Name = "Local",
+                            VaccineId = 3L
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Name = "AMVAX B",
+                            VaccineId = 3L
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Name = "ENGERIX B",
+                            VaccineId = 3L
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Name = "ENGERIX B",
+                            VaccineId = 4L
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            Name = "INDIRAB",
+                            VaccineId = 5L
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            Name = "VERORAB",
+                            VaccineId = 5L
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            Name = "VERORAB",
+                            VaccineId = 6L
+                        },
+                        new
+                        {
+                            Id = 10L,
+                            Name = "IMATET",
+                            VaccineId = 7L
+                        },
+                        new
+                        {
+                            Id = 11L,
+                            Name = "TT",
+                            VaccineId = 7L
+                        },
+                        new
+                        {
+                            Id = 12L,
+                            Name = "Tetanus",
+                            VaccineId = 7L
+                        },
+                        new
+                        {
+                            Id = 13L,
+                            Name = "ROTARIX",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 14L,
+                            Name = "Rota Teq",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 15L,
+                            Name = "ROTARIX*",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 16L,
+                            Name = "INFANRIX HEXA",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 17L,
+                            Name = "HEXAXIM",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 18L,
+                            Name = "QUINAVAXEM + OPV",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 19L,
+                            Name = "EUPENTA + OPV",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 20L,
+                            Name = "PENTA+OPV",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 21L,
+                            Name = "PREVENAR*",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 22L,
+                            Name = "SYNFLORIX",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 23L,
+                            Name = "PREVENAR",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 24L,
+                            Name = "PENTA ( amson)",
+                            VaccineId = 11L
+                        },
+                        new
+                        {
+                            Id = 25L,
+                            Name = "Men B",
+                            VaccineId = 12L
+                        },
+                        new
+                        {
+                            Id = 26L,
+                            Name = "INFLUVAC",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 27L,
+                            Name = "FLUARIX",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 28L,
+                            Name = "VAXIGRIP",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 29L,
+                            Name = "ANFLU",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 30L,
+                            Name = "FLU",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 31L,
+                            Name = "MEASLES",
+                            VaccineId = 14L
+                        },
+                        new
+                        {
+                            Id = 32L,
+                            Name = "MENACTRA",
+                            VaccineId = 15L
+                        },
+                        new
+                        {
+                            Id = 33L,
+                            Name = "NIMENRIX",
+                            VaccineId = 15L
+                        },
+                        new
+                        {
+                            Id = 34L,
+                            Name = "STAMARIL",
+                            VaccineId = 16L
+                        },
+                        new
+                        {
+                            Id = 35L,
+                            Name = "TYPHIRIX",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 36L,
+                            Name = "TYPBAR",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 37L,
+                            Name = "TYPBAR TCV",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 38L,
+                            Name = "TYPBAR*",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 39L,
+                            Name = "TYPHOID",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 40L,
+                            Name = "MR",
+                            VaccineId = 18L
+                        },
+                        new
+                        {
+                            Id = 41L,
+                            Name = "VARIVAC",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 42L,
+                            Name = "VARILRIX",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 43L,
+                            Name = "VAXAPOX",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 44L,
+                            Name = "PRIORIX TETRA",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 45L,
+                            Name = "VARICELLA",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 46L,
+                            Name = "TRIMOVAX",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 47L,
+                            Name = "PRIORIX",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 48L,
+                            Name = "MMR",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 49L,
+                            Name = "PRIORIX TETRA",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 50L,
+                            Name = "TRESIVAC",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 51L,
+                            Name = "HAVRIX",
+                            VaccineId = 21L
+                        },
+                        new
+                        {
+                            Id = 52L,
+                            Name = "TWINRIX",
+                            VaccineId = 21L
+                        },
+                        new
+                        {
+                            Id = 53L,
+                            Name = "AVAXIM",
+                            VaccineId = 21L
+                        },
+                        new
+                        {
+                            Id = 54L,
+                            Name = "PCV",
+                            VaccineId = 22L
+                        },
+                        new
+                        {
+                            Id = 55L,
+                            Name = "PNEUMOVAX",
+                            VaccineId = 22L
+                        },
+                        new
+                        {
+                            Id = 56L,
+                            Name = "PREVENAR",
+                            VaccineId = 22L
+                        },
+                        new
+                        {
+                            Id = 57L,
+                            Name = "BOOSTRIX",
+                            VaccineId = 23L
+                        },
+                        new
+                        {
+                            Id = 58L,
+                            Name = "BOOSTRIX",
+                            VaccineId = 23L
+                        },
+                        new
+                        {
+                            Id = 59L,
+                            Name = "Local",
+                            VaccineId = 24L
+                        },
+                        new
+                        {
+                            Id = 60L,
+                            Name = "Pfizer",
+                            VaccineId = 24L
+                        },
+                        new
+                        {
+                            Id = 61L,
+                            Name = "SinoVac",
+                            VaccineId = 24L
+                        },
+                        new
+                        {
+                            Id = 62L,
+                            Name = "Local",
+                            VaccineId = 25L
+                        },
+                        new
+                        {
+                            Id = 63L,
+                            Name = "CERVARIX",
+                            VaccineId = 25L
+                        },
+                        new
+                        {
+                            Id = 64L,
+                            Name = "Dengvaxia",
+                            VaccineId = 26L
+                        });
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.BrandAmount", b =>
@@ -348,6 +734,448 @@ namespace api.fernflowers.com.Migrations
                     b.HasIndex("VaccineId");
 
                     b.ToTable("Doses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "BCG",
+                            VaccineId = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "OPV # 1",
+                            VaccineId = 2L
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "HBV",
+                            VaccineId = 3L
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "Hep B 1",
+                            VaccineId = 4L
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            MinAge = 29,
+                            MinAgeText = "4 Weeks",
+                            Name = "Hep B 2",
+                            VaccineId = 4L
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            MinAge = 169,
+                            MinAgeText = "6 Months",
+                            Name = "Hep B 3",
+                            VaccineId = 4L
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "Pre-Exp Rabies-1",
+                            VaccineId = 5L
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            MinAge = 1,
+                            MinAgeText = "1 Day",
+                            Name = "Pre-Exp Rabies-2",
+                            VaccineId = 5L
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            MinAge = 29,
+                            MinAgeText = "4 Weeks",
+                            Name = "Pre-Exp Rabies-3",
+                            VaccineId = 5L
+                        },
+                        new
+                        {
+                            Id = 10L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "RABIES#1",
+                            VaccineId = 6L
+                        },
+                        new
+                        {
+                            Id = 11L,
+                            MinAge = 4,
+                            MinAgeText = "4 Days",
+                            Name = "RABIES#2",
+                            VaccineId = 6L
+                        },
+                        new
+                        {
+                            Id = 12L,
+                            MinAge = 8,
+                            MinAgeText = "8 Days",
+                            Name = "RABIES#3",
+                            VaccineId = 6L
+                        },
+                        new
+                        {
+                            Id = 13L,
+                            MinAge = 29,
+                            MinAgeText = "4 Weeks",
+                            Name = "RABIES#4",
+                            VaccineId = 6L
+                        },
+                        new
+                        {
+                            Id = 14L,
+                            MinAge = 0,
+                            MinAgeText = "At Birth",
+                            Name = "Tetanus",
+                            VaccineId = 7L
+                        },
+                        new
+                        {
+                            Id = 15L,
+                            MinAge = 43,
+                            MinAgeText = "6 Weeks",
+                            Name = "Rota Virus GE # 1",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 16L,
+                            MinAge = 71,
+                            MinAgeText = "10 Weeks",
+                            Name = "Rota Virus GE # 2",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 17L,
+                            MinAge = 99,
+                            MinAgeText = "14 Weeks",
+                            Name = "Rota Virus GE # 3",
+                            VaccineId = 8L
+                        },
+                        new
+                        {
+                            Id = 18L,
+                            MinAge = 43,
+                            MinAgeText = "6 Weeks",
+                            Name = "OPV/IPV+HBV+DPT+Hib # 1",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 19L,
+                            MinAge = 71,
+                            MinAgeText = "10 Weeks",
+                            Name = "OPV/IPV+HBV+DPT+Hib # 2",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 20L,
+                            MinAge = 99,
+                            MinAgeText = "14 Weeks",
+                            Name = "OPV/IPV+HBV+DPT+Hib # 3",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 21L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "OPV/IPV+HBV+DPT+Hib # 4",
+                            VaccineId = 9L
+                        },
+                        new
+                        {
+                            Id = 22L,
+                            MinAge = 43,
+                            MinAgeText = "6 Weeks",
+                            Name = "Pneumococcal # 1",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 23L,
+                            MinAge = 71,
+                            MinAgeText = "10 Weeks",
+                            Name = "Pneumococcal # 2",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 24L,
+                            MinAge = 99,
+                            MinAgeText = "14 Weeks",
+                            Name = "Pneumococcal # 3",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 25L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "Pneumococcal # 4",
+                            VaccineId = 10L
+                        },
+                        new
+                        {
+                            Id = 26L,
+                            MinAge = 43,
+                            MinAgeText = "6 Weeks",
+                            Name = "HBV+DPT+Hib # 1",
+                            VaccineId = 11L
+                        },
+                        new
+                        {
+                            Id = 27L,
+                            MinAge = 71,
+                            MinAgeText = "10 Weeks",
+                            Name = "HBV+DPT+Hib # 2",
+                            VaccineId = 11L
+                        },
+                        new
+                        {
+                            Id = 28L,
+                            MinAge = 99,
+                            MinAgeText = "14 Weeks",
+                            Name = "HBV+DPT+Hib # 3",
+                            VaccineId = 11L
+                        },
+                        new
+                        {
+                            Id = 29L,
+                            MinAge = 57,
+                            MinAgeText = "8 Weeks",
+                            Name = "MenB Vaccine # 1",
+                            VaccineId = 12L
+                        },
+                        new
+                        {
+                            Id = 30L,
+                            MinAge = 113,
+                            MinAgeText = "16 Weeks",
+                            Name = "MenB Vaccine # 2",
+                            VaccineId = 12L
+                        },
+                        new
+                        {
+                            Id = 31L,
+                            MinAge = 169,
+                            MinAgeText = "6 Months",
+                            Name = "Flu",
+                            VaccineId = 13L
+                        },
+                        new
+                        {
+                            Id = 32L,
+                            MinAge = 169,
+                            MinAgeText = "6 Months",
+                            Name = "MEASLES # 1",
+                            VaccineId = 14L
+                        },
+                        new
+                        {
+                            Id = 33L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "MEASLES # 2",
+                            VaccineId = 14L
+                        },
+                        new
+                        {
+                            Id = 34L,
+                            MinAge = 275,
+                            MinAgeText = "9 Months",
+                            Name = "MenACWY # 1",
+                            VaccineId = 15L
+                        },
+                        new
+                        {
+                            Id = 35L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "MenACWY # 2",
+                            VaccineId = 15L
+                        },
+                        new
+                        {
+                            Id = 36L,
+                            MinAge = 275,
+                            MinAgeText = "9 Months",
+                            Name = "Yellow Fever # 1",
+                            VaccineId = 16L
+                        },
+                        new
+                        {
+                            Id = 37L,
+                            MinAge = 275,
+                            MinAgeText = "9 Months",
+                            Name = "Typhoid",
+                            VaccineId = 17L
+                        },
+                        new
+                        {
+                            Id = 38L,
+                            MinAge = 275,
+                            MinAgeText = "9 Months",
+                            Name = "MR#1",
+                            VaccineId = 18L
+                        },
+                        new
+                        {
+                            Id = 39L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "MR#2",
+                            VaccineId = 18L
+                        },
+                        new
+                        {
+                            Id = 40L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "Chicken Pox # 1",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 41L,
+                            MinAge = 457,
+                            MinAgeText = "15 Months",
+                            Name = "Chicken Pox # 2",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 42L,
+                            MinAge = 548,
+                            MinAgeText = "18 Months",
+                            Name = "Chicken Pox # 3",
+                            VaccineId = 19L
+                        },
+                        new
+                        {
+                            Id = 43L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "MMR # 1",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 44L,
+                            MinAge = 548,
+                            MinAgeText = "18 Months",
+                            Name = "MMR # 2",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 45L,
+                            MinAge = 4746,
+                            MinAgeText = "13 Year",
+                            Name = "MMR # 3",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 46L,
+                            MinAge = 731,
+                            MinAgeText = "2 Year",
+                            Name = "MMR # 4",
+                            VaccineId = 20L
+                        },
+                        new
+                        {
+                            Id = 47L,
+                            MinAge = 365,
+                            MinAgeText = "1 Year",
+                            Name = "Hepatitis A #1",
+                            VaccineId = 21L
+                        },
+                        new
+                        {
+                            Id = 48L,
+                            MinAge = 548,
+                            MinAgeText = "18 Months",
+                            Name = "Hepatitis A #2",
+                            VaccineId = 21L
+                        },
+                        new
+                        {
+                            Id = 49L,
+                            MinAge = 731,
+                            MinAgeText = "2 Year",
+                            Name = "PPSV/PCV",
+                            VaccineId = 22L
+                        },
+                        new
+                        {
+                            Id = 50L,
+                            MinAge = 1826,
+                            MinAgeText = "5 Year",
+                            Name = "DTaP # 1",
+                            VaccineId = 23L
+                        },
+                        new
+                        {
+                            Id = 51L,
+                            MinAge = 3651,
+                            MinAgeText = "10 Year",
+                            Name = "DTaP # 2",
+                            VaccineId = 23L
+                        },
+                        new
+                        {
+                            Id = 52L,
+                            MinAge = 3286,
+                            MinAgeText = "9 Year",
+                            Name = "HPV # 1",
+                            VaccineId = 25L
+                        },
+                        new
+                        {
+                            Id = 53L,
+                            MinAge = 3316,
+                            MinAgeText = "1 Year 1 Month",
+                            Name = "HPV # 2",
+                            VaccineId = 25L
+                        },
+                        new
+                        {
+                            Id = 54L,
+                            MinAge = 3651,
+                            MinAgeText = "10 Year",
+                            Name = "Dengue Fever #1",
+                            VaccineId = 26L
+                        },
+                        new
+                        {
+                            Id = 55L,
+                            MinAge = 3834,
+                            MinAgeText = "10 Year 6 Months",
+                            Name = "Dengue Fever #2",
+                            VaccineId = 26L
+                        });
                 });
 
             modelBuilder.Entity("api.fernflowers.com.Data.Entities.PatientSchedule", b =>
