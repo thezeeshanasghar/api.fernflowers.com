@@ -16,7 +16,9 @@ public class Child
     public string Password { get; set; }
     public Gender Gender { get; set; }
     public string City { get; set; }
-    public string CNIC { get; set; }
+
+    public string SelectCnicOrPassport { get; set; } = "CNIC";
+    public string? CnicOrPassPort { get; set; }
     public string MobileNumber { get; set; }
     public bool IsEPIDone { get; set; }
     public bool IsVerified { get; set; }

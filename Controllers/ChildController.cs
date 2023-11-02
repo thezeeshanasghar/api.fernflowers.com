@@ -124,6 +124,15 @@ namespace api.fernflowers.com.Controllers
 
                 if (clinic != null && clinic.IsOnline)
                 {
+                    if (string.IsNullOrWhiteSpace(childEntity.SelectCnicOrPassport))
+                    {
+                        childEntity.SelectCnicOrPassport = "CNIC";
+                    }
+                    
+                    if (string.IsNullOrWhiteSpace(childEntity.CnicOrPassPort))
+                    {
+                        childEntity.CnicOrPassPort = null;
+                    }
                     // If the clinic is online, add the Child entity to the database
                     _db.Childs.Add(childEntity);
                     await _db.SaveChangesAsync();

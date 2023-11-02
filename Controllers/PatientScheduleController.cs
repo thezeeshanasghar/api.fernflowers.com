@@ -512,6 +512,8 @@ namespace api.fernflowers.com.Controllers
                             ChildGuardian= child.Guardian,
                             ChildGuardianName=child.GuardianName,
                             ChildMobileNumber=child.MobileNumber,
+                            ChildCnicOrPassport=child.CnicOrPassPort,
+                            ChildSelectCnicOrPassport=child.SelectCnicOrPassport,
                             Gender=child.Gender,
                             DoctorId = doctor.Id,
                             DoctorName = doctor.Name,
@@ -560,6 +562,8 @@ namespace api.fernflowers.com.Controllers
             string ClinicNumber = result.ClinicNumber;
             string ClinicCity = result.ClinicCity;
             string ChildName = result.ChildName;
+            string ChildCnicPassPort=result.ChildCnicOrPassport;
+            string ChildSelectCnicOrPassport=result.ChildSelectCnicOrPassport;
             string ChildGuardian = result.ChildGuardian;
             string ChildGuardianName = result.ChildGuardianName;
             string ChildMobileNumber=result.ChildMobileNumber;
@@ -577,18 +581,18 @@ namespace api.fernflowers.com.Controllers
                 PdfPTable table = new PdfPTable(1);
                 table.WidthPercentage = 100;
 
-                PdfPCell DoctorNamecell = new PdfPCell(new Phrase(doctorName, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12)));
+                PdfPCell DoctorNamecell = new PdfPCell(new Phrase(doctorName, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13)));
                 DoctorNamecell.Border = Rectangle.NO_BORDER;
                 DoctorNamecell.HorizontalAlignment = Element.ALIGN_LEFT;
                 table.AddCell(DoctorNamecell);
 
 
-                PdfPCell doctorEmailCell = new PdfPCell(new Phrase(DoctorEmail, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell doctorEmailCell = new PdfPCell(new Phrase(DoctorEmail, FontFactory.GetFont(FontFactory.HELVETICA, 12)));
                 doctorEmailCell.Border = Rectangle.NO_BORDER;
                 doctorEmailCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 table.AddCell(doctorEmailCell);
 
-                PdfPCell doctorMobileNumberCell = new PdfPCell(new Phrase(DoctorMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell doctorMobileNumberCell = new PdfPCell(new Phrase(DoctorMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 12)));
                 doctorMobileNumberCell.Border = Rectangle.NO_BORDER;
                 doctorMobileNumberCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 table.AddCell(doctorMobileNumberCell);
@@ -625,18 +629,18 @@ namespace api.fernflowers.com.Controllers
                 clinicTable.AddCell(ClinicNameCell);
 
             
-                PdfPCell ClinicAddressCell = new PdfPCell(new Phrase(ClinicAddress, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell ClinicAddressCell = new PdfPCell(new Phrase(ClinicAddress, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ClinicAddressCell.Border = Rectangle.NO_BORDER;
                 ClinicAddressCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicAddressCell);
 
 
-                PdfPCell ClinicNumberCell = new PdfPCell(new Phrase("Phone: " +ClinicNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell ClinicNumberCell = new PdfPCell(new Phrase("Phone: " +ClinicNumber, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ClinicNumberCell.Border = Rectangle.NO_BORDER;
                 ClinicNumberCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicNumberCell);
 
-                PdfPCell ClinicCityCell = new PdfPCell(new Phrase("City: " +ClinicCity, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell ClinicCityCell = new PdfPCell(new Phrase("City: " +ClinicCity, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ClinicCityCell.Border = Rectangle.NO_BORDER;
                 ClinicCityCell.HorizontalAlignment = Element.ALIGN_LEFT;
                 clinicTable.AddCell(ClinicCityCell);
@@ -665,7 +669,7 @@ namespace api.fernflowers.com.Controllers
 
                 //string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
                 //string childWithGuardianName = genderText + " " + (ChildGuardian == "Husband" ? "w/o":"") + " " + ChildGuardianName;
-                string genderText = result.Gender == Gender.Boy ? "s/o" : "d/o";
+                string genderText = result.Gender == Gender.Boy ? "S/O" : "D/O";
 
                 string childWithGuardianName;
 
@@ -675,18 +679,29 @@ namespace api.fernflowers.com.Controllers
                 }
                 else
                 {
-                    childWithGuardianName = "w/o" + " " + ChildGuardianName;
+                    childWithGuardianName = "W/O" + " " + ChildGuardianName;
                 }
-                PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+                PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ChildGuardianNameCell.Border = Rectangle.NO_BORDER;
                 ChildGuardianNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childTable.AddCell(ChildGuardianNameCell);
 
+                
 
-                PdfPCell ChildMobileNumberCell = new PdfPCell(new Phrase(ChildMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
+
+                PdfPCell ChildMobileNumberCell = new PdfPCell(new Phrase("+92-"+ChildMobileNumber, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ChildMobileNumberCell.Border = Rectangle.NO_BORDER;
                 ChildMobileNumberCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childTable.AddCell(ChildMobileNumberCell);
+
+                if(ChildCnicPassPort!=null)
+                {
+                    PdfPCell ChildCnicPassportCell = new PdfPCell(new Phrase(ChildSelectCnicOrPassport+" "+ChildCnicPassPort, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
+                    ChildCnicPassportCell.Border = Rectangle.NO_BORDER;
+                    ChildCnicPassportCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    childTable.AddCell(ChildCnicPassportCell);
+
+                }
 
                 PdfPCell childCell = new PdfPCell(childTable);
                 childCell.Border = Rectangle.NO_BORDER;
@@ -699,7 +714,7 @@ namespace api.fernflowers.com.Controllers
 
                 Paragraph title = new Paragraph("IMMUNIZATION RECORD");
                 title.Font =
-                FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 11);
+                FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
                 title.Alignment = Element.ALIGN_CENTER;
                 document.Add(title);
 
@@ -723,38 +738,38 @@ namespace api.fernflowers.com.Controllers
                 int counter = 1;
                 foreach (var schedule in result2)
                 {
-                    table_Center.AddCell(new PdfPCell(new Phrase(counter.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 8))) { HorizontalAlignment = Element.ALIGN_CENTER , MinimumHeight = 10f, PaddingBottom = 2f });
-                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.DoseName, FontFactory.GetFont(FontFactory.HELVETICA, 8))) { HorizontalAlignment = Element.ALIGN_CENTER , MinimumHeight = 10f, PaddingBottom = 2f });
+                    table_Center.AddCell(new PdfPCell(new Phrase(counter.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 10))) { HorizontalAlignment = Element.ALIGN_CENTER , MinimumHeight = 10f, PaddingBottom = 2f });
+                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.DoseName, FontFactory.GetFont(FontFactory.HELVETICA, 10))) { HorizontalAlignment = Element.ALIGN_CENTER , MinimumHeight = 10f, PaddingBottom = 2f });
                     PdfPCell statusCell;
                     if (schedule.IsDone == true)
                     {
                         // Status is "Given" and formatted in bold
-                        statusCell = new PdfPCell(new Phrase("Given", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8)));
+                        statusCell = new PdfPCell(new Phrase("Given", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10)));
                     }
                     else if (schedule.IsSkip==true)
                     {
                         // Status is empty or any other value
-                        statusCell = new PdfPCell(new Phrase("Missed", FontFactory.GetFont(FontFactory.HELVETICA, 8)));
+                        statusCell = new PdfPCell(new Phrase("Missed", FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                     }
                     else
                     {
-                        statusCell = new PdfPCell(new Phrase("Due", FontFactory.GetFont(FontFactory.HELVETICA, 8)));
+                        statusCell = new PdfPCell(new Phrase("Due", FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                     }
 
                     statusCell.HorizontalAlignment = Element.ALIGN_CENTER;
                     table_Center.AddCell(statusCell);
-                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.Date.ToString("d"), FontFactory.GetFont(FontFactory.HELVETICA, 8)))  { HorizontalAlignment = Element.ALIGN_CENTER, MinimumHeight = 7f, PaddingBottom = 2f });
+                    table_Center.AddCell(new PdfPCell(new Phrase(schedule.Date.ToString("d"), FontFactory.GetFont(FontFactory.HELVETICA, 10)))  { HorizontalAlignment = Element.ALIGN_CENTER, MinimumHeight = 7f, PaddingBottom = 2f });
 
                     PdfPCell BrandCell;
                     if (schedule.IsDone == true)
                     {
                     // Status is "Given" and formatted in bold
-                    BrandCell = new PdfPCell(new Phrase(schedule.BrandName, FontFactory.GetFont(FontFactory.HELVETICA, 8)));
+                    BrandCell = new PdfPCell(new Phrase(schedule.BrandName, FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                     }
                     else 
                     {
                     // Status is empty or any other value
-                    BrandCell = new PdfPCell(new Phrase("", FontFactory.GetFont(FontFactory.HELVETICA, 8)));
+                    BrandCell = new PdfPCell(new Phrase("", FontFactory.GetFont(FontFactory.HELVETICA, 10)));
                     }
 
                     BrandCell.HorizontalAlignment = Element.ALIGN_CENTER;

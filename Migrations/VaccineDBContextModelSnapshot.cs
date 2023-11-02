@@ -490,16 +490,15 @@ namespace api.fernflowers.com.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<string>("CNIC")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<long>("ClinicId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("CnicOrPassPort")
+                        .HasColumnType("longtext");
 
                     b.Property<DateOnly>("DOB")
                         .HasColumnType("date");
@@ -540,6 +539,10 @@ namespace api.fernflowers.com.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SelectCnicOrPassport")
                         .IsRequired()
                         .HasColumnType("longtext");
 
