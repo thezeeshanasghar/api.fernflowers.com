@@ -133,6 +133,10 @@ namespace api.fernflowers.com.Controllers
                     {
                         childEntity.CnicOrPassPort = null;
                     }
+                    if (string.IsNullOrWhiteSpace(childEntity.Email))
+                    {
+                        childEntity.Email = null;
+                    }
                     // If the clinic is online, add the Child entity to the database
                     _db.Childs.Add(childEntity);
                     await _db.SaveChangesAsync();

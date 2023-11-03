@@ -10,7 +10,7 @@ namespace api.fernflowers.com.ModelDTO
         public string Name { get; set; }
         public string Guardian { get; set; }
         public string GuardianName { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [JsonProperty("DOB")]
         [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
         public System.DateOnly DOB { get; set; }

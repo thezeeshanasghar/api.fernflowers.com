@@ -507,7 +507,6 @@ namespace api.fernflowers.com.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Gender")
