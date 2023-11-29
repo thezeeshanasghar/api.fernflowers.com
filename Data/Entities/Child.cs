@@ -20,6 +20,7 @@ public class Child
     public string SelectCnicOrPassport { get; set; } = "CNIC";
     public string? CnicOrPassPort { get; set; }
     public string MobileNumber { get; set; }
+    public bool IsSpecial { get; set; }
     public bool IsEPIDone { get; set; }
     public bool IsVerified { get; set; }
     public bool IsInactive { get; set; }

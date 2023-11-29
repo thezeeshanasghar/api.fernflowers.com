@@ -96,14 +96,14 @@ public class VaccineDBContext : DbContext
                         new Vaccine{
                             Id=5,
                             Name="Pre-Exp RABIES",
-                            IsSpecial=false,
+                            IsSpecial=true,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=6,
                             Name="PO-Ex Rabies",
-                            IsSpecial=false,
+                            IsSpecial=true,
                             Infinite=false
 
                         },

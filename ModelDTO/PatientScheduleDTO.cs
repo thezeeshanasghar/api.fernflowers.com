@@ -17,5 +17,7 @@ public class PatientScheduleDTO
     public long ChildId { get; set; }
     public bool IsSkip { get; set; }
     public bool IsDone { get; set; }
+    public bool IsSpecial { get; set; }
+    public bool IsSpecial2 { get; set; }
     public long? BrandId { get; set; }
 }

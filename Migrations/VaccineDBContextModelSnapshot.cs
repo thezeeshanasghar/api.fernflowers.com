@@ -526,6 +526,9 @@ namespace api.fernflowers.com.Migrations
                     b.Property<bool>("IsInactive")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsSpecial")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsVerified")
                         .HasColumnType("tinyint(1)");
 
@@ -1210,6 +1213,12 @@ namespace api.fernflowers.com.Migrations
                     b.Property<bool>("IsSkip")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsSpecial")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsSpecial2")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoseId");
@@ -1270,14 +1279,14 @@ namespace api.fernflowers.com.Migrations
                         {
                             Id = 5L,
                             Infinite = false,
-                            IsSpecial = false,
+                            IsSpecial = true,
                             Name = "Pre-Exp RABIES"
                         },
                         new
                         {
                             Id = 6L,
                             Infinite = false,
-                            IsSpecial = false,
+                            IsSpecial = true,
                             Name = "PO-Ex Rabies"
                         },
                         new
