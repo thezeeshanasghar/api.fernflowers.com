@@ -45,6 +45,19 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet("IsSpecial")]
+        public async Task<IActionResult> GetSpecialVaccines()
+        {
+            try
+            {
+                var specialVaccines = await _db.Vaccines.Where(v => v.IsSpecial==true).ToListAsync();
+                return Ok(specialVaccines);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Vaccine vaccine)
         {
