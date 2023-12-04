@@ -26,7 +26,7 @@ namespace api.fernflowers.com.Controllers
         private readonly VaccineDBContext _db;
         private readonly IMapper _mapper;
 
-        public ChildController(VaccineDBContext vaccineDBContext, IMapper mapper)
+        public ChildController(VaccineDBContext vaccineDBContext,IMapper mapper)
         {
             _db = vaccineDBContext;
             _mapper = mapper;
@@ -49,7 +49,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
         [HttpGet("search-by-doctor-name")]
         public ActionResult<IEnumerable<ChildDTO>> SearchByDoctorName(
             string? doctorName = null,
@@ -102,7 +102,7 @@ namespace api.fernflowers.com.Controllers
         //          var childEntity = _mapper.Map<Child>(childDTO);
 
         //          _db.Childs.Add(childEntity);
-
+               
         //         await _db.SaveChangesAsync();
         //         return NoContent();
         //     }
@@ -124,19 +124,6 @@ namespace api.fernflowers.com.Controllers
 
                 if (clinic != null && clinic.IsOnline)
                 {
-                    if (string.IsNullOrWhiteSpace(childEntity.SelectCnicOrPassport))
-                    {
-                        childEntity.SelectCnicOrPassport = "CNIC";
-                    }
-
-                    if (string.IsNullOrWhiteSpace(childEntity.CnicOrPassPort))
-                    {
-                        childEntity.CnicOrPassPort = null;
-                    }
-                    if (string.IsNullOrWhiteSpace(childEntity.Email))
-                    {
-                        childEntity.Email = null;
-                    }
                     // If the clinic is online, add the Child entity to the database
                     _db.Childs.Add(childEntity);
                     await _db.SaveChangesAsync();
@@ -206,7 +193,7 @@ namespace api.fernflowers.com.Controllers
             return Ok(count);
         }
 
-
+  
 
         [HttpGet]
         [Route("allpatients")]
@@ -262,10 +249,10 @@ namespace api.fernflowers.com.Controllers
 
                 int startIndex = (page - 1) * perPage;
                 var children = childrenQuery.Skip(startIndex).Take(perPage).ToList();
-
+                
                 var childrenDTOs = _mapper.Map<List<ChildDTO>>(children);
 
-
+              
 
                 return Ok(childrenDTOs);
             }
