@@ -19,4 +19,5 @@ RUN dotnet publish "api.fernflowers.com.csproj" -c Release -o /app/publish /p:Us
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "api.fernflowers.com.dll"]

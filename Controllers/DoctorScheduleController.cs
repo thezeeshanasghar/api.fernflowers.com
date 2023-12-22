@@ -181,6 +181,69 @@ namespace api.fernflowers.com.Controllers
         //        return StatusCode(500, ex.Message);
         //    }
         //}
+        //[HttpGet]
+        //[Route("Doctor_DoseSchedule")]
+        //public async Task<IActionResult> GetNew(long doctorId)
+        //{
+        //    try
+        //    {
+        //        Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+        //        Check if the DoctorSchedules table already exists.
+        //        if (_db.DoctorSchedules.Any(d => d.DoctorId == doctorId))
+        //        {
+        //            Fetch and organize data from the DoctorSchedules table for the specified doctorId.
+
+        //           var doctorSchedules = await _db.DoctorSchedules.Include(schedule => schedule.Dose).Where(d => d.DoctorId == doctorId).ToListAsync();
+        //            foreach (var doctorSchedule in doctorSchedules)
+        //            {
+        //                var doseDTO = _mapper.Map<DoseDTO>(doctorSchedule.Dose);
+
+        //                if (dict.ContainsKey(doctorSchedule.Date))
+        //                    dict[doctorSchedule.Date].Add(doseDTO);
+        //                else
+        //                    dict.Add(doctorSchedule.Date, new List<DoseDTO>() { doseDTO });
+        //            }
+        //        }
+
+        //        Fetch new lines from AdminSchedules table and add them to DoctorSchedules.
+        //        var newAdminSchedules = await _db.AdminSchedules
+        //            .Where(adminSchedule => !_db.DoctorSchedules.Any(ds => ds.DoctorId == doctorId && ds.Date == adminSchedule.Date && ds.DoseId == adminSchedule.DoseId))
+        //            .ToListAsync();
+
+        //        foreach (var newAdminSchedule in newAdminSchedules)
+        //        {
+        //            Add a new entry to DoctorSchedules.
+        //            var doctorSchedule = _mapper.Map<DoctorSchedule>(new DoctorScheduleDTO
+        //            {
+        //                Date = newAdminSchedule.Date,
+        //                DoseId = newAdminSchedule.DoseId,
+        //                DoctorId = doctorId
+        //            });
+        //            _db.DoctorSchedules.Add(doctorSchedule);
+
+        //            Update the dictionary with the new entry.
+        //           var newDate = newAdminSchedule.Date;
+        //            var dose = await _db.Doses.FindAsync(newAdminSchedule.DoseId);
+        //            var dto = _mapper.Map<DoseDTO>(dose);
+
+        //            if (dict.ContainsKey(newDate))
+        //                dict[newDate].Add(dto);
+        //            else
+        //                dict.Add(newDate, new List<DoseDTO>() { dto });
+        //        }
+
+        //        await _db.SaveChangesAsync();
+
+        //        Sort the dictionary by date.
+        //       var sortedDict = dict.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        //        return Ok(sortedDict);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
         [HttpGet]
         [Route("Doctor_DoseSchedule")]
         public async Task<IActionResult> GetNew(long doctorId)
@@ -189,20 +252,20 @@ namespace api.fernflowers.com.Controllers
             {
                 Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
 
-                // Check if the DoctorSchedules table already exists.
-                if (_db.DoctorSchedules.Any(d => d.DoctorId == doctorId))
-                {
-                    // Fetch and organize data from the DoctorSchedules table for the specified doctorId.
-                    var doctorSchedules = await _db.DoctorSchedules.Include(schedule => schedule.Dose).Where(d => d.DoctorId == doctorId).ToListAsync();
-                    foreach (var doctorSchedule in doctorSchedules)
-                    {
-                        var doseDTO = _mapper.Map<DoseDTO>(doctorSchedule.Dose);
+                // Fetch and organize data from the DoctorSchedules table for the specified doctorId.
+                var doctorSchedules = await _db.DoctorSchedules
+                    .Include(schedule => schedule.Dose)
+                    .Where(d => d.DoctorId == doctorId)
+                    .ToListAsync();
 
-                        if (dict.ContainsKey(doctorSchedule.Date))
-                            dict[doctorSchedule.Date].Add(doseDTO);
-                        else
-                            dict.Add(doctorSchedule.Date, new List<DoseDTO>() { doseDTO });
-                    }
+                foreach (var doctorSchedule in doctorSchedules)
+                {
+                    var doseDTO = _mapper.Map<DoseDTO>(doctorSchedule.Dose);
+
+                    if (dict.ContainsKey(doctorSchedule.Date))
+                        dict[doctorSchedule.Date].Add(doseDTO);
+                    else
+                        dict.Add(doctorSchedule.Date, new List<DoseDTO> { doseDTO });
                 }
 
                 // Fetch new lines from AdminSchedules table and add them to DoctorSchedules.
@@ -212,13 +275,15 @@ namespace api.fernflowers.com.Controllers
 
                 foreach (var newAdminSchedule in newAdminSchedules)
                 {
-                    // Add a new entry to DoctorSchedules.
-                    var doctorSchedule = _mapper.Map<DoctorSchedule>(new DoctorScheduleDTO
+                    // Create a new entry for DoctorSchedules.
+                    var doctorSchedule = new DoctorSchedule
                     {
                         Date = newAdminSchedule.Date,
                         DoseId = newAdminSchedule.DoseId,
                         DoctorId = doctorId
-                    });
+                    };
+
+                    // Add the new entry to DoctorSchedules.
                     _db.DoctorSchedules.Add(doctorSchedule);
 
                     // Update the dictionary with the new entry.
@@ -229,9 +294,10 @@ namespace api.fernflowers.com.Controllers
                     if (dict.ContainsKey(newDate))
                         dict[newDate].Add(dto);
                     else
-                        dict.Add(newDate, new List<DoseDTO>() { dto });
+                        dict.Add(newDate, new List<DoseDTO> { dto });
                 }
 
+                // Save changes to the database.
                 await _db.SaveChangesAsync();
 
                 // Sort the dictionary by date.

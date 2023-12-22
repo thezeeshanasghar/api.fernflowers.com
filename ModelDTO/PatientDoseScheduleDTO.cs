@@ -7,4 +7,5 @@ public class PatientDoseScheduleDTO
     public bool IsSkip { get; set; }
     public bool IsDone { get; set; }
     public string BrandName {get;set;}
+    public long? DoseId { get; set; }
 }

@@ -26,7 +26,7 @@ namespace api.fernflowers.com.Controllers
         private readonly VaccineDBContext _db;
         private readonly IMapper _mapper;
 
-        public ChildController(VaccineDBContext vaccineDBContext,IMapper mapper)
+        public ChildController(VaccineDBContext vaccineDBContext, IMapper mapper)
         {
             _db = vaccineDBContext;
             _mapper = mapper;
@@ -49,9 +49,10 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
         [HttpGet("search-by-doctor-name")]
         public ActionResult<IEnumerable<ChildDTO>> SearchByDoctorName(
+            long? doctorId=null,
             string? doctorName = null,
             string? name = null,
             string? city = null,
@@ -73,7 +74,8 @@ namespace api.fernflowers.com.Controllers
                 )
                 .Where(
                     pd =>
-                        (string.IsNullOrEmpty(name) || pd.Child.Name == name)
+                        (string.IsNullOrEmpty(name) || pd.Child.Name.Contains(name))
+                        && (doctorId == null || pd.Child.DoctorId == doctorId)
                         && (string.IsNullOrEmpty(doctorName) || pd.Doctor.Name.Contains(doctorName))
                         && (string.IsNullOrEmpty(city) || pd.Child.City == city)
                         && (gender == null || (int)pd.Child.Gender == gender)
@@ -94,6 +96,22 @@ namespace api.fernflowers.com.Controllers
             return Ok(childDTOs);
         }
 
+        [HttpGet("searchby")]
+        public ActionResult<IEnumerable<ChildDTO>> SearchByDoctorId(long doctorId, string? childName = null)
+        {
+            var query = _db.Childs
+                .Where(child => child.DoctorId == doctorId && (string.IsNullOrEmpty(childName) || child.Name.Contains(childName)))
+                .ToList();
+
+            if (query.Count == 0)
+            {
+                return StatusCode(404, "No records found for the specified doctor ID and child name.");
+            }
+
+            var childDTOs = _mapper.Map<List<ChildDTO>>(query);
+            return Ok(childDTOs);
+        }
+
         // [HttpPost]
         // public async Task<IActionResult> PostNew([FromBody] ChildDTO childDTO)
         // {
@@ -102,7 +120,7 @@ namespace api.fernflowers.com.Controllers
         //          var childEntity = _mapper.Map<Child>(childDTO);
 
         //          _db.Childs.Add(childEntity);
-               
+
         //         await _db.SaveChangesAsync();
         //         return NoContent();
         //     }
@@ -124,10 +142,23 @@ namespace api.fernflowers.com.Controllers
 
                 if (clinic != null && clinic.IsOnline)
                 {
+                    if (string.IsNullOrWhiteSpace(childEntity.SelectCnicOrPassport))
+                    {
+                        childEntity.SelectCnicOrPassport = "CNIC";
+                    }
+
+                    if (string.IsNullOrWhiteSpace(childEntity.CnicOrPassPort))
+                    {
+                        childEntity.CnicOrPassPort = null;
+                    }
+                    if (string.IsNullOrWhiteSpace(childEntity.Email))
+                    {
+                        childEntity.Email = null;
+                    }
                     // If the clinic is online, add the Child entity to the database
                     _db.Childs.Add(childEntity);
                     await _db.SaveChangesAsync();
-                    return NoContent();
+                    return Ok(childEntity);
                 }
                 else
                 {
@@ -193,7 +224,7 @@ namespace api.fernflowers.com.Controllers
             return Ok(count);
         }
 
-  
+
 
         [HttpGet]
         [Route("allpatients")]
@@ -249,10 +280,10 @@ namespace api.fernflowers.com.Controllers
 
                 int startIndex = (page - 1) * perPage;
                 var children = childrenQuery.Skip(startIndex).Take(perPage).ToList();
-                
+
                 var childrenDTOs = _mapper.Map<List<ChildDTO>>(children);
 
-              
+
 
                 return Ok(childrenDTOs);
             }

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using System.Globalization;
+using System.Text.RegularExpressions;
+
 namespace api.fernflowers.com.Controllers
 {
     [Route("api/[controller]")]
@@ -154,8 +156,61 @@ namespace api.fernflowers.com.Controllers
 
                     foreach (var dose in doses)
                     {
-                        var newDate = startingDate.AddDays(dose.MinAge);
-                        _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+                        DateOnly newDate;
+
+                        bool containsYear = dose.MinAgeText.ToLower().Contains("year");
+                        bool containsMonth = dose.MinAgeText.ToLower().Contains("months");
+
+                        if (containsYear && containsMonth)
+                        {
+                            // If both "year" and "month" are present, handle accordingly
+                            string numericYearPart = new string(dose.MinAgeText
+                            .TakeWhile(char.IsDigit)
+                            .ToArray());
+                            string numericMonthPart = new string(dose.MinAgeText
+                                .SkipWhile(c => char.IsDigit(c))
+                                .Where(c => char.IsDigit(c) || char.IsWhiteSpace(c))
+                                .ToArray());
+
+                            if (int.TryParse(numericYearPart, out int yearValue) &&
+                                int.TryParse(numericMonthPart, out int monthValue))
+                            {
+                                // Add both years and months to the startingDate without changing the day
+                                newDate = startingDate.AddYears(yearValue).AddMonths(monthValue);
+
+                                // Print the result to verify
+                                
+                                _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+                            }
+                        }
+                        else if (containsYear)
+                        {
+                            // If only "year" is present, add years to the startingDate without changing day and month
+                            string numericPart = new string(dose.MinAgeText.Where(char.IsDigit).ToArray());
+
+                            if (int.TryParse(numericPart, out int minAgeValue))
+                            {
+                                newDate = startingDate.AddYears(minAgeValue);
+                                _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+                            }
+                        }
+                        else if (containsMonth)
+                        {
+                            // If only "month" is present, add months to the startingDate without changing day
+                            string numericPart = new string(dose.MinAgeText.Where(char.IsDigit).ToArray());
+
+                            if (int.TryParse(numericPart, out int minAgeValue))
+                            {
+                                newDate = startingDate.AddMonths(minAgeValue);
+                                _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+                            }
+                        }
+                        else
+                        {
+                            // If neither "year" nor "month" is present, add MinAge days to the startingDate
+                            newDate = startingDate.AddDays(dose.MinAge);
+                            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+                        }
                     }
 
                     await _db.SaveChangesAsync();
@@ -165,11 +220,66 @@ namespace api.fernflowers.com.Controllers
                 var existingDoseIds = await _db.AdminSchedules.Select(schedule => schedule.DoseId).ToListAsync();
                 var newDoses = await _db.Doses.Where(dose => !existingDoseIds.Contains(dose.Id)).ToListAsync();
 
-                foreach (var dose in newDoses)
+                foreach (var newDose in newDoses)
                 {
-                    var newDate = startingDate.AddDays(dose.MinAge);
-                    _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = dose.Id });
+
+
+                    DateOnly newDate;
+                    
+
+                    bool containsYear = newDose.MinAgeText.ToLower().Contains("year");
+                    bool containsMonth = newDose.MinAgeText.ToLower().Contains("months");
+
+                    if (containsYear && containsMonth)
+                    {
+                        // If both "year" and "month" are present, handle accordingly
+                        string numericYearPart = new string(newDose.MinAgeText.Where(char.IsDigit).ToArray());
+                        string numericMonthPart = new string(newDose.MinAgeText
+                            .SkipWhile(c => char.IsDigit(c))
+                            .Where(c => char.IsDigit(c) || char.IsWhiteSpace(c))
+                            .ToArray());
+
+                        if (int.TryParse(numericYearPart, out int yearValue) &&
+                            int.TryParse(numericMonthPart, out int monthValue))
+                        {
+                            // Add both years and months to the startingDate without changing the day
+                            startingDate = startingDate.AddYears(yearValue).AddMonths(monthValue);
+
+                            // Print the result to verify
+                            Console.WriteLine(startingDate); // This should now be 01-07-2033
+                            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = newDose.Id });
+                        }
+                    }
+                    else if (containsYear)
+                    {
+                        // If only "year" is present, add years to the startingDate without changing day and month
+                        string numericPart = new string(newDose.MinAgeText.Where(char.IsDigit).ToArray());
+
+                        if (int.TryParse(numericPart, out int minAgeValue))
+                        {
+                            newDate = startingDate.AddYears(minAgeValue);
+                            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = newDose.Id });
+                        }
+                    }
+                    else if (containsMonth)
+                    {
+                        // If only "month" is present, add months to the startingDate without changing day
+                        string numericPart = new string(newDose.MinAgeText.Where(char.IsDigit).ToArray());
+
+                        if (int.TryParse(numericPart, out int minAgeValue))
+                        {
+                            newDate = startingDate.AddMonths(minAgeValue);
+                            _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = newDose.Id });
+                        }
+                    }
+                    else
+                    {
+                        // If neither "year" nor "month" is present, add MinAge days to the startingDate
+                        newDate = startingDate.AddDays(newDose.MinAge);
+                        _db.AdminSchedules.Add(new AdminSchedule { Date = newDate, DoseId = newDose.Id });
+                    }
                 }
+                        
 
                 await _db.SaveChangesAsync();
 
@@ -200,6 +310,8 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
 
 
     }

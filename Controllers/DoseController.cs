@@ -36,7 +36,13 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-  
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Dose>>> GetDoses()
+        {
+            var doses = await _db.Doses.ToListAsync();
+            return Ok(doses);
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Dose dose)
         {
@@ -97,6 +103,7 @@ namespace api.fernflowers.com.Controllers
                 }
                 dbDose.Name = ds.Name;
                 dbDose.MinAge = ds.MinAge;
+                dbDose.MinAgeText=ds.MinAgeText;
                 _db.Entry(dbDose).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
