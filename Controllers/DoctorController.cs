@@ -54,70 +54,103 @@ namespace api.fernflowers.com.Controllers
 
             }
         }
+        
+        
+        //[HttpPost]
+        //public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+        //{
+        //    if (doctor != null)
+        //    {
+        //        DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+        //        DateOnly yesterday = today.AddDays(-1);
+        //        var doctorEntity = new Doctor
+        //        {
+        //            Name = doctor.Name,
+        //            MobileNumber = doctor.MobileNumber,
+        //            Password = doctor.Password,
+        //            Email = doctor.Email,
+        //            PMDC = doctor.PMDC,
+        //            ValidUpto = yesterday
+        //        };
 
+        //        _db.Doctors.Add(doctorEntity);
+        //        await _db.SaveChangesAsync();
+
+        //        if (doctor.Clinics != null && doctor.Clinics.Any())
+        //        {
+        //            foreach (var clinic in doctor.Clinics)
+        //            {
+        //                var clinicEntity = new Clinic
+        //                {
+        //                    Name = clinic.Name,
+        //                    Address = clinic.Address,
+        //                    Number = clinic.Number,
+        //                    City = clinic.City,
+        //                    Fees = clinic.Fees,
+        //                    DoctorId = doctorEntity.Id,
+        //                    IsOnline = true
+        //                };
+
+        //                _db.Clinics.Add(clinicEntity);
+        //                await _db.SaveChangesAsync();
+
+        //                if (clinic.ClinicTimings != null && clinic.ClinicTimings.Any())
+        //                {
+        //                    foreach (var clinicTiming in clinic.ClinicTimings)
+        //                    {
+        //                        var clinicTimingEntity = new ClinicTiming
+        //                        {
+        //                            Day = clinicTiming.Day,
+        //                            Session = clinicTiming.Session,
+        //                            StartTime = clinicTiming.StartTime,
+        //                            EndTime = clinicTiming.EndTime,
+        //                            ClinicId = clinicEntity.Id
+        //                        };
+
+        //                        _db.ClinicTimings.Add(clinicTimingEntity);
+        //                    }
+        //                    await _db.SaveChangesAsync();
+        //                }
+        //            }
+        //        }
+
+        //        return Ok();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Doctor data is required");
+        //    }
+        //}
         [HttpPost]
-        public async Task<IActionResult> PostNew([FromBody] Doctor doctor)
+        public async Task<IActionResult> PostDoctor([FromBody] Doctor doctor)
         {
-            if (doctor != null)
+            try
             {
-                DateOnly today = DateOnly.FromDateTime(DateTime.Today);
-                DateOnly yesterday = today.AddDays(-1);
-                var doctorEntity = new Doctor
-                {
-                    Name = doctor.Name,
-                    MobileNumber = doctor.MobileNumber,
-                    Password = doctor.Password,
-                    Email = doctor.Email,
-                    PMDC = doctor.PMDC,
-                    ValidUpto =  yesterday
-                };
 
-                _db.Doctors.Add(doctorEntity);
-                await _db.SaveChangesAsync();
 
-                if (doctor.Clinics != null && doctor.Clinics.Any())
+                if (doctor != null)
                 {
-                    foreach (var clinic in doctor.Clinics)
+                    DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+                    DateOnly yesterday = today.AddDays(-1);
+                    var doctorEntity = new Doctor
                     {
-                        var clinicEntity = new Clinic
-                        {
-                            Name = clinic.Name,
-                            Address = clinic.Address,
-                            Number = clinic.Number,
-                            City = clinic.City,
-                            Fees = clinic.Fees,
-                            DoctorId = doctorEntity.Id,
-                            IsOnline=true
-                        };
+                        Name = doctor.Name,
+                        MobileNumber = doctor.MobileNumber,
+                        Password = doctor.Password,
+                        Email = doctor.Email,
+                        PMDC = doctor.PMDC,
+                        ValidUpto = yesterday
+                    };
 
-                        _db.Clinics.Add(clinicEntity);
-                        await _db.SaveChangesAsync();
-
-                        if (clinic.ClinicTimings != null && clinic.ClinicTimings.Any())
-                        {
-                            foreach (var clinicTiming in clinic.ClinicTimings)
-                            {
-                                var clinicTimingEntity = new ClinicTiming
-                                {
-                                    Day = clinicTiming.Day,
-                                    Session = clinicTiming.Session,
-                                    StartTime = clinicTiming.StartTime,
-                                    EndTime = clinicTiming.EndTime,
-                                    ClinicId = clinicEntity.Id
-                                };
-
-                                _db.ClinicTimings.Add(clinicTimingEntity);
-                            }
-                            await _db.SaveChangesAsync();
-                        }
-                    }
+                    _db.Doctors.Add(doctorEntity);
+                    await _db.SaveChangesAsync();
                 }
+                    return Created(new Uri(Request.GetEncodedUrl()), doctor); // For testing, return the DTO directly
 
-                return Ok();
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Doctor data is required");
+                return StatusCode(500, ex.Message);
             }
         }
         [Route("{id}")]
@@ -283,60 +316,61 @@ namespace api.fernflowers.com.Controllers
 
                     var clinics = _db.Clinics.Where(c => c.DoctorId == doctor.Id).ToList();
 
-                    if (clinics != null && clinics.Count > 0)
+                    DoctorDTO doctorDTO = new DoctorDTO
                     {
-                        DoctorDTO doctorDTO = new DoctorDTO
+                        Id = doctor.Id,
+                        Name = doctor.Name,
+                        Email = doctor.Email,
+                        MobileNumber = doctor.MobileNumber,
+                        Password = doctor.Password,
+                        PMDC = doctor.PMDC,
+                        ValidUpto = doctor.ValidUpto,
+                        Clinics = new List<ClinicDTO>()
+                    };
+
+                    foreach (var clinic in clinics)
+                    {
+                        var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
+
+                        ClinicDTO clinicDTO = new ClinicDTO
                         {
-                            Id = doctor.Id,
-                            Name = doctor.Name,
-                            Email = doctor.Email,
-                            MobileNumber = doctor.MobileNumber,
-                            Password = doctor.Password,
-                            PMDC = doctor.PMDC,
-                            ValidUpto = doctor.ValidUpto,
-                            Clinics = new List<ClinicDTO>()
+                            Id = clinic.Id,
+                            Address = clinic.Address,
+                            Name = clinic.Name,
+                            Number = clinic.Number,
+                            City = clinic.City,
+                            Fees = clinic.Fees,
+                            DoctorId = clinic.DoctorId,
+                            IsOnline = clinic.IsOnline,
+                            ClinicTimings = new List<ClinicTimingDTO>()
                         };
 
-                        foreach (var clinic in clinics)
+                        foreach (var ct in clinictiming)
                         {
-                            var clinictiming = _db.ClinicTimings.Where(ct => ct.ClinicId == clinic.Id).ToList();
-
-                            ClinicDTO clinicDTO = new ClinicDTO
+                            ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
                             {
-                                Id = clinic.Id,
-                                Address = clinic.Address,
-                                Name = clinic.Name,
-                                Number = clinic.Number,
-                                City = clinic.City,
-                                Fees = clinic.Fees,
-                                DoctorId = clinic.DoctorId,
-                                IsOnline = clinic.IsOnline,
-                                ClinicTimings = new List<ClinicTimingDTO>()
+                                Id = ct.Id,
+                                Day = ct.Day,
+                                Session = ct.Session,
+                                StartTime = ct.StartTime,
+                                EndTime = ct.EndTime,
+                                ClinicId = ct.ClinicId
                             };
 
-                            foreach (var ct in clinictiming)
-                            {
-                                ClinicTimingDTO clinicTimingDTO = new ClinicTimingDTO
-                                {
-                                    Id = ct.Id,
-                                    Day = ct.Day,
-                                    Session = ct.Session,
-                                    StartTime = ct.StartTime,
-                                    EndTime = ct.EndTime,
-                                    ClinicId = ct.ClinicId
-                                };
-
-                                clinicDTO.ClinicTimings.Add(clinicTimingDTO);
-                            }
-
-                            doctorDTO.Clinics.Add(clinicDTO);
+                            clinicDTO.ClinicTimings.Add(clinicTimingDTO);
                         }
 
+                        doctorDTO.Clinics.Add(clinicDTO);
+                    }
+
+                    if (doctorDTO.Clinics.Count > 0)
+                    {
                         return Ok(doctorDTO);
                     }
                     else
                     {
-                        return NotFound("No clinics associated with the doctor.");
+                        // No clinics associated with the doctor
+                        return Ok(doctorDTO);
                     }
                 }
                 else
@@ -349,6 +383,7 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
     }
 }

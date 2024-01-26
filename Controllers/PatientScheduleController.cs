@@ -13,6 +13,7 @@ using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Cors;
 using System.Linq;
 using System.Xml.XPath;
+using System.Runtime.Intrinsics.X86;
 
 namespace api.fernflowers.com.Controllers
 {
@@ -27,6 +28,402 @@ namespace api.fernflowers.com.Controllers
         {
             _db = vaccineDBContext;
             _mapper = mapper;
+        }
+
+
+
+        [HttpGet]
+        [Route("Patient_DoseSchedule")]
+        public async Task<IActionResult> GetNew(long ChildId, long DoctorId)
+        {
+            try
+            {
+                var child = await _db.Childs.FindAsync(ChildId);
+
+                if (child == null)
+                {
+                    return NotFound();
+                }
+
+                Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
+
+                if (!child.IsSpecial)
+                {
+                    if (!_db.PatientSchedules.Any(d => d.ChildId == ChildId && d.DoctorId == DoctorId))
+                    {
+                        var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
+
+                        DateOnly childDOB = child.DOB; // Example date of birth for the child
+
+                        DateOnly oldDate = default; // Variable to store the previous date
+                        DateOnly updateDate = default; // Variable to store the updated date
+                        var childgender = child.Gender;
+                        foreach (var schedule in doctorSchedules)
+                        {
+                            var dose3 = await _db.Doses.FindAsync(schedule.DoseId);
+                            long vaccineId = dose3.VaccineId;
+
+                            // Query the Vaccine table based on the VaccineId
+                            var vaccine = await _db.Vaccines.FindAsync(vaccineId);
+
+
+                            var vaccineName = vaccine.Name;
+                            // ... other vaccine properties
+
+                            if (childgender == 0 && vaccineName == "HPV")
+                            {
+                                continue;
+                            }
+
+
+
+
+                            var pdate = schedule.Date; // Store the current schedule's date in pdate
+
+                            if (oldDate == default)
+                            {
+                                oldDate = pdate;
+                                updateDate = childDOB; // Replace the first date with the child's date of birth
+                            }
+                            else
+                            {
+                                if (pdate != oldDate)
+                                {
+                                    var gap = (int)(pdate.DayNumber - oldDate.DayNumber); // Calculate the gap between oldDate and pdate
+                                    updateDate = updateDate.AddDays(gap); // Add the gap to the updateDate
+                                }
+                            }
+
+                            var newDate = updateDate;
+
+                            var dose = await _db.Doses
+                                .Join(_db.Vaccines,
+                                    dose => dose.VaccineId,
+                                    vaccine => vaccine.Id,
+                                    (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
+                                .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
+                                .Select(x => x.Dose)
+                                .FirstOrDefaultAsync();
+                            
+
+                            if (dose == null)
+                            {
+                                // Dose not found, set the properties to null
+                                var dto = new PatientDoseScheduleDTO
+                                {
+                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
+                                    DoseName = null,
+                                    IsSkip = false,
+                                    IsDone = false,
+                                    BrandName = null,
+
+                                };
+
+                                if (dict.ContainsKey(newDate))
+                                    dict[newDate].Add(dto);
+                                else
+                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+
+                                // Save the DoctorSchedule record with DoseId set to null (optional)
+                                var patientSchedule = new PatientSchedule
+                                {
+                                    Date = newDate,
+                                    DoseId = null, // Set DoseId to null or remove this line if you prefer
+                                    DoctorId = DoctorId,
+                                    ChildId = ChildId,
+                                    IsDone = false,
+                                    BrandId = null,
+                                    GivenDate = null,
+                                    IsSpecial = true,
+                                };
+                                //_db.PatientSchedules.Add(patientSchedule);
+                                //await _db.SaveChangesAsync();
+
+                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
+
+                                oldDate = pdate; // Update the oldDate for the next iteration
+                               
+                            }
+                            else
+                            {
+                                // Dose found, continue with the existing code to create the dto
+                                var dto = new PatientDoseScheduleDTO
+                                {
+                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
+                                    DoseName = dose.Name,
+                                    IsSkip = false,
+                                    IsDone = false,
+                                    // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
+                                };
+
+                                if (dict.ContainsKey(newDate))
+                                    dict[newDate].Add(dto);
+                                else
+                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+
+                                // Save the DoctorSchedule record.
+
+                                var patientSchedule = new PatientSchedule
+                                {
+                                    Date = newDate,
+                                    DoseId = schedule.DoseId,
+                                    DoctorId = DoctorId,
+                                    ChildId = ChildId,
+                                    IsDone = false,
+                                    BrandId = null,
+                                    GivenDate = null,
+                                    IsSpecial = true,
+                                };
+
+                                _db.PatientSchedules.Add(patientSchedule);
+                               
+                               
+                                await _db.SaveChangesAsync();
+
+
+                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
+
+                                oldDate = pdate; // Update the oldDate for the next iteration
+                            }
+                            
+                            
+                        }
+                    }
+
+                    Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict2 = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
+                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
+
+                    foreach (var patientSchedule in patientSchedules)
+                    {
+                        var newDate = patientSchedule.Date;
+                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
+                        var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
+
+                        if (dose == null || brand == null)
+                        {
+                            // Dose or Brand not found, set the properties to null
+                            var dto = new PatientDoseScheduleDTO
+                            {
+                                ScheduleId = patientSchedule.Id,
+                                DoseName = dose?.Name,
+                                IsSkip = patientSchedule.IsSkip,
+                                IsDone = patientSchedule.IsDone,
+                                BrandName = brand?.Name
+                            };
+
+                            if (dict2.ContainsKey(newDate))
+                                dict2[newDate].Add(dto);
+                            else
+                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                        }
+                        else
+                        {
+                            // Dose and Brand found, continue with the existing code to create the dto
+                            var dto = new PatientDoseScheduleDTO
+                            {
+                                ScheduleId = patientSchedule.Id,
+                                DoseName = dose.Name,
+                                IsSkip = patientSchedule.IsSkip,
+                                IsDone = patientSchedule.IsDone,
+                                BrandName = brand.Name
+                            };
+
+                            if (dict2.ContainsKey(newDate))
+                                dict2[newDate].Add(dto);
+                            else
+                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                        }
+                    }
+
+                    var sortedDict = dict2.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    return Ok(sortedDict);
+                }
+                else
+                {
+                    if (!_db.PatientSchedules.Any(d => d.ChildId == ChildId && d.DoctorId == DoctorId))
+                    {
+                        var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
+
+                        DateOnly childDOB = child.DOB; // Example date of birth for the child
+
+                        DateOnly oldDate = default; // Variable to store the previous date
+                        DateOnly updateDate = default; // Variable to store the updated date
+                        var childgender = Gender.Boy;
+
+                        foreach (var schedule in doctorSchedules)
+                        {
+                            var dose3 = await _db.Doses.FindAsync(schedule.DoseId);
+                            long vaccineId = dose3.VaccineId;
+
+                            // Query the Vaccine table based on the VaccineId
+                            var vaccine = await _db.Vaccines.FindAsync(vaccineId);
+
+
+                            var vaccineName = vaccine.Name;
+                            // ... other vaccine properties
+
+                            if (childgender == Gender.Boy && vaccineName == "HPV")
+                            {
+                                continue;
+                            }
+
+                            var pdate = schedule.Date; // Store the current schedule's date in pdate
+
+                            if (oldDate == default)
+                            {
+                                oldDate = pdate;
+                                updateDate = childDOB; // Replace the first date with the child's date of birth
+                            }
+                            else
+                            {
+                                if (pdate != oldDate)
+                                {
+                                    var gap = (int)(pdate.DayNumber - oldDate.DayNumber); // Calculate the gap between oldDate and pdate
+                                    updateDate = updateDate.AddDays(gap); // Add the gap to the updateDate
+                                }
+                            }
+
+                            var newDate = updateDate;
+
+                            var dose = await _db.Doses.FindAsync(schedule.DoseId);
+                            
+
+
+                            if (dose == null)
+                            {
+                                // Dose not found, set the properties to null
+                                var dto = new PatientDoseScheduleDTO
+                                {
+                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
+                                    DoseName = null,
+                                    IsSkip = false,
+                                    IsDone = false,
+                                    BrandName = null
+                                };
+
+                                if (dict.ContainsKey(newDate))
+                                    dict[newDate].Add(dto);
+                                else
+                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+
+                                // Save the DoctorSchedule record with DoseId set to null (optional)
+                                var patientSchedule = new PatientSchedule
+                                {
+                                    Date = newDate,
+                                    DoseId = null, // Set DoseId to null or remove this line if you prefer
+                                    DoctorId = DoctorId,
+                                    ChildId = ChildId,
+                                    IsDone = false,
+                                    BrandId = null,
+                                    GivenDate = null,
+
+                                };
+                                //_db.PatientSchedules.Add(patientSchedule);
+                                //await _db.SaveChangesAsync();
+
+                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
+
+                                oldDate = pdate; // Update the oldDate for the next iteration
+                            }
+                            else
+                            {
+                                // Dose found, continue with the existing code to create the dto
+                                var dto = new PatientDoseScheduleDTO
+                                {
+                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
+                                    DoseName = dose.Name,
+                                    IsSkip = false,
+                                    IsDone = false,
+                                    // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
+                                };
+
+                                if (dict.ContainsKey(newDate))
+                                    dict[newDate].Add(dto);
+                                else
+                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+
+                                // Save the DoctorSchedule record.
+                                var patientSchedule = new PatientSchedule
+                                {
+                                    Date = newDate,
+                                    DoseId = schedule.DoseId,
+                                    DoctorId = DoctorId,
+                                    ChildId = ChildId,
+                                    IsDone = false,
+                                    BrandId = null,
+                                    GivenDate = null,
+
+                                };
+                                
+
+                                
+                                _db.PatientSchedules.Add(patientSchedule);
+                                await _db.SaveChangesAsync();
+
+                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
+
+                                oldDate = pdate; // Update the oldDate for the next iteration
+                            }
+                            
+                        }
+                    }
+
+                    Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict2 = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
+                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
+
+                    foreach (var patientSchedule in patientSchedules)
+                    {
+                        var newDate = patientSchedule.Date;
+                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
+                        var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
+
+                        if (dose == null || brand == null)
+                        {
+                            // Dose or Brand not found, set the properties to null
+                            var dto = new PatientDoseScheduleDTO
+                            {
+                                ScheduleId = patientSchedule.Id,
+                                DoseName = dose?.Name,
+                                IsSkip = patientSchedule.IsSkip,
+                                IsDone = patientSchedule.IsDone,
+                                BrandName = brand?.Name
+                            };
+
+                            if (dict2.ContainsKey(newDate))
+                                dict2[newDate].Add(dto);
+                            else
+                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                        }
+                        else
+                        {
+                            // Dose and Brand found, continue with the existing code to create the dto
+                            var dto = new PatientDoseScheduleDTO
+                            {
+                                ScheduleId = patientSchedule.Id,
+                                DoseName = dose.Name,
+                                IsSkip = patientSchedule.IsSkip,
+                                IsDone = patientSchedule.IsDone,
+                                BrandName = brand.Name
+                            };
+
+                            if (dict2.ContainsKey(newDate))
+                                dict2[newDate].Add(dto);
+                            else
+                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
+                        }
+                    }
+
+                    var sortedDict = dict2.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    return Ok(sortedDict);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
         [Route("GetMissingDoses")]
@@ -91,10 +488,25 @@ namespace api.fernflowers.com.Controllers
                         DateOnly childDOB = child.DOB; // Example date of birth for the child
 
                         DateOnly oldDate = default; // Variable to store the previous date
+                        var childgender=child.Gender;
                         DateOnly updateDate = default; // Variable to store the updated date
 
                         foreach (var schedule in newdoses)
                         {
+                            var dose3 = await _db.Doses.FindAsync(schedule.DoseId);
+                            long vaccineId = dose3.VaccineId;
+
+                            // Query the Vaccine table based on the VaccineId
+                            var vaccine = await _db.Vaccines.FindAsync(vaccineId);
+
+
+                            var vaccineName = vaccine.Name;
+                            // ... other vaccine properties
+
+                            if (childgender == 0 && vaccineName == "HPV")
+                            {
+                                continue;
+                            }
                             var pdate = schedule.Date; // Store the current schedule's date in pdate
 
                             if (oldDate == default)
@@ -143,7 +555,7 @@ namespace api.fernflowers.com.Controllers
                                 var patientSchedule = new PatientSchedule
                                 {
                                     Date = newDate,
-                                    DoseId = null, // Set DoseId to null or remove this line if you prefer
+                                    DoseId = schedule.DoseId, // Set DoseId to null or remove this line if you prefer
                                     DoctorId = DoctorId,
                                     ChildId = ChildId,
                                     IsDone = false,
@@ -151,8 +563,8 @@ namespace api.fernflowers.com.Controllers
                                     GivenDate = null,
                                     IsSpecial=false,
                                 };
-                                //_db.PatientSchedules.Add(patientSchedule);
-                                //await _db.SaveChangesAsync();
+                                _db.PatientSchedules.Add(patientSchedule);
+                                await _db.SaveChangesAsync();
 
                                 dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
 
@@ -244,7 +656,7 @@ namespace api.fernflowers.com.Controllers
 
                         var sortedDict2 = dict3.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-                        return Ok("added");
+                        return Ok( newdoses);
                     }
                     else
                     {
@@ -259,12 +671,27 @@ namespace api.fernflowers.com.Controllers
                         var smallestDate=smallestIdDoctorSchedule.Date;
 
                         DateOnly childDOB = child.DOB; // Example date of birth for the child
+                        var childgender=child.Gender;
 
                         DateOnly oldDate = default; // Variable to store the previous date
                         DateOnly updateDate = default; // Variable to store the updated date
 
                         foreach (var schedule in doctorSchedules2)
                         {
+                            var dose3 = await _db.Doses.FindAsync(schedule.DoseId);
+                            long vaccineId = dose3.VaccineId;
+
+                            // Query the Vaccine table based on the VaccineId
+                            var vaccine = await _db.Vaccines.FindAsync(vaccineId);
+
+
+                            var vaccineName = vaccine.Name;
+                            // ... other vaccine properties
+
+                            if (childgender == 0 && vaccineName == "HPV")
+                            {
+                                continue;
+                            }
                             var pdate = schedule.Date; // Store the current schedule's date in pdate
 
                           
@@ -420,354 +847,7 @@ namespace api.fernflowers.com.Controllers
 
 
 
-        [HttpGet]
-        [Route("Patient_DoseSchedule")]
-        public async Task<IActionResult> GetNew(long ChildId, long DoctorId)
-        {
-            try
-            {
-                var child = await _db.Childs.FindAsync(ChildId);
-
-                if (child == null)
-                {
-                    return NotFound();
-                }
-
-                Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
-
-                if (!child.IsSpecial)
-                {
-                    if (!_db.PatientSchedules.Any(d => d.ChildId == ChildId && d.DoctorId == DoctorId))
-                    {
-                        var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
-
-                        DateOnly childDOB = child.DOB; // Example date of birth for the child
-
-                        DateOnly oldDate = default; // Variable to store the previous date
-                        DateOnly updateDate = default; // Variable to store the updated date
-
-                        foreach (var schedule in doctorSchedules)
-                        {
-                            var pdate = schedule.Date; // Store the current schedule's date in pdate
-
-                            if (oldDate == default)
-                            {
-                                oldDate = pdate;
-                                updateDate = childDOB; // Replace the first date with the child's date of birth
-                            }
-                            else
-                            {
-                                if (pdate != oldDate)
-                                {
-                                    var gap = (int)(pdate.DayNumber - oldDate.DayNumber); // Calculate the gap between oldDate and pdate
-                                    updateDate = updateDate.AddDays(gap); // Add the gap to the updateDate
-                                }
-                            }
-
-                            var newDate = updateDate;
-
-                            var dose = await _db.Doses
-                                .Join(_db.Vaccines,
-                                    dose => dose.VaccineId,
-                                    vaccine => vaccine.Id,
-                                    (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
-                                .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
-                                .Select(x => x.Dose)
-                                .FirstOrDefaultAsync();
-
-                            if (dose == null)
-                            {
-                                // Dose not found, set the properties to null
-                                var dto = new PatientDoseScheduleDTO
-                                {
-                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
-                                    DoseName = null,
-                                    IsSkip = false,
-                                    IsDone = false,
-                                    BrandName = null,
-                                    
-                                };
-
-                                if (dict.ContainsKey(newDate))
-                                    dict[newDate].Add(dto);
-                                else
-                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-
-                                // Save the DoctorSchedule record with DoseId set to null (optional)
-                                var patientSchedule = new PatientSchedule
-                                {
-                                    Date = newDate,
-                                    DoseId = null, // Set DoseId to null or remove this line if you prefer
-                                    DoctorId = DoctorId,
-                                    ChildId = ChildId,
-                                    IsDone = false,
-                                    BrandId = null,
-                                    GivenDate = null,
-                                    IsSpecial = true,
-                                };
-                                //_db.PatientSchedules.Add(patientSchedule);
-                                //await _db.SaveChangesAsync();
-
-                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
-
-                                oldDate = pdate; // Update the oldDate for the next iteration
-                            }
-                            else
-                            {
-                                // Dose found, continue with the existing code to create the dto
-                                var dto = new PatientDoseScheduleDTO
-                                {
-                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
-                                    DoseName = dose.Name,
-                                    IsSkip = false,
-                                    IsDone = false,
-                                    // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
-                                };
-
-                                if (dict.ContainsKey(newDate))
-                                    dict[newDate].Add(dto);
-                                else
-                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-
-                                // Save the DoctorSchedule record.
-                                var patientSchedule = new PatientSchedule
-                                {
-                                    Date = newDate,
-                                    DoseId = schedule.DoseId,
-                                    DoctorId = DoctorId,
-                                    ChildId = ChildId,
-                                    IsDone = false,
-                                    BrandId = null,
-                                    GivenDate = null,
-                                    IsSpecial = true,
-                                };
-                                _db.PatientSchedules.Add(patientSchedule);
-                                await _db.SaveChangesAsync();
-
-                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
-
-                                oldDate = pdate; // Update the oldDate for the next iteration
-                            }
-                        }
-                    }
-
-                    Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict2 = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
-                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
-
-                    foreach (var patientSchedule in patientSchedules)
-                    {
-                        var newDate = patientSchedule.Date;
-                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
-                        var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
-
-                        if (dose == null || brand == null)
-                        {
-                            // Dose or Brand not found, set the properties to null
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose?.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
-                            };
-
-                            if (dict2.ContainsKey(newDate))
-                                dict2[newDate].Add(dto);
-                            else
-                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
-                        else
-                        {
-                            // Dose and Brand found, continue with the existing code to create the dto
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
-                            };
-
-                            if (dict2.ContainsKey(newDate))
-                                dict2[newDate].Add(dto);
-                            else
-                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
-                    }
-
-                    var sortedDict = dict2.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                    return Ok(sortedDict);
-                }
-                else
-                {
-                    if (!_db.PatientSchedules.Any(d => d.ChildId == ChildId && d.DoctorId == DoctorId))
-                    {
-                        var doctorSchedules = _db.DoctorSchedules.Where(d => d.DoctorId == DoctorId).OrderBy(d => d.Date).ToList();
-
-                        DateOnly childDOB = child.DOB; // Example date of birth for the child
-
-                        DateOnly oldDate = default; // Variable to store the previous date
-                        DateOnly updateDate = default; // Variable to store the updated date
-
-                        foreach (var schedule in doctorSchedules)
-                        {
-                            var pdate = schedule.Date; // Store the current schedule's date in pdate
-
-                            if (oldDate == default)
-                            {
-                                oldDate = pdate;
-                                updateDate = childDOB; // Replace the first date with the child's date of birth
-                            }
-                            else
-                            {
-                                if (pdate != oldDate)
-                                {
-                                    var gap = (int)(pdate.DayNumber - oldDate.DayNumber); // Calculate the gap between oldDate and pdate
-                                    updateDate = updateDate.AddDays(gap); // Add the gap to the updateDate
-                                }
-                            }
-
-                            var newDate = updateDate;
-
-                            var dose = await _db.Doses.FindAsync(schedule.DoseId);
-                               
-
-                            if (dose == null)
-                            {
-                                // Dose not found, set the properties to null
-                                var dto = new PatientDoseScheduleDTO
-                                {
-                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
-                                    DoseName = null,
-                                    IsSkip = false,
-                                    IsDone = false,
-                                    BrandName = null
-                                };
-
-                                if (dict.ContainsKey(newDate))
-                                    dict[newDate].Add(dto);
-                                else
-                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-
-                                // Save the DoctorSchedule record with DoseId set to null (optional)
-                                var patientSchedule = new PatientSchedule
-                                {
-                                    Date = newDate,
-                                    DoseId = null, // Set DoseId to null or remove this line if you prefer
-                                    DoctorId = DoctorId,
-                                    ChildId = ChildId,
-                                    IsDone = false,
-                                    BrandId = null,
-                                    GivenDate = null,
-                                   
-                                };
-                                _db.PatientSchedules.Add(patientSchedule);
-                                await _db.SaveChangesAsync();
-
-                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
-
-                                oldDate = pdate; // Update the oldDate for the next iteration
-                            }
-                            else
-                            {
-                                // Dose found, continue with the existing code to create the dto
-                                var dto = new PatientDoseScheduleDTO
-                                {
-                                    ScheduleId = 0, // Set to 0 as it will be generated when saved
-                                    DoseName = dose.Name,
-                                    IsSkip = false,
-                                    IsDone = false,
-                                    // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
-                                };
-
-                                if (dict.ContainsKey(newDate))
-                                    dict[newDate].Add(dto);
-                                else
-                                    dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-
-                                // Save the DoctorSchedule record.
-                                var patientSchedule = new PatientSchedule
-                                {
-                                    Date = newDate,
-                                    DoseId = schedule.DoseId,
-                                    DoctorId = DoctorId,
-                                    ChildId = ChildId,
-                                    IsDone = false,
-                                    BrandId = null,
-                                    GivenDate = null,
-                                    
-                                };
-                                _db.PatientSchedules.Add(patientSchedule);
-                                await _db.SaveChangesAsync();
-
-                                dto.ScheduleId = patientSchedule.Id; // Assign the generated Id to the DTO
-
-                                oldDate = pdate; // Update the oldDate for the next iteration
-                            }
-                        }
-                    }
-
-                    Dictionary<DateOnly, List<PatientDoseScheduleDTO>> dict2 = new Dictionary<DateOnly, List<PatientDoseScheduleDTO>>();
-                    var patientSchedules = await _db.PatientSchedules.Where(d => d.DoctorId == DoctorId && d.ChildId == ChildId).ToListAsync();
-
-                    foreach (var patientSchedule in patientSchedules)
-                    {
-                        var newDate = patientSchedule.Date;
-                        var dose = await _db.Doses.FindAsync(patientSchedule.DoseId);
-                        var brand = await _db.Brands.FindAsync(patientSchedule.BrandId);
-
-                        if (dose == null || brand == null)
-                        {
-                            // Dose or Brand not found, set the properties to null
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose?.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
-                            };
-
-                            if (dict2.ContainsKey(newDate))
-                                dict2[newDate].Add(dto);
-                            else
-                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
-                        else
-                        {
-                            // Dose and Brand found, continue with the existing code to create the dto
-                            var dto = new PatientDoseScheduleDTO
-                            {
-                                ScheduleId = patientSchedule.Id,
-                                DoseName = dose.Name,
-                                IsSkip = patientSchedule.IsSkip,
-                                IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
-                            };
-
-                            if (dict2.ContainsKey(newDate))
-                                dict2[newDate].Add(dto);
-                            else
-                                dict2.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
-                        }
-                    }
-
-                    var sortedDict = dict2.OrderBy(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                    return Ok(sortedDict);
-                }
-            
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-
-
+        
         [Route("single_updateDate")]
         [HttpPatch]
         public async Task<IActionResult> Update(long Id,[FromBody] PatientScheduleDTO ps)
@@ -821,7 +901,7 @@ namespace api.fernflowers.com.Controllers
                     string doseName = dose.Name;
                     var child = await _db.Childs.FindAsync(dbps.ChildId);
                     DateOnly dob = child.DOB;
-                    DateOnly newchilddob = dob.AddYears(1);
+                    DateOnly newchilddob = dob.AddYears(2);
 
                     if (doseName == "MenACWY # 1" && dbps.GivenDate> newchilddob)
                     {
@@ -1010,9 +1090,6 @@ namespace api.fernflowers.com.Controllers
                             if (ps.IsSkip == false)
                             {
 
-
-
-
                                 // Find rows with the same DoseId and greater Id
                                 var rowsToDelete = await _db.PatientSchedules
                                     .Where(d => d.DoseId == doseIdToDelete && d.Id > currentRowId)
@@ -1091,7 +1168,7 @@ namespace api.fernflowers.com.Controllers
                                     Date = newDate,
                                     GivenDate = null,
                                     IsSkip = false,
-                                    IsSpecial = false,
+                                    IsSpecial = true,
                                     IsSpecial2 = false
                                 };
 
@@ -1149,7 +1226,7 @@ namespace api.fernflowers.com.Controllers
                             var child = await _db.Childs.FindAsync(record.ChildId);
                             DateOnly dob = child.DOB;
                             
-                            DateOnly newchilddob = dob.AddYears(1);
+                            DateOnly newchilddob = dob.AddYears(2);
 
                             if (doseName == "MenACWY # 1" && record.GivenDate > newchilddob)
                             {
@@ -1802,7 +1879,7 @@ namespace api.fernflowers.com.Controllers
                          join vaccine in _db.Vaccines on dose.VaccineId equals vaccine.Id
                          join brand in _db.Brands on schedule.BrandId equals brand.Id into brandGroup
                          from brand in brandGroup.DefaultIfEmpty() // Perform left outer join
-                         where schedule.ChildId == ChildId && vaccine.Infinite == false
+                         where schedule.ChildId == ChildId && vaccine.Infinite == false && schedule.IsSpecial==true
                          select new
                          {
                              schedule.Id,
@@ -1810,11 +1887,32 @@ namespace api.fernflowers.com.Controllers
                              Vaccine = vaccine.Name,
                              DoseName = dose.Name,
                              schedule.Date,
+                             schedule.GivenDate,
                              schedule.IsSkip,
                              schedule.IsDone,
+                             
                              BrandName = (schedule.BrandId == null) ? null : brand.Name
                          };
             var result2 = query2.OrderBy(item => item.Date).ToList();
+            var query3 = from schedule2 in _db.PatientSchedules
+                         join dose in _db.Doses on schedule2.DoseId equals dose.Id
+                         join vaccine in _db.Vaccines on dose.VaccineId equals vaccine.Id
+                         join brand in _db.Brands on schedule2.BrandId equals brand.Id into brandGroup
+                         from brand in brandGroup.DefaultIfEmpty() // Perform left outer join
+                         where schedule2.ChildId == ChildId && vaccine.Infinite == true
+                         select new
+                         {
+                             schedule2.Id,
+                             schedule2.ChildId,
+                             Vaccine = vaccine.Name,
+                             DoseName = dose.Name,
+                             schedule2.Date,
+                             schedule2.GivenDate,
+                             schedule2.IsSkip,
+                             schedule2.IsDone,
+                             BrandName = (schedule2.BrandId == null) ? null : brand.Name
+                         };
+            var result3 = query3.OrderBy(item => item.Date).ToList();
 
 
             string doctorName = result.DoctorName;
@@ -1836,6 +1934,9 @@ namespace api.fernflowers.com.Controllers
                 var output = new MemoryStream();
                 var writer = PdfWriter.GetInstance(document, output);
                 writer.CloseStream = false;
+                PDFFooter footer = new PDFFooter("NOTE: 1. Vaccines may cause fever, localised redness and pain. 2. This schedule is valid to produce on demand at all airports, embassies and schools of the world. 3. We always use the best available vaccine brand/manufacturer. With time and continuous research vaccine brand can be different for future doses. Disclaimer: This schedule provides recommended dates for immunisations for individual based date of birth, past history of immunisation and disease. Your consultant may update the due dates or add/remove vaccines. Vaccine.pk, its management or staff holds no responsibility for any loss or damage due to any vaccine given. *OHF = vaccine given at other health faculty (not by vaccine.pk) ");
+                writer.PageEvent = footer;
+                FontFactory.RegisterDirectories();
 
                 document.Open();
                 PdfPTable table2 = new PdfPTable(1);
@@ -2053,15 +2154,383 @@ namespace api.fernflowers.com.Controllers
 
 
                 }
-                document.Add(table);
+                
+               
 
+                document.Add(table);
+                document.NewPage();
+
+                
+                // special vaccines table start
+                float[] lowerwidths = new float[] { 255f, 255f };
+                PdfPTable lowertable = new PdfPTable(2);
+                lowertable.HorizontalAlignment = 0;
+                lowertable.TotalWidth = 510f;
+                lowertable.LockedWidth = true;
+                lowertable.SpacingBefore = 10;
+                lowertable.SetWidths(lowerwidths);
+                lowertable.AddCell(CreateCell("Typhoid (Every 2-3 years)","bold",1,"center","scheduleRecords"));
+                lowertable.AddCell(CreateCell("Flu (Yearly)","bold",1,"center","scheduleRecords"));
+                document.Add(lowertable);
+
+                float[] lowerwidths2 =
+                    new float[] { 85f, 85f, 85f };
+                PdfPTable lowertable2 = new PdfPTable(3);
+                lowertable2.HorizontalAlignment = 0;
+                lowertable2.TotalWidth = 255f;
+                lowertable2.LockedWidth = true;
+                lowertable2.SetWidths(lowerwidths2);
+                lowertable2.DefaultCell.Border = PdfPCell.NO_BORDER;
+
+                //header
+                lowertable2.AddCell(CreateCell("Brand","backgroudLightGray",1,"center","scheduleRecords"));
+                lowertable2.AddCell(CreateCell("Given On ","backgroudLightGray",1,"center","scheduleRecords"));
+                lowertable2.AddCell(CreateCell("Next Due","backgroudLightGray",1,"center","scheduleRecords"));
+
+                float[] lowerwidths3 = new float[] { 85f, 85f, 85f };
+                PdfPTable lowertable3 = new PdfPTable(3);
+                lowertable3.HorizontalAlignment = 0;
+                lowertable3.TotalWidth = 255f;  // Adjust the width as needed
+                lowertable3.LockedWidth = true;
+                lowertable3.SetWidths(lowerwidths3);
+                lowertable3.DefaultCell.Border = PdfPCell.NO_BORDER;
+
+                // Header for the second table
+                lowertable3.AddCell(CreateCell("Brand", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                lowertable3.AddCell(CreateCell("Given On ", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                lowertable3.AddCell(CreateCell("Next Due", "backgroudLightGray", 1, "center", "scheduleRecords"));
+
+                int counter3 = 1;
+                
+                foreach (var schedule2 in result3)
+                {
+                    if (schedule2.Vaccine == "Typhoid" && schedule2.IsDone==false && schedule2.IsSkip==false)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TyphoidBrand = new PdfPCell(new Phrase("", font3));
+                        lowertable2.AddCell(TyphoidBrand);
+
+                        PdfPCell TyphoidGiven = new PdfPCell(new Phrase("", font3));
+                        lowertable2.AddCell(TyphoidGiven);
+                        
+                        PdfPCell TyphoidDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable2.AddCell(TyphoidDate);
+                        
+
+
+                    }
+                    else if (schedule2.Vaccine == "Typhoid" && schedule2.IsDone == true)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TyphoidBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable2.AddCell(TyphoidBrand);
+
+                        PdfPCell TyphoidGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            TyphoidGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            TyphoidGiven = new PdfPCell(new Phrase("N/A", font3)); // or any other default value or placeholder
+                        }
+                        lowertable2.AddCell(TyphoidGiven);
+
+                        PdfPCell TyphoidDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable2.AddCell(TyphoidDate);
+
+
+
+                    }
+                    else if (schedule2.Vaccine == "Typhoid" && schedule2.IsSkip== true)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TyphoidBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable2.AddCell(TyphoidBrand);
+
+                        PdfPCell TyphoidGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            TyphoidGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            TyphoidGiven = new PdfPCell(new Phrase("Skip", font3)); // or any other default value or placeholder
+                        }
+                        lowertable2.AddCell(TyphoidGiven);
+
+                        PdfPCell TyphoidDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable2.AddCell(TyphoidDate);
+
+
+
+                    }
+                    else if (schedule2.Vaccine == "Flu" && schedule2.IsDone == false && schedule2.IsSkip == false)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell FluBrand = new PdfPCell(new Phrase("", font3));
+                        lowertable3.AddCell(FluBrand);
+
+                        PdfPCell FluGiven = new PdfPCell(new Phrase("", font3));
+                        lowertable3.AddCell(FluGiven);
+
+                        PdfPCell DateFlu = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable3.AddCell(DateFlu);
+
+
+
+                    }
+                  
+                    else if (schedule2.Vaccine == "Flu" && schedule2.IsDone == true )
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell FluBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable3.AddCell(FluBrand);
+
+                        
+                        PdfPCell FluGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            FluGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            FluGiven = new PdfPCell(new Phrase("N/A", font3)); // or any other default value or placeholder
+                        }
+                        lowertable3.AddCell(FluGiven);
+
+                        PdfPCell DateFlu = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable3.AddCell(DateFlu);
+
+
+
+                    }
+                    else if (schedule2.Vaccine == "Flu" && schedule2.IsSkip == true)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell FluBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable3.AddCell(FluBrand);
+
+
+                        PdfPCell FluGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            FluGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            FluGiven = new PdfPCell(new Phrase("Skip", font3)); // or any other default value or placeholder
+                        }
+                        lowertable3.AddCell(FluGiven);
+
+                        PdfPCell DateFlu = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable3.AddCell(DateFlu);
+
+
+
+                    }
+                 
+                    else
+                    {
+
+                        continue;
+
+
+
+
+                    }
+                counter3++;
+                    
+
+                }
+                PdfPTable containerTable = new PdfPTable(2);
+                containerTable.TotalWidth = 510f;  // Adjust the width as needed
+                containerTable.LockedWidth = true;
+                containerTable.DefaultCell.Border = PdfPCell.NO_BORDER;
+
+                // Add both tables to the container table
+                containerTable.AddCell(lowertable2);
+                containerTable.AddCell(lowertable3);
+
+                // Add the container table to the document
+                document.Add(containerTable);
+
+                float[] lowerwidths5 = new float[] {255f };
+                PdfPTable lowertable5 = new PdfPTable(1);
+                lowertable5.HorizontalAlignment = 0;
+                lowertable5.TotalWidth = 250f;
+                lowertable5.LockedWidth = true;
+                lowertable5.SpacingBefore = 10;
+                lowertable5.SetWidths(lowerwidths5);
+                lowertable5.AddCell(CreateCell("Tetnus(Every 2-3 years)", "bold", 1, "center", "scheduleRecords"));
+            
+                document.Add(lowertable5);
+
+                float[] lowerwidths6 =
+                    new float[] { 85f, 85f, 85f };
+                PdfPTable lowertable6 = new PdfPTable(3);
+                lowertable6.HorizontalAlignment = 0;
+                lowertable6.TotalWidth = 255f;
+                lowertable6.LockedWidth = true;
+                lowertable6.SetWidths(lowerwidths6);
+                lowertable6.DefaultCell.Border = PdfPCell.NO_BORDER;
+
+                //header
+                lowertable6.AddCell(CreateCell("Brand", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                lowertable6.AddCell(CreateCell("Given On ", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                lowertable6.AddCell(CreateCell("Next Due", "backgroudLightGray", 1, "center", "scheduleRecords"));
+
+                
+               
+                int counter4 = 1;
+
+                foreach (var schedule2 in result3)
+                {
+                   
+                    
+                     if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == false && schedule2.IsSkip == false)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TetanusBrand = new PdfPCell(new Phrase("", font3));
+                        lowertable6.AddCell(TetanusBrand);
+
+                        PdfPCell TetanusGiven = new PdfPCell(new Phrase("", font3));
+                        lowertable6.AddCell(TetanusGiven);
+
+                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable6.AddCell(TetanusDate);
+
+
+
+                    }
+                    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == true)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable6.AddCell(TetanusBrand);
+
+                        PdfPCell TetanusGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            TetanusGiven = new PdfPCell(new Phrase("N/A", font3)); // or any other default value or placeholder
+                        }
+                        lowertable6.AddCell(TetanusGiven);
+
+                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable6.AddCell(TetanusDate);
+
+
+
+                    }
+                    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsSkip == true)
+                    {
+                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+                        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                        lowertable6.AddCell(TetanusBrand);
+
+                        PdfPCell TetanusGiven;
+
+                        if (schedule2.GivenDate != null)
+                        {
+                            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                        }
+                        else
+                        {
+                            // Handle the case where GivenDate is null
+                            TetanusGiven = new PdfPCell(new Phrase("Skip", font3)); // or any other default value or placeholder
+                        }
+                        lowertable6.AddCell(TetanusGiven);
+
+                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                        lowertable6.AddCell(TetanusDate);
+
+
+
+                    }
+                    else
+                    {
+
+                        continue;
+
+
+
+
+                    }
+                    counter4++;
+
+
+                }
+
+                document.Add(lowertable6);
                 //special vaccines table end
                 document.Close();
                 output.Seek(0, SeekOrigin.Begin);
                 return output;
             }
         }
-        protected PdfPCell CreateCell(string value,
+        public class PDFFooter : PdfPageEventHelper
+        {
+            private string footerText;
+
+            public PDFFooter(string footerText)
+            {
+                this.footerText = footerText;
+            }
+
+
+            // write on end of each page
+            public override void OnEndPage(PdfWriter writer, Document document)
+            {
+                base.OnEndPage(writer, document);
+                string footer = footerText + " Printed on: " + DateTime.UtcNow.AddHours(5).ToString("MMMM dd, yyyy");
+
+                footer =
+                    footer
+                        .Replace(Environment.NewLine, String.Empty)
+                        .Replace("  ", String.Empty);
+                Font georgia = FontFactory.GetFont("georgia", 6f);
+
+                PdfPCell cell = new PdfPCell(new Phrase(footer, georgia));
+                cell.Border = 0;
+
+
+                PdfPTable tabFot = new PdfPTable(1);
+                tabFot.SetTotalWidth(new float[] { 510f });
+                tabFot.DefaultCell.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
+
+                cell.PaddingTop = 5;
+
+                tabFot.AddCell(cell);
+
+
+                tabFot.WriteSelectedRows(0, -1, document.LeftMargin, document.BottomMargin, writer.DirectContent);
+
+            }
+        }
+            protected PdfPCell CreateCell(string value,
             string color,
             int colpan,
             string alignment,

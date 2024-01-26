@@ -72,6 +72,58 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost("{doctorId}")]
+        public async Task<IActionResult> AddClinicToDoctor([FromBody] Clinic clinic, long doctorId)
+        {
+            if (clinic != null)
+            {
+                var doctorEntity = await _db.Doctors.FindAsync(doctorId);
+
+                if (doctorEntity == null)
+                {
+                    return NotFound($"Doctor with Id {doctorId} not found");
+                }
+
+                var clinicEntity = new Clinic
+                {
+                    Name = clinic.Name,
+                    Address = clinic.Address,
+                    Number = clinic.Number,
+                    City = clinic.City,
+                    Fees = clinic.Fees,
+                    DoctorId = doctorId, // Link clinic to the specified doctor
+                    IsOnline = true
+                };
+
+                _db.Clinics.Add(clinicEntity);
+                await _db.SaveChangesAsync();
+
+                if (clinic.ClinicTimings != null && clinic.ClinicTimings.Any())
+                {
+                    foreach (var clinicTiming in clinic.ClinicTimings)
+                    {
+                        var clinicTimingEntity = new ClinicTiming
+                        {
+                            Day = clinicTiming.Day,
+                            Session = clinicTiming.Session,
+                            StartTime = clinicTiming.StartTime,
+                            EndTime = clinicTiming.EndTime,
+                            ClinicId = clinicEntity.Id
+                        };
+
+                        _db.ClinicTimings.Add(clinicTimingEntity);
+                    }
+                    await _db.SaveChangesAsync();
+                }
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Clinic data is required");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> PostNew([FromBody] Clinic clinic)
