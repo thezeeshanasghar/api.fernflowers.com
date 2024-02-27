@@ -9,6 +9,7 @@ public class DoctorScheduleDTO
     [JsonConverter(typeof(DateFormatConverter), "yyyy-MM-dd")]
     public System.DateOnly Date { get; set; }
     public long DoseId { get; set; }
+    public bool SelectedDose { get; set; }
     public long DoctorId { get; set; }
    
 }

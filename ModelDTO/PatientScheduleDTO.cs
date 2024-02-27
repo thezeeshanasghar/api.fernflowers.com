@@ -20,4 +20,7 @@ public class PatientScheduleDTO
     public bool IsSpecial2 { get; set; }
     public bool IsDone { get; set; }
     public long? BrandId { get; set; }
+    public double? Height { get; set; }
+    public double? Weight { get; set; }
+    public double? OFC { get; set; }
 }

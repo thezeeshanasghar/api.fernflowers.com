@@ -1809,7 +1809,7 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
-                            ChildGuardian = child.Guardian,
+                            
                             ChildGuardianName = child.GuardianName,
                             ChildMobileNumber = child.MobileNumber,
                             ChildCnicOrPassport = child.CnicOrPassPort,
@@ -1857,7 +1857,7 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
-                            ChildGuardian = child.Guardian,
+                            
                             ChildGuardianName = child.GuardianName,
                             ChildMobileNumber = child.MobileNumber,
                             ChildCnicOrPassport = child.CnicOrPassPort,
@@ -1925,7 +1925,7 @@ namespace api.fernflowers.com.Controllers
             string ChildName = result.ChildName;
             string ChildCnicPassPort = result.ChildCnicOrPassport;
             string ChildSelectCnicOrPassport = result.ChildSelectCnicOrPassport;
-            string ChildGuardian = result.ChildGuardian;
+           
             string ChildGuardianName = result.ChildGuardianName;
             string ChildMobileNumber = result.ChildMobileNumber;
             var document = new Document(PageSize.A4, 45, 45, 30, 30);
@@ -2009,14 +2009,10 @@ namespace api.fernflowers.com.Controllers
                 //string childWithGuardianName = genderText + " " + (ChildGuardian == "Husband" ? "w/o":"") + " " + ChildGuardianName;
                 string genderText = result.Gender == Gender.Boy ? "S/O" : "D/O";
                 string childWithGuardianName;
-                if (ChildGuardian == "Father" || ChildGuardian == "Mother")
-                {
-                    childWithGuardianName = genderText + " " + ChildGuardianName;
-                }
-                else
-                {
-                    childWithGuardianName = "W/O" + " " + ChildGuardianName;
-                }
+               
+                
+                childWithGuardianName = "F/M/W/O" + " " + ChildGuardianName;
+                
                 PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ChildGuardianNameCell.Border = Rectangle.NO_BORDER;
                 ChildGuardianNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;

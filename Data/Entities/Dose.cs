@@ -8,6 +8,7 @@ public class Dose
     public string Name { get; set; }
     public int MinAge { get; set; }
     public string MinAgeText { get; set; }
+    public bool Special { get; set; }
     public long VaccineId { get; set; }
     
     // public virtual AdminSchedule AdminSchedules { get; set; }
