@@ -9,7 +9,6 @@ public class PatientSchedule
     public long Id { get; set; }
     public System.DateOnly Date { get; set; }
 
-
     public System.DateOnly? GivenDate { get; set; }
     public long? DoseId { get; set; }
     public long DoctorId { get; set; }

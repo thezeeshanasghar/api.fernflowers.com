@@ -8,4 +8,5 @@ public class PatientDoseScheduleDTO
     public bool IsDone { get; set; }
     public string BrandName {get;set;}
     public long? DoseId { get; set; }
+    public bool IsSpecial { get; set; }
 }

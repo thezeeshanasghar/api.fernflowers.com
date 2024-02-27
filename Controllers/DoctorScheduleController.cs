@@ -244,6 +244,46 @@ namespace api.fernflowers.com.Controllers
         //        return StatusCode(500, ex.Message);
         //    }
         //}
+        [Route("DoseSelection")]
+        [HttpPatch()]
+        public async Task<IActionResult> UpdateIsSpecial(long DoctorId, [FromBody] List<long> doseIds)
+        {
+            try
+            {
+                if (doseIds == null || !doseIds.Any())
+                {
+                    return BadRequest("Invalid input data");
+                }
+
+               
+                foreach (var id in doseIds)
+                {
+                    var dbPS = await _db.DoctorSchedules
+                        .Where(ps => ps.DoctorId == DoctorId && id == ps.DoseId)
+                        .ToListAsync();
+
+                    if (dbPS == null || !dbPS.Any())
+                    {
+                        return NotFound("No matching records found");
+                    }
+
+                    foreach (var record in dbPS)
+                    {
+                        record.SelectedDose = true;
+
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+             
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for troubleshooting
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
         [HttpGet]
         [Route("Doctor_DoseSchedule")]
         public async Task<IActionResult> GetNew(long doctorId)
@@ -280,7 +320,8 @@ namespace api.fernflowers.com.Controllers
                     {
                         Date = newAdminSchedule.Date,
                         DoseId = newAdminSchedule.DoseId,
-                        DoctorId = doctorId
+                        DoctorId = doctorId,
+                        SelectedDose=false,
                     };
 
                     // Add the new entry to DoctorSchedules.
@@ -309,6 +350,39 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet]
+        [Route("Doctor_DoseSchedule_special")]
+        public async Task<IActionResult> GetNewDosesSpecial(long DoctorId)
+        {
+            try
+            {
+                Dictionary<DateOnly, List<DoseDTO>> dict = new Dictionary<DateOnly, List<DoseDTO>>();
+
+                // Fetch and organize data from the DoctorSchedules table for the specified doctorId.
+                var doctorSchedules = await _db.DoctorSchedules
+                    .Include(schedule => schedule.Dose)
+                    .Where(d => d.DoctorId == DoctorId && d.SelectedDose==true)
+                    .ToListAsync();
+
+                foreach (var doctorSchedule in doctorSchedules)
+                {
+                    var doseDTO = _mapper.Map<DoseDTO>(doctorSchedule.Dose);
+
+                    if (dict.ContainsKey(doctorSchedule.Date))
+                        dict[doctorSchedule.Date].Add(doseDTO);
+                    else
+                        dict.Add(doctorSchedule.Date, new List<DoseDTO> { doseDTO });
+                }
+
+                // Return the dictionary with only selected doses.
+                return Ok(dict);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
     }
 }

@@ -117,6 +117,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandName = null,
 
+
                                 };
 
                                 if (dict.ContainsKey(newDate))
@@ -153,6 +154,7 @@ namespace api.fernflowers.com.Controllers
                                     DoseName = dose.Name,
                                     IsSkip = false,
                                     IsDone = false,
+                                    IsSpecial=schedule.SelectedDose,
                                     // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
                                 };
 
@@ -172,7 +174,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial = true,
+                                    IsSpecial = schedule.SelectedDose,
                                 };
 
                                 _db.PatientSchedules.Add(patientSchedule);
@@ -208,7 +210,9 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose?.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
+                                BrandName = brand?.Name,
+                                IsSpecial=patientSchedule.IsSpecial,
+
                             };
 
                             if (dict2.ContainsKey(newDate))
@@ -225,7 +229,8 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
+                                BrandName = brand.Name,
+                                IsSpecial=patientSchedule.IsSpecial,
                             };
 
                             if (dict2.ContainsKey(newDate))
@@ -353,6 +358,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
+                                    IsSpecial=schedule.SelectedDose,
 
                                 };
                                 
@@ -387,7 +393,8 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose?.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
+                                BrandName = brand?.Name,
+                                IsSpecial=patientSchedule.IsSpecial,
                             };
 
                             if (dict2.ContainsKey(newDate))
@@ -404,7 +411,8 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
+                                BrandName = brand.Name,
+                                IsSpecial=patientSchedule.IsSpecial,
                             };
 
                             if (dict2.ContainsKey(newDate))
@@ -463,7 +471,8 @@ namespace api.fernflowers.com.Controllers
                                 Id = doctorSchedule.Id,
                                 DoseId = doctorSchedule.DoseId,
                                 Date = doctorSchedule.Date,
-                                DoctorId=doctorSchedule.DoctorId
+                                DoctorId=doctorSchedule.DoctorId,
+                                SelectedDose=doctorSchedule.SelectedDose
                                 // Add other properties from DoctorScheduleDTO as needed
                             });
                         }
@@ -551,7 +560,6 @@ namespace api.fernflowers.com.Controllers
                                 else
                                     dict.Add(newDate, new List<PatientDoseScheduleDTO> { dto });
 
-                                // Save the DoctorSchedule record with DoseId set to null (optional)
                                 var patientSchedule = new PatientSchedule
                                 {
                                     Date = newDate,
@@ -561,7 +569,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial=false,
+                                    IsSpecial=schedule.SelectedDose,
                                 };
                                 _db.PatientSchedules.Add(patientSchedule);
                                 await _db.SaveChangesAsync();
@@ -597,7 +605,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial=false,
+                                    IsSpecial=schedule.SelectedDose,
                                 };
                                 _db.PatientSchedules.Add(patientSchedule);
                                 await _db.SaveChangesAsync();
@@ -627,7 +635,8 @@ namespace api.fernflowers.com.Controllers
                                     DoseName = dose?.Name,
                                     IsSkip = patientSchedule.IsSkip,
                                     IsDone = patientSchedule.IsDone,
-                                    BrandName = brand?.Name
+                                    BrandName = brand?.Name,
+                                    IsSpecial=patientSchedule.IsSpecial
                                 };
 
                                 if (dict3.ContainsKey(newDate))
@@ -644,7 +653,8 @@ namespace api.fernflowers.com.Controllers
                                     DoseName = dose.Name,
                                     IsSkip = patientSchedule.IsSkip,
                                     IsDone = patientSchedule.IsDone,
-                                    BrandName = brand.Name
+                                    BrandName = brand.Name,
+                                    IsSpecial = patientSchedule.IsSpecial
                                 };
 
                                 if (dict3.ContainsKey(newDate))
@@ -801,7 +811,8 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose?.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand?.Name
+                                BrandName = brand?.Name,
+                                IsSpecial = patientSchedule.IsSpecial
                             };
 
                             if (dict4.ContainsKey(newDate))
@@ -818,7 +829,8 @@ namespace api.fernflowers.com.Controllers
                                 DoseName = dose.Name,
                                 IsSkip = patientSchedule.IsSkip,
                                 IsDone = patientSchedule.IsDone,
-                                BrandName = brand.Name
+                                BrandName = brand.Name,
+                                IsSpecial = patientSchedule.IsSpecial
                             };
 
                             if (dict4.ContainsKey(newDate))
@@ -1809,7 +1821,6 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
-                            
                             ChildGuardianName = child.GuardianName,
                             ChildMobileNumber = child.MobileNumber,
                             ChildCnicOrPassport = child.CnicOrPassPort,
@@ -1857,7 +1868,6 @@ namespace api.fernflowers.com.Controllers
                         {
                             ChildId = child.Id,
                             ChildName = child.Name,
-                            
                             ChildGuardianName = child.GuardianName,
                             ChildMobileNumber = child.MobileNumber,
                             ChildCnicOrPassport = child.CnicOrPassPort,
@@ -1890,6 +1900,9 @@ namespace api.fernflowers.com.Controllers
                              schedule.GivenDate,
                              schedule.IsSkip,
                              schedule.IsDone,
+                             schedule.Height,
+                             schedule.Weight,
+                             schedule.OFC,
                              
                              BrandName = (schedule.BrandId == null) ? null : brand.Name
                          };
@@ -1910,6 +1923,9 @@ namespace api.fernflowers.com.Controllers
                              schedule2.GivenDate,
                              schedule2.IsSkip,
                              schedule2.IsDone,
+                             schedule2.Height,
+                             schedule2.Weight,
+                             schedule2.OFC,
                              BrandName = (schedule2.BrandId == null) ? null : brand.Name
                          };
             var result3 = query3.OrderBy(item => item.Date).ToList();
@@ -1925,7 +1941,6 @@ namespace api.fernflowers.com.Controllers
             string ChildName = result.ChildName;
             string ChildCnicPassPort = result.ChildCnicOrPassport;
             string ChildSelectCnicOrPassport = result.ChildSelectCnicOrPassport;
-           
             string ChildGuardianName = result.ChildGuardianName;
             string ChildMobileNumber = result.ChildMobileNumber;
             var document = new Document(PageSize.A4, 45, 45, 30, 30);
@@ -1941,8 +1956,7 @@ namespace api.fernflowers.com.Controllers
                 document.Open();
                 PdfPTable table2 = new PdfPTable(1);
                 table2.WidthPercentage = 100;
-                // GetPDFHeading (document, "Immunization Record");
-                //Table 1 for description above Schedule table
+               
                 PdfPCell DoctorNamecell = new PdfPCell(new Phrase(doctorName, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13)));
                 DoctorNamecell.Border = Rectangle.NO_BORDER;
                 DoctorNamecell.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -1997,21 +2011,16 @@ namespace api.fernflowers.com.Controllers
 
                 PdfPTable childTable = new PdfPTable(1);
                 childTable.DefaultCell.Border = Rectangle.NO_BORDER;
-                // PdfPCell gapCell = new PdfPCell();
-                // gapCell.FixedHeight = 10f; // Adjust the height of the gap as needed
-                // gapCell.Border = Rectangle.NO_BORDER;
-                // childTable.AddCell(gapCell);
+                
                 PdfPCell childNameCell = new PdfPCell(new Phrase(ChildName, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12)));
                 childNameCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 childNameCell.Border = Rectangle.NO_BORDER;
                 childTable.AddCell(childNameCell);
-                //string genderText = result.Gender == Gender.Boy ? "s/o " : "d/o ";
-                //string childWithGuardianName = genderText + " " + (ChildGuardian == "Husband" ? "w/o":"") + " " + ChildGuardianName;
                 string genderText = result.Gender == Gender.Boy ? "S/O" : "D/O";
                 string childWithGuardianName;
                
                 
-                childWithGuardianName = "F/M/W/O" + " " + ChildGuardianName;
+                childWithGuardianName = "S/D/W/O" + " " + ChildGuardianName;
                 
                 PdfPCell ChildGuardianNameCell = new PdfPCell(new Phrase(childWithGuardianName, FontFactory.GetFont(FontFactory.HELVETICA, 11)));
                 ChildGuardianNameCell.Border = Rectangle.NO_BORDER;
@@ -2034,15 +2043,16 @@ namespace api.fernflowers.com.Controllers
                 mainTable.AddCell(childCell);
                 document.Add(table2);
                 document.Add(mainTable);
-                // iTextSharp.TEXT.Font myFont = FontFactory.GetFont (FontFactory.HELVETICA, 10, Font.BOLD);
+
                 Paragraph title = new Paragraph("IMMUNIZATION RECORD");
                 title.Font =
                 FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
                 title.Alignment = Element.ALIGN_CENTER;
                 document.Add(title);
 
-                float[] widths = new float[] { 20f, 90f, 50f, 90f, 70 };
-                PdfPTable table = new PdfPTable(5);
+                float[] widths = new float[] { 20f, 145f, 50f, 70, 70f, 60f, 60f, 60f };
+
+                PdfPTable table = new PdfPTable(8);
                 table.HorizontalAlignment = 0;
                 table.TotalWidth = 510f;
                 table.LockedWidth = true;
@@ -2053,6 +2063,11 @@ namespace api.fernflowers.com.Controllers
                 table.AddCell(CreateCell("Status", "backgroudLightGray", 1, "center", "scheduleRecords"));
                 table.AddCell(CreateCell("Date", "backgroudLightGray", 1, "center", "scheduleRecords"));
                 table.AddCell(CreateCell("Brand", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                table.AddCell(CreateCell("Height", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                table.AddCell(CreateCell("Weight", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                table.AddCell(CreateCell("OFC/BMI", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                
+                
 
 
                 int counter = 1;
@@ -2060,18 +2075,9 @@ namespace api.fernflowers.com.Controllers
                 {
                     Font font = FontFactory.GetFont(FontFactory.HELVETICA, 10);
                     Font rangevaluefont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
-                    // float x = document.LeftMargin;
-                    // float y = document.BottomMargin - 15; // Adjust the value as needed
-                    // float width = document.PageSize.Width - document.LeftMargin - document.RightMargin;
-                    // float height = 70; // Adjust the value as needed for the height of the text
+                    
                     Font rangefont = FontFactory.GetFont(FontFactory.HELVETICA, 6);
-                    // Rectangle rect = new Rectangle(x, y, x + width, y + height);
-                    // ColumnText columnText = new ColumnText(canvas);
-                    // columnText.SetSimpleColumn(rect);
-                    // columnText.Alignment = Element.ALIGN_LEFT;
-                    // columnText.AddElement(footerPhrase);
-                    // columnText.UseAscender = true;
-                    // columnText.Go();
+                    
                     Font boldfont = FontFactory.GetFont(FontFactory.HELVETICA, 10, Font.BOLD);
                     Font italicfont = FontFactory.GetFont(FontFactory.HELVETICA, 10, Font.ITALIC);
                     PdfPCell ageCell = new PdfPCell(new Phrase(counter.ToString(), font));
@@ -2142,6 +2148,61 @@ namespace api.fernflowers.com.Controllers
                         brandCell.BorderColor = GrayColor.LIGHT_GRAY;
                         table.AddCell(brandCell);
                     }
+                    if (schedule.Height == null)
+                    {
+                        // Status is "Given" and formatted in bold
+                        PdfPCell heightCell =
+                                   new PdfPCell(new Phrase("", font));
+                        heightCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        heightCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(heightCell);
+                    }
+                    else
+                    {
+                        // Status is empty or any other value
+                        PdfPCell heightCell =
+                                   new PdfPCell(new Phrase(schedule.Height.ToString(), font));
+                        heightCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        heightCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(heightCell);
+                    }
+                    if (schedule.Weight == null)
+                    {
+                        // Status is "Given" and formatted in bold
+                        PdfPCell WeightCell =
+                                   new PdfPCell(new Phrase("", font));
+                        WeightCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        WeightCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(WeightCell);
+                    }
+                    else
+                    {
+                        // Status is empty or any other value
+                        PdfPCell WeightCell =
+                                   new PdfPCell(new Phrase(schedule.Weight.ToString(), font));
+                        WeightCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        WeightCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(WeightCell);
+                    }
+                    if (schedule.OFC == null)
+                    {
+                        // Status is "Given" and formatted in bold
+                        PdfPCell OFCCell =
+                                   new PdfPCell(new Phrase("", font));
+                        OFCCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        OFCCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(OFCCell);
+                    }
+                    else
+                    {
+                        // Status is empty or any other value
+                        PdfPCell OFCCell =
+                                   new PdfPCell(new Phrase(schedule.OFC.ToString(), font));
+                        OFCCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                        OFCCell.BorderColor = GrayColor.LIGHT_GRAY;
+                        table.AddCell(OFCCell);
+                    }
+
 
 
 
@@ -2154,7 +2215,6 @@ namespace api.fernflowers.com.Controllers
                
 
                 document.Add(table);
-                document.NewPage();
 
                 
                 // special vaccines table start
@@ -2365,122 +2425,122 @@ namespace api.fernflowers.com.Controllers
                 // Add the container table to the document
                 document.Add(containerTable);
 
-                float[] lowerwidths5 = new float[] {255f };
-                PdfPTable lowertable5 = new PdfPTable(1);
-                lowertable5.HorizontalAlignment = 0;
-                lowertable5.TotalWidth = 250f;
-                lowertable5.LockedWidth = true;
-                lowertable5.SpacingBefore = 10;
-                lowertable5.SetWidths(lowerwidths5);
-                lowertable5.AddCell(CreateCell("Tetnus(Every 2-3 years)", "bold", 1, "center", "scheduleRecords"));
+                //float[] lowerwidths5 = new float[] {255f };
+                //PdfPTable lowertable5 = new PdfPTable(1);
+                //lowertable5.HorizontalAlignment = 0;
+                //lowertable5.TotalWidth = 250f;
+                //lowertable5.LockedWidth = true;
+                //lowertable5.SpacingBefore = 10;
+                //lowertable5.SetWidths(lowerwidths5);
+                //lowertable5.AddCell(CreateCell("Tetnus(Every 2-3 years)", "bold", 1, "center", "scheduleRecords"));
             
-                document.Add(lowertable5);
+                //document.Add(lowertable5);
 
-                float[] lowerwidths6 =
-                    new float[] { 85f, 85f, 85f };
-                PdfPTable lowertable6 = new PdfPTable(3);
-                lowertable6.HorizontalAlignment = 0;
-                lowertable6.TotalWidth = 255f;
-                lowertable6.LockedWidth = true;
-                lowertable6.SetWidths(lowerwidths6);
-                lowertable6.DefaultCell.Border = PdfPCell.NO_BORDER;
+                //float[] lowerwidths6 =
+                //    new float[] { 85f, 85f, 85f };
+                //PdfPTable lowertable6 = new PdfPTable(3);
+                //lowertable6.HorizontalAlignment = 0;
+                //lowertable6.TotalWidth = 255f;
+                //lowertable6.LockedWidth = true;
+                //lowertable6.SetWidths(lowerwidths6);
+                //lowertable6.DefaultCell.Border = PdfPCell.NO_BORDER;
 
-                //header
-                lowertable6.AddCell(CreateCell("Brand", "backgroudLightGray", 1, "center", "scheduleRecords"));
-                lowertable6.AddCell(CreateCell("Given On ", "backgroudLightGray", 1, "center", "scheduleRecords"));
-                lowertable6.AddCell(CreateCell("Next Due", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                ////header
+                //lowertable6.AddCell(CreateCell("Brand", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                //lowertable6.AddCell(CreateCell("Given On ", "backgroudLightGray", 1, "center", "scheduleRecords"));
+                //lowertable6.AddCell(CreateCell("Next Due", "backgroudLightGray", 1, "center", "scheduleRecords"));
 
                 
                
-                int counter4 = 1;
+                //int counter4 = 1;
 
-                foreach (var schedule2 in result3)
-                {
+                //foreach (var schedule2 in result3)
+                //{
                    
                     
-                     if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == false && schedule2.IsSkip == false)
-                    {
-                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+                //     if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == false && schedule2.IsSkip == false)
+                //    {
+                //        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
-                        PdfPCell TetanusBrand = new PdfPCell(new Phrase("", font3));
-                        lowertable6.AddCell(TetanusBrand);
+                //        PdfPCell TetanusBrand = new PdfPCell(new Phrase("", font3));
+                //        lowertable6.AddCell(TetanusBrand);
 
-                        PdfPCell TetanusGiven = new PdfPCell(new Phrase("", font3));
-                        lowertable6.AddCell(TetanusGiven);
+                //        PdfPCell TetanusGiven = new PdfPCell(new Phrase("", font3));
+                //        lowertable6.AddCell(TetanusGiven);
 
-                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
-                        lowertable6.AddCell(TetanusDate);
-
-
-
-                    }
-                    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == true)
-                    {
-                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
-
-                        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
-                        lowertable6.AddCell(TetanusBrand);
-
-                        PdfPCell TetanusGiven;
-
-                        if (schedule2.GivenDate != null)
-                        {
-                            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
-                        }
-                        else
-                        {
-                            // Handle the case where GivenDate is null
-                            TetanusGiven = new PdfPCell(new Phrase("N/A", font3)); // or any other default value or placeholder
-                        }
-                        lowertable6.AddCell(TetanusGiven);
-
-                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
-                        lowertable6.AddCell(TetanusDate);
+                //        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                //        lowertable6.AddCell(TetanusDate);
 
 
 
-                    }
-                    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsSkip == true)
-                    {
-                        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+                //    }
+                //    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsDone == true)
+                //    {
+                //        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
-                        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
-                        lowertable6.AddCell(TetanusBrand);
+                //        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                //        lowertable6.AddCell(TetanusBrand);
 
-                        PdfPCell TetanusGiven;
+                //        PdfPCell TetanusGiven;
 
-                        if (schedule2.GivenDate != null)
-                        {
-                            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
-                        }
-                        else
-                        {
-                            // Handle the case where GivenDate is null
-                            TetanusGiven = new PdfPCell(new Phrase("Skip", font3)); // or any other default value or placeholder
-                        }
-                        lowertable6.AddCell(TetanusGiven);
+                //        if (schedule2.GivenDate != null)
+                //        {
+                //            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                //        }
+                //        else
+                //        {
+                //            // Handle the case where GivenDate is null
+                //            TetanusGiven = new PdfPCell(new Phrase("N/A", font3)); // or any other default value or placeholder
+                //        }
+                //        lowertable6.AddCell(TetanusGiven);
 
-                        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
-                        lowertable6.AddCell(TetanusDate);
-
-
-
-                    }
-                    else
-                    {
-
-                        continue;
+                //        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                //        lowertable6.AddCell(TetanusDate);
 
 
 
+                //    }
+                //    else if (schedule2.Vaccine == "Tetanus" && schedule2.IsSkip == true)
+                //    {
+                //        Font font3 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
-                    }
-                    counter4++;
+                //        PdfPCell TetanusBrand = new PdfPCell(new Phrase(schedule2.BrandName, font3));
+                //        lowertable6.AddCell(TetanusBrand);
+
+                //        PdfPCell TetanusGiven;
+
+                //        if (schedule2.GivenDate != null)
+                //        {
+                //            TetanusGiven = new PdfPCell(new Phrase(schedule2.GivenDate.Value.ToString("dd/MM/yyyy"), font3));
+                //        }
+                //        else
+                //        {
+                //            // Handle the case where GivenDate is null
+                //            TetanusGiven = new PdfPCell(new Phrase("Skip", font3)); // or any other default value or placeholder
+                //        }
+                //        lowertable6.AddCell(TetanusGiven);
+
+                //        PdfPCell TetanusDate = new PdfPCell(new Phrase(schedule2.Date.ToString("dd/MM/yyyy"), font3));
+                //        lowertable6.AddCell(TetanusDate);
 
 
-                }
 
-                document.Add(lowertable6);
+                //    }
+                //    else
+                //    {
+
+                //        continue;
+
+
+
+
+                //    }
+                  /*  counter4++*/;
+
+
+                //}
+
+                //document.Add(lowertable6);
                 //special vaccines table end
                 document.Close();
                 output.Seek(0, SeekOrigin.Begin);
@@ -2518,11 +2578,12 @@ namespace api.fernflowers.com.Controllers
                 tabFot.DefaultCell.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
 
                 cell.PaddingTop = 5;
-
+                cell.PaddingBottom = 5;
                 tabFot.AddCell(cell);
 
+                float bottomMarginWithSpace = document.BottomMargin + 20; // Add 20 units of extra space
+                tabFot.WriteSelectedRows(0, -1, document.LeftMargin, bottomMarginWithSpace, writer.DirectContent);
 
-                tabFot.WriteSelectedRows(0, -1, document.LeftMargin, document.BottomMargin, writer.DirectContent);
 
             }
         }
