@@ -31,11 +31,21 @@ public class VaccineDBContext : DbContext
                         new Doctor{
                             Id=1,
                             Name="Ali",
-                            MobileNumber="03352920239",
-                            Password="123",
+                            MobileNumber="3352920239",
+                            Password="1234",
                             Email="ali.iiui1234@gmail.com",
                             PMDC="a1234",
-                            ValidUpto =new DateOnly(2023, 7, 26)
+                            ValidUpto =new DateOnly(2028, 7, 26)
+                        },
+                        new Doctor
+                        {
+                            Id = 2,
+                            Name = "moiz",
+                            MobileNumber = "3125663979",
+                            Password = "1234",
+                            Email = "ali.234@gmail.com",
+                            PMDC = "a1234",
+                            ValidUpto = new DateOnly(2028, 7, 26)
                         }
                     );
 
