@@ -79,181 +79,181 @@ public class VaccineDBContext : DbContext
                         new Vaccine{
                             Id=1,
                             Name="BCG",
-                            IsSpecial=false,
+                           // IsSpecial=false,
                             Infinite=false
                         },
                         new Vaccine{
                             Id=2,
                             Name="OPV",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=3,
                             Name="HBV",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=4,
                             Name="Hepatitis B",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=5,
                             Name="Pre-Exp RABIES",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=6,
                             Name="PO-Ex Rabies",
-                            IsSpecial=false,
+                           // IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=7,
                             Name="Tetanus",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=true
 
                         },
                         new Vaccine{
                             Id=8,
                             Name="Rota Virus GE",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=9,
                             Name="OPV/IPV+HBV+DPT+Hib",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=10,
                             Name="Pneumococcal",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=11,
                             Name="HBV+DPT+Hib",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=12,
                             Name="MenB vaccines",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=13,
                             Name="Flu",
-                            IsSpecial=false,
+                          //  IsSpecial=false,
                             Infinite=true
 
                         },
                         new Vaccine{
                             Id=14,
                             Name="MEASLES",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=15,
                             Name="MenACWY",
-                            IsSpecial=false,
+                           // IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=16,
                             Name="Yellow Fever",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=17,
                             Name="Typhoid",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=true
 
                         },
                         new Vaccine{
                             Id=18,
                             Name="MR",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=19,
                             Name="Chicken Pox",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=20,
                             Name="MMR",
-                            IsSpecial=false,
+                            ////IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=21,
                             Name="Hepatitis A",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=22,
                             Name="PPSV/PCV",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=23,
                             Name="DTaP",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=24,
                             Name="COVID 19",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=25,
                             Name="HPV",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         },
                         new Vaccine{
                             Id=26,
                             Name="Dengue Fever",
-                            IsSpecial=false,
+                            //IsSpecial=false,
                             Infinite=false
 
                         }
@@ -267,7 +267,7 @@ public class VaccineDBContext : DbContext
                             Name = "BCG",
                             MinAge = 0,
                             MinAgeText="At Birth",
-
+                            IsSpecial = false,
                             VaccineId = 1
 
                         },
@@ -277,7 +277,7 @@ public class VaccineDBContext : DbContext
                             Name = "OPV # 1",
                             MinAge = 0,
                             MinAgeText = "At Birth",
-
+                            IsSpecial = false,
                             VaccineId = 2
 
                         },
@@ -287,7 +287,7 @@ public class VaccineDBContext : DbContext
                             Name = "HBV",
                             MinAge = 0,
                             MinAgeText = "At Birth",
-
+                            IsSpecial = false,
                             VaccineId = 3
 
                         },
@@ -306,6 +306,7 @@ public class VaccineDBContext : DbContext
                             Name = "Hep B 2",
                             MinAge = 29,
                             MinAgeText = "4 Weeks",
+                            IsSpecial = false,
                             VaccineId = 4
 
                         },
@@ -315,7 +316,7 @@ public class VaccineDBContext : DbContext
                             Name = "Hep B 3",
                             MinAge = 169,
                             MinAgeText = "6 Months",
-
+                            IsSpecial = false,
                             VaccineId = 4
 
                         },
@@ -326,7 +327,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pre-Exp Rabies-1",
                             MinAge = 0,
                             MinAgeText = "At Birth",
-
+                            IsSpecial = true,
                             VaccineId = 5
 
                         },
@@ -336,6 +337,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pre-Exp Rabies-2",
                             MinAge = 1,
                             MinAgeText = "1 Day",
+                            IsSpecial = true,
                             VaccineId = 5
 
                         },
@@ -345,6 +347,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pre-Exp Rabies-3",
                             MinAge = 29,
                             MinAgeText = "4 Weeks",
+                            IsSpecial = true,
                             VaccineId = 5
 
                         },
@@ -354,7 +357,7 @@ public class VaccineDBContext : DbContext
                             Name = "RABIES#1",
                             MinAge = 0,
                             MinAgeText = "At Birth",
-
+                            IsSpecial = true,
                             VaccineId = 6
 
                         },
@@ -364,6 +367,7 @@ public class VaccineDBContext : DbContext
                             Name = "RABIES#2",
                             MinAge = 4,
                             MinAgeText = "4 Days",
+                            IsSpecial = true,
                             VaccineId = 6
 
                         },
@@ -373,6 +377,7 @@ public class VaccineDBContext : DbContext
                             Name = "RABIES#3",
                             MinAge = 8,
                             MinAgeText = "8 Days",
+                            IsSpecial=true,
                             VaccineId = 6
 
                         },
@@ -382,6 +387,7 @@ public class VaccineDBContext : DbContext
                             Name = "RABIES#4",
                             MinAge = 29,
                             MinAgeText = "4 Weeks",
+                            IsSpecial = true,
                             VaccineId = 6
 
                         },
@@ -391,7 +397,7 @@ public class VaccineDBContext : DbContext
                             Name = "Tetanus",
                             MinAge = 0,
                             MinAgeText = "At Birth",
-
+                            IsSpecial=true,
                             VaccineId = 7
 
                         },
@@ -401,7 +407,7 @@ public class VaccineDBContext : DbContext
                             Name = "Rota Virus GE # 1",
                             MinAge = 43,
                             MinAgeText = "6 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 8
 
                         },
@@ -411,7 +417,7 @@ public class VaccineDBContext : DbContext
                             Name = "Rota Virus GE # 2",
                             MinAge = 71,
                             MinAgeText = "10 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 8
 
                         },
@@ -421,7 +427,7 @@ public class VaccineDBContext : DbContext
                             Name = "Rota Virus GE # 3",
                             MinAge = 99,
                             MinAgeText = "14 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 8
 
                         },
@@ -431,7 +437,7 @@ public class VaccineDBContext : DbContext
                             Name = "OPV/IPV+HBV+DPT+Hib # 1",
                             MinAge = 43,
                             MinAgeText = "6 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 9
 
                         },
@@ -441,7 +447,7 @@ public class VaccineDBContext : DbContext
                             Name = "OPV/IPV+HBV+DPT+Hib # 2",
                             MinAge = 71,
                             MinAgeText = "10 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 9
 
                         },
@@ -451,7 +457,7 @@ public class VaccineDBContext : DbContext
                             Name = "OPV/IPV+HBV+DPT+Hib # 3",
                             MinAge = 99,
                             MinAgeText = "14 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 9
 
                         },
@@ -470,7 +476,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pneumococcal # 1",
                             MinAge = 43,
                             MinAgeText = "6 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 10
 
                         },
@@ -480,7 +486,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pneumococcal # 2",
                             MinAge = 71,
                             MinAgeText = "10 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 10
 
                         },
@@ -490,7 +496,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pneumococcal # 3",
                             MinAge = 99,
                             MinAgeText = "14 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 10
 
                         },
@@ -500,6 +506,7 @@ public class VaccineDBContext : DbContext
                             Name = "Pneumococcal # 4",
                             MinAge = 365,
                             MinAgeText = "1 Year",
+                            IsSpecial = false,
                             VaccineId = 10
 
                         },
@@ -509,7 +516,7 @@ public class VaccineDBContext : DbContext
                             Name = "HBV+DPT+Hib # 1",
                             MinAge = 43,
                             MinAgeText = "6 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 11
 
                         },
@@ -519,7 +526,7 @@ public class VaccineDBContext : DbContext
                             Name = "HBV+DPT+Hib # 2",
                             MinAge = 71,
                             MinAgeText = "10 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 11
 
                         },
@@ -529,7 +536,7 @@ public class VaccineDBContext : DbContext
                             Name = "HBV+DPT+Hib # 3",
                             MinAge = 99,
                             MinAgeText = "14 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 11
 
                         },
@@ -539,7 +546,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenB Vaccine # 1",
                             MinAge = 57,
                             MinAgeText = "8 Weeks",
-
+                            IsSpecial = false,
                             VaccineId = 12
 
                         },
@@ -549,6 +556,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenB Vaccine # 2",
                             MinAge = 113,
                             MinAgeText = "16 Weeks",
+                            IsSpecial = false,
                             VaccineId = 12
 
                         },
@@ -558,7 +566,7 @@ public class VaccineDBContext : DbContext
                             Name = "Flu",
                             MinAge = 169,
                             MinAgeText = "6 Months",
-
+                            IsSpecial = false,
                             VaccineId = 13
 
                         },
@@ -568,7 +576,7 @@ public class VaccineDBContext : DbContext
                             Name = "MEASLES # 1",
                             MinAge = 169,
                             MinAgeText = "6 Months",
-
+                            IsSpecial = false,
                             VaccineId = 14
 
                         },
@@ -578,7 +586,7 @@ public class VaccineDBContext : DbContext
                             Name = "MEASLES # 2",
                             MinAge = 365,
                             MinAgeText = "1 Year",
-
+                            IsSpecial = false,
                             VaccineId = 14
 
                         },
@@ -588,7 +596,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenACWY # 1",
                             MinAge = 275,
                             MinAgeText = "9 Months",
-
+                            IsSpecial = false,
                             VaccineId = 15
 
                         },
@@ -598,6 +606,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenACWY # 2",
                             MinAge = 365,
                             MinAgeText = "1 Year",
+                            IsSpecial = false,
                             VaccineId = 15
 
                         },
@@ -607,7 +616,7 @@ public class VaccineDBContext : DbContext
                             Name = "Yellow Fever # 1",
                             MinAge = 275,
                             MinAgeText = "9 Months",
-
+                            IsSpecial = false,
                             VaccineId = 16
 
                         },
@@ -617,7 +626,7 @@ public class VaccineDBContext : DbContext
                             Name = "Typhoid",
                             MinAge = 275,
                             MinAgeText = "9 Months",
-
+                            IsSpecial = false,
                             VaccineId = 17
 
                         },
@@ -627,7 +636,7 @@ public class VaccineDBContext : DbContext
                             Name = "MR#1",
                             MinAge = 275,
                             MinAgeText = "9 Months",
-
+                            IsSpecial = false,
                             VaccineId = 18
 
                         },
@@ -637,6 +646,7 @@ public class VaccineDBContext : DbContext
                             Name = "MR#2",
                             MinAge = 365,
                             MinAgeText = "1 Year",
+                            IsSpecial = false,
                             VaccineId = 18
 
                         },
@@ -646,7 +656,7 @@ public class VaccineDBContext : DbContext
                             Name = "Chicken Pox # 1",
                             MinAge = 365,
                             MinAgeText = "1 Year",
-
+                            IsSpecial = false,
                             VaccineId = 19
 
                         },
@@ -656,6 +666,7 @@ public class VaccineDBContext : DbContext
                             Name = "Chicken Pox # 2",
                             MinAge = 457,
                             MinAgeText = "15 Months",
+                            IsSpecial = false,
                             VaccineId = 19
 
                         },
@@ -665,7 +676,7 @@ public class VaccineDBContext : DbContext
                             Name = "Chicken Pox # 3",
                             MinAge = 548,
                             MinAgeText = "18 Months",
-
+                            IsSpecial = false,
                             VaccineId = 19
 
                         },
@@ -675,7 +686,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 1",
                             MinAge = 365,
                             MinAgeText = "1 Year",
-
+                            IsSpecial = false,
                             VaccineId = 20
 
                         },
@@ -685,7 +696,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 2",
                             MinAge = 548,
                             MinAgeText = "18 Months",
-
+                            IsSpecial = false,
                             VaccineId = 20
 
                         },
@@ -695,7 +706,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 3",
                             MinAge = 4746,
                             MinAgeText = "13 Year",
-
+                            IsSpecial = false,
                             VaccineId = 20
 
                         },
@@ -705,7 +716,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 4",
                             MinAge = 731,
                             MinAgeText = "2 Year",
-
+                            IsSpecial = false,
                             VaccineId = 20
 
                         },
@@ -715,7 +726,7 @@ public class VaccineDBContext : DbContext
                             Name = "Hepatitis A #1",
                             MinAge = 365,
                             MinAgeText = "1 Year",
-
+                            IsSpecial = false,
                             VaccineId = 21
 
                         },
@@ -725,7 +736,7 @@ public class VaccineDBContext : DbContext
                             Name = "Hepatitis A #2",
                             MinAge = 548,
                             MinAgeText = "18 Months",
-
+                            IsSpecial = false,
                             VaccineId = 21
 
                         },
@@ -735,7 +746,7 @@ public class VaccineDBContext : DbContext
                             Name = "PPSV/PCV",
                             MinAge = 731,
                             MinAgeText = "2 Year",
-
+                            IsSpecial = false,
                             VaccineId = 22
 
                         },
@@ -745,7 +756,7 @@ public class VaccineDBContext : DbContext
                             Name = "DTaP # 1",
                             MinAge = 1826,
                             MinAgeText = "5 Year",
-
+                            IsSpecial = false,
                             VaccineId = 23
 
                         },
@@ -755,7 +766,7 @@ public class VaccineDBContext : DbContext
                             Name = "DTaP # 2",
                             MinAge = 3651,
                             MinAgeText = "10 Year",
-
+                            IsSpecial = false,
                             VaccineId = 23
 
                         },
@@ -765,7 +776,7 @@ public class VaccineDBContext : DbContext
                             Name = "HPV # 1",
                             MinAge = 3286,
                             MinAgeText = "9 Year",
-
+                            IsSpecial = false,
                             VaccineId = 25
 
                         },
@@ -775,7 +786,7 @@ public class VaccineDBContext : DbContext
                             Name = "HPV # 2",
                             MinAge = 3316,
                             MinAgeText = "1 Year 1 Month",
-
+                            IsSpecial = false,
                             VaccineId = 25
 
                         },
@@ -785,7 +796,7 @@ public class VaccineDBContext : DbContext
                             Name = "Dengue Fever #1",
                             MinAge = 3651,
                             MinAgeText = "10 Year",
-
+                            IsSpecial = false,
                             VaccineId = 26
 
                         },
@@ -795,7 +806,7 @@ public class VaccineDBContext : DbContext
                             Name = "Dengue Fever #2",
                             MinAge = 3834,
                             MinAgeText = "10 Year 6 Months",
-
+                            IsSpecial = false,
                             VaccineId = 26
 
                         }

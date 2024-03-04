@@ -12,8 +12,7 @@ public class Vaccine
 
     public long Id { get; set; }
     public string Name { get; set; }
-    public bool IsSpecial { get; set; }
-    public bool Infinite { get; set; }
+       public bool Infinite { get; set; }
 
     [JsonIgnore]
     public virtual ICollection<Dose> Doses { get; set; }

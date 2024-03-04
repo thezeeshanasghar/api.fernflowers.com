@@ -104,9 +104,24 @@ namespace api.fernflowers.com.Controllers
                 dbDose.Name = ds.Name;
                 dbDose.MinAge = ds.MinAge;
                 dbDose.MinAgeText=ds.MinAgeText;
+                dbDose.IsSpecial=ds.IsSpecial;
                 _db.Entry(dbDose).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("IsSpecial")]
+        public async Task<IActionResult> GetSpecialDoses()
+        {
+            try
+            {
+                var specialDoses= await _db.Doses.Where(v => v.IsSpecial==true).ToListAsync();
+                return Ok(specialDoses);
             }
             catch (Exception ex)
             {

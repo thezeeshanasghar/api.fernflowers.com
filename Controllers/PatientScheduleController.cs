@@ -30,7 +30,52 @@ namespace api.fernflowers.com.Controllers
             _mapper = mapper;
         }
 
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateIsDone(long id,bool isDone)
+    {
+        var patientSchedule = await _db.PatientSchedules.FindAsync(id);
+        if (patientSchedule == null)
+        {
+            return NotFound();
+        }
 
+        patientSchedule.IsDone = isDone;
+
+        // Reset other properties if IsDone is false
+        if (!isDone)
+        {
+            // Reset other properties here
+            patientSchedule.GivenDate = null;
+            patientSchedule.BrandId = null;
+            patientSchedule.Height = null;
+            patientSchedule.Weight = null;
+            patientSchedule.OFC = null;
+            // You can reset other properties as needed
+        }
+
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!PatientScheduleExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return NoContent();
+    }
+
+    private bool PatientScheduleExists(long id)
+    {
+        throw new NotImplementedException();
+    }
 
         [HttpGet]
         [Route("Patient_DoseSchedule")]
@@ -96,15 +141,17 @@ namespace api.fernflowers.com.Controllers
 
                             var newDate = updateDate;
 
-                            var dose = await _db.Doses
-                                .Join(_db.Vaccines,
-                                    dose => dose.VaccineId,
-                                    vaccine => vaccine.Id,
-                                    (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
-                                .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
-                                .Select(x => x.Dose)
-                                .FirstOrDefaultAsync();
-                            
+                            // var dose = await _db.Doses
+                            //     .Join(_db.Vaccines,
+                            //         dose => dose.VaccineId,
+                            //         vaccine => vaccine.Id,
+                            //         (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
+                            //     .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
+                            //     .Select(x => x.Dose)
+                            //     .FirstOrDefaultAsync();
+                               var dose = await _db.Doses
+                                .Where(d => !d.IsSpecial && d.Id == schedule.DoseId)
+                                .FirstOrDefaultAsync(); 
 
                             if (dose == null)
                             {
@@ -534,14 +581,17 @@ namespace api.fernflowers.com.Controllers
 
                             var newDate = updateDate;
 
+                            // var dose = await _db.Doses
+                            //     .Join(_db.Vaccines,
+                            //         dose => dose.VaccineId,
+                            //         vaccine => vaccine.Id,
+                            //         (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
+                            //     .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
+                            //     .Select(x => x.Dose)
+                            //     .FirstOrDefaultAsync();
                             var dose = await _db.Doses
-                                .Join(_db.Vaccines,
-                                    dose => dose.VaccineId,
-                                    vaccine => vaccine.Id,
-                                    (dose, vaccine) => new { Dose = dose, Vaccine = vaccine })
-                                .Where(x => !x.Vaccine.IsSpecial && x.Dose.Id == schedule.DoseId)
-                                .Select(x => x.Dose)
-                                .FirstOrDefaultAsync();
+    .Where(d => !d.IsSpecial && d.Id == schedule.DoseId)
+    .FirstOrDefaultAsync();
 
                             if (dose == null)
                             {
@@ -903,6 +953,11 @@ namespace api.fernflowers.com.Controllers
                 dbps.IsDone = ps.IsDone;
                 dbps.BrandId = ps.BrandId; 
                 dbps.GivenDate= ps.GivenDate;
+                dbps.IsDone = ps.IsDone;
+
+                dbps.Height = ps.Height;
+                dbps.Weight = ps.Weight;
+                dbps.OFC = ps.OFC;
                 _db.Entry(dbps).State = EntityState.Modified;
                 //await _db.SaveChangesAsync();
 
