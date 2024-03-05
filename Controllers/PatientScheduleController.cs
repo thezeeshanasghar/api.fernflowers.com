@@ -1283,6 +1283,8 @@ namespace api.fernflowers.com.Controllers
                             record.IsDone = updateItem.IsDone;
                             record.GivenDate = parsedNewDate;
                             record.BrandId = updateItem.BrandId;
+                            record.BrandId = updateItem.BrandId;
+
                         }
 
                         if (record.DoseId != 0)
@@ -1706,7 +1708,7 @@ namespace api.fernflowers.com.Controllers
             var parsedDate = System.DateOnly.Parse(date);
 
             var patientSchedules = await _db.PatientSchedules
-                .Where(ps => ps.Date == parsedDate)
+                .Where(ps => ps.Date == parsedDate && ps.IsSpecial==true)
                 .Select(ps => new PatientScheduleDTO
                 {
                     Id=ps.Id,
@@ -1746,6 +1748,7 @@ namespace api.fernflowers.com.Controllers
                         IsSkip = patientSchedule.IsSkip,
                         IsDone = patientSchedule.IsDone,
                         BrandName = brand?.Name,
+                        IsSpecial = patientSchedule.IsSpecial,
                         DoseId = patientSchedule?.DoseId,
                     };
 
@@ -1764,6 +1767,7 @@ namespace api.fernflowers.com.Controllers
                         IsSkip = patientSchedule.IsSkip,
                         IsDone = patientSchedule.IsDone,
                         BrandName = brand.Name,
+                        IsSpecial = patientSchedule.IsSpecial,
                         DoseId = patientSchedule?.DoseId
                     };
 
