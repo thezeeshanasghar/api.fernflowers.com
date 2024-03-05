@@ -49,30 +49,30 @@ public class VaccineDBContext : DbContext
                         }
                     );
 
-                    modelBuilder.Entity< Clinic >().HasData(
-                        new Clinic{
-                            Id=1,
-                            Name="Ali s clinic ",
-                            Number="3333333",
-                            Address="b17",
-                            City="Isb",
-                            Fees="100",
-                            DoctorId=1,
-                            IsOnline=true
+                    //modelBuilder.Entity< Clinic >().HasData(
+                    //    new Clinic{
+                    //        Id=1,
+                    //        Name="Ali s clinic ",
+                    //        Number="3333333",
+                    //        Address="b17",
+                    //        City="Isb",
+                    //        Fees="100",
+                    //        DoctorId=1,
+                    //        IsOnline=true
 
-                        }
-                    ); 
+                    //    }
+                    //); 
                     
-                    modelBuilder.Entity< ClinicTiming >().HasData(
-                        new ClinicTiming{
-                            Id=1,
-                            Day="Monday",
-                            Session="Morning",
-                            StartTime=new TimeSpan(2,0,0),
-                            EndTime=new TimeSpan(3,0,0),
-                            ClinicId=1
-                        }
-                    ); 
+                    //modelBuilder.Entity< ClinicTiming >().HasData(
+                    //    new ClinicTiming{
+                    //        Id=1,
+                    //        Day="Monday",
+                    //        Session="Morning",
+                    //        StartTime=new TimeSpan(2,0,0),
+                    //        EndTime=new TimeSpan(3,0,0),
+                    //        ClinicId=1
+                    //    }
+                    //); 
 
                     //vccine
                     modelBuilder.Entity< Vaccine >().HasData(
@@ -297,6 +297,7 @@ public class VaccineDBContext : DbContext
                             Name = "Hep B 1",
                             MinAge = 0,
                             MinAgeText = "At Birth",
+                            IsSpecial = false,
                             VaccineId = 4
 
                         },
@@ -427,7 +428,7 @@ public class VaccineDBContext : DbContext
                             Name = "Rota Virus GE # 3",
                             MinAge = 99,
                             MinAgeText = "14 Weeks",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 8
 
                         },
@@ -546,7 +547,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenB Vaccine # 1",
                             MinAge = 57,
                             MinAgeText = "8 Weeks",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 12
 
                         },
@@ -556,7 +557,7 @@ public class VaccineDBContext : DbContext
                             Name = "MenB Vaccine # 2",
                             MinAge = 113,
                             MinAgeText = "16 Weeks",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 12
 
                         },
@@ -576,7 +577,7 @@ public class VaccineDBContext : DbContext
                             Name = "MEASLES # 1",
                             MinAge = 169,
                             MinAgeText = "6 Months",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 14
 
                         },
@@ -586,7 +587,7 @@ public class VaccineDBContext : DbContext
                             Name = "MEASLES # 2",
                             MinAge = 365,
                             MinAgeText = "1 Year",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 14
 
                         },
@@ -676,7 +677,7 @@ public class VaccineDBContext : DbContext
                             Name = "Chicken Pox # 3",
                             MinAge = 548,
                             MinAgeText = "18 Months",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 19
 
                         },
@@ -706,7 +707,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 3",
                             MinAge = 4746,
                             MinAgeText = "13 Year",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 20
 
                         },
@@ -716,7 +717,7 @@ public class VaccineDBContext : DbContext
                             Name = "MMR # 4",
                             MinAge = 731,
                             MinAgeText = "2 Year",
-                            IsSpecial = false,
+                            IsSpecial = true,
                             VaccineId = 20
 
                         },
