@@ -1283,7 +1283,9 @@ namespace api.fernflowers.com.Controllers
                             record.IsDone = updateItem.IsDone;
                             record.GivenDate = parsedNewDate;
                             record.BrandId = updateItem.BrandId;
-                            record.BrandId = updateItem.BrandId;
+                            record.Height= updateItem.Height;
+                            record.Weight = updateItem.Weight;
+                            record.OFC = updateItem.OFC;
 
                         }
 
