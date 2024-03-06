@@ -1702,6 +1702,126 @@ namespace api.fernflowers.com.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [Route("patient_bulk_updateDoneWithSkip")]
+        [HttpPatch()]
+        public async Task<IActionResult> UpdateBrandIdAndDateWithSkip([FromBody] List<PatientScheduleUpdateDTO> updateData)
+        {
+            try
+            {
+                foreach (var updateItem in updateData)
+                {
+                    var parsedCurrentDate = System.DateOnly.Parse(updateItem.CurrentDate);
+                    var parsedNewDate = System.DateOnly.Parse(updateItem.GivenDate);
+
+                    var dbPS = await _db.PatientSchedules
+                        .Where(d => d.Id == updateItem.Id && d.Date.Equals(parsedCurrentDate))
+                        .ToListAsync();
+
+                    if (dbPS == null || dbPS.Count == 0)
+                    {
+                        return NotFound();
+                    }
+                    foreach (var record in dbPS)
+                    {
+                        if (!updateItem.IsSkip) // Check if IsSkip is false
+                        {
+                            record.IsDone = false;
+                            record.GivenDate = null;
+                            record.BrandId = null;
+                            record.Height = null;
+                            record.Weight = null;
+                            record.OFC = null;
+
+                        }
+
+                        if (record.DoseId != 0)
+                        {
+                            var dose = await _db.Doses
+                        .FirstOrDefaultAsync(d => d.Id == record.DoseId);
+                            string doseName = dose.Name;
+                            var child = await _db.Childs.FindAsync(record.ChildId);
+                            DateOnly dob = child.DOB;
+
+                            DateOnly newchilddob = dob.AddYears(2);
+
+                            if (doseName == "MenACWY # 1" && parsedNewDate > newchilddob)
+                            {
+                                var dose2 = await _db.Doses.FirstOrDefaultAsync(d => d.Name == "MenACWY # 2");
+
+                                if (dose2 != null)
+                                {
+                                    var patientScheduleWithDose2 = await _db.PatientSchedules.FirstOrDefaultAsync(ps => ps.DoseId == dose2.Id);
+
+                                    if (patientScheduleWithDose2 != null)
+                                    {
+                                        // Set IsSkip to true
+                                        patientScheduleWithDose2.IsSkip = false;
+
+                                        // Optionally, you can set other properties related to the "MenACWY # 2" dose
+                                        // Update other properties as needed
+
+                                        // Save changes to the database
+                                        await _db.SaveChangesAsync();
+                                    }
+                                }
+
+                            }
+                            if (dose != null)
+                            {
+                                var vaccine = await _db.Vaccines
+                                    .FirstOrDefaultAsync(v => v.Id == dose.VaccineId);
+                                var doseIdToDelete = record.DoseId;
+                                var currentRowId = record.Id;
+                                string additionalVaccineName = vaccine?.Name;
+
+                                if (vaccine.Infinite == true || additionalVaccineName == "Flu")
+                                {
+
+
+                                    if (record.IsSkip == false)
+                                    {
+
+
+
+
+                                        // Find rows with the same DoseId and greater Id
+                                        var rowsToDelete = await _db.PatientSchedules
+                                            .Where(d => d.DoseId == doseIdToDelete && d.Id > currentRowId)
+                                            .ToListAsync();
+
+                                        // Delete the found rows
+                                        foreach (var row in rowsToDelete)
+                                        {
+                                            _db.PatientSchedules.Remove(row);
+                                        }
+
+                                    }
+
+
+
+
+
+                                    // Add a new PatientSchedule entry with multiplied date
+
+                                    await _db.SaveChangesAsync();
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [Route("getData_baseOnDate")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PatientScheduleDTO>>> GetPatientSchedules(string date)
