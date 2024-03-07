@@ -153,7 +153,7 @@ namespace api.fernflowers.com.Controllers
                                 .Where(d => !d.IsSpecial && d.Id == schedule.DoseId)
                                 .FirstOrDefaultAsync(); 
 
-                            if (dose == null)
+                            if (dose == null )
                             {
                                 // Dose not found, set the properties to null
                                 var dto = new PatientDoseScheduleDTO
@@ -193,7 +193,7 @@ namespace api.fernflowers.com.Controllers
                                
                             }
                             else
-                            {
+                            { 
                                 // Dose found, continue with the existing code to create the dto
                                 var dto = new PatientDoseScheduleDTO
                                 {
@@ -201,7 +201,7 @@ namespace api.fernflowers.com.Controllers
                                     DoseName = dose.Name,
                                     IsSkip = false,
                                     IsDone = false,
-                                    IsSpecial=schedule.SelectedDose,
+                                    IsSpecial = schedule.SelectedDose,
                                     // BrandName = brand.Name (you can remove this line since we don't need it when dose is deleted)
                                 };
 
@@ -221,7 +221,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial = schedule.SelectedDose,
+                                    IsSpecial =  schedule.SelectedDose,
                                 };
 
                                 _db.PatientSchedules.Add(patientSchedule);
@@ -590,8 +590,8 @@ namespace api.fernflowers.com.Controllers
                             //     .Select(x => x.Dose)
                             //     .FirstOrDefaultAsync();
                             var dose = await _db.Doses
-    .Where(d => !d.IsSpecial && d.Id == schedule.DoseId)
-    .FirstOrDefaultAsync();
+                        .Where(d => !d.IsSpecial && d.Id == schedule.DoseId)
+                        .FirstOrDefaultAsync();
 
                             if (dose == null)
                             {
@@ -619,7 +619,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial=schedule.SelectedDose,
+                                    IsSpecial=false,
                                 };
                                 _db.PatientSchedules.Add(patientSchedule);
                                 await _db.SaveChangesAsync();
@@ -655,7 +655,7 @@ namespace api.fernflowers.com.Controllers
                                     IsDone = false,
                                     BrandId = null,
                                     GivenDate = null,
-                                    IsSpecial=schedule.SelectedDose,
+                                    IsSpecial = false,
                                 };
                                 _db.PatientSchedules.Add(patientSchedule);
                                 await _db.SaveChangesAsync();
